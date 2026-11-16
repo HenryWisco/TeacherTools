@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local use. Never commit real values.
+ANTHROPIC_API_KEY=
+ADMIN_TOKEN=choose-a-long-password
+IP_SALT=any-random-text
+SUPPORTER_CODE=
+SHOW_AD_PLACEHOLDERS=1
