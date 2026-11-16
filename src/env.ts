@@ -12,10 +12,12 @@ export type Env = {
   SITE_URL: string;
   CONTACT_EMAIL: string;
   MODEL: string;
-  DAILY_LIMIT_PER_IP: string;
+  DAILY_LIMIT_PER_DEVICE: string;
+  DAILY_LIMIT_PER_NETWORK: string;
   GLOBAL_DAILY_LIMIT: string;
   ADSENSE_CLIENT: string;
   ADSENSE_SLOT: string;
+  ADS_PERSONALIZED: string;
   AMAZON_TAG: string;
   SUPPORT_URL: string;
   SPONSOR_TEXT: string;

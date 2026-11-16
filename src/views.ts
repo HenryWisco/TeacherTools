@@ -2,7 +2,7 @@ import { html, raw } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import type { Env } from "./env";
 import type { LibraryFilter, Resource } from "./db";
-import { adScript, adSlot, classroomPicks, sponsorStrip, type Money } from "./monetize";
+import { NO_AD_TOOLS, adScript, adSlot, classroomPicks, sponsorStrip, type Money } from "./monetize";
 import { renderMarkdown } from "./markdown";
 import { BANDS, GRADES, SUBJECTS, TOOLS, gradeLabel, typeLabel, TOOL_BY_ID, type Field, type Tool } from "./tools";
 
@@ -275,7 +275,7 @@ export function toolPage(m: Money, tool: Tool, pre: Record<string, string>, exam
       <h1 class="no-print"><span aria-hidden="true">${tool.icon}</span> ${h1}</h1>
       <p class="lede no-print">${tool.intro}</p>
       ${generator(tool, pre)}
-      ${adSlot(m, "tool")}
+      ${NO_AD_TOOLS.has(tool.id) ? "" : adSlot(m, "tool")}
     </section>
     ${examples.length
       ? html`<section class="wrap section no-print">
@@ -476,10 +476,10 @@ export function privacyPage(m: Money) {
         <li><strong>What you type into a tool</strong> is sent to our AI provider (Anthropic) to write your document and is not stored by us after the document is returned.</li>
         <li><strong>Documents you choose to share</strong> are stored and, after review, published in the library. Don't share anything containing personal information. Ask ${contact} to remove a shared document at any time.</li>
         <li><strong>Your email address</strong>, only if you subscribe to the weekly email. Unsubscribe any time; we never sell or rent the list.</li>
-        <li><strong>A daily usage counter</strong> tied to a scrambled, one-day version of your network address, used only to stop automated abuse. We do not store your actual IP address.</li>
+        <li><strong>A daily usage counter</strong> tied to a random number kept in a cookie on your device and to a scrambled, one-day version of your network address. It is used only to stop automated abuse and is not linked to who you are or what you typed. We do not store your actual IP address.</li>
       </ul>
       <h2>Cookies and advertising</h2>
-      <p>The site itself sets one cookie, and only if you become a supporter (to switch ads off). Our advertising partners, including Google, may use cookies to show and measure ads. You can turn off personalised advertising in <a href="https://adssettings.google.com" rel="noopener">Google's ad settings</a>. Ads never appear on printed or downloaded documents.</p>
+      <p>The site itself sets two cookies: the random usage-counter number above, and one that switches ads off if you become a supporter. Ads are shown without personalization: they are not chosen using a profile of you. Our advertising partners, including Google, may still use cookies to deliver and measure ads. Ads never appear on printed or downloaded documents, and never beside the tools for family messages, report card comments, IEP goals or differentiation.</p>
       <p>Some links to products are affiliate links: if you buy something, the site may earn a small commission at no cost to you.</p>
       <h2>Contact</h2>
       <p>Questions or removal requests: ${contact}.</p>

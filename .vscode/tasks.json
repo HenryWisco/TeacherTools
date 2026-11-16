@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. First-time setup (install + database)",
+      "type": "shell",
+      "command": "npm install && npm run db:local",
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Start the site",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "npm test",
+      "problemMatcher": [],
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "Reload starter library",
+      "type": "shell",
+      "command": "npm run db:local",
+      "problemMatcher": []
+    },
+    {
+      "label": "Deploy to Cloudflare",
+      "type": "shell",
+      "command": "npm run db:remote && npm run deploy",
+      "problemMatcher": []
+    }
+  ]
+}

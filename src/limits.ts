@@ -24,23 +24,32 @@ const BUMP = `INSERT INTO usage (day, ip_hash, count) VALUES (?1, ?2, 1)
               ON CONFLICT (day, ip_hash) DO UPDATE SET count = count + 1
               RETURNING count`;
 
-// Counts one generation against the visitor and the site, atomically, and says whether it may run.
-export async function takeGeneration(env: Env, ip: string, now = new Date()): Promise<LimitResult> {
+// Counts one generation and says whether it may run. Three caps, loosest last:
+//   per device  - one teacher's browser (a random cookie; no account)
+//   per network - a whole school usually shares one address, so this is set high;
+//                 it mainly stops scripts that throw the cookie away
+//   site-wide   - the ceiling on the day's AI bill
+export async function takeGeneration(env: Env, ip: string, deviceId: string, now = new Date()): Promise<LimitResult> {
   const day = today(now);
-  const perIp = intVar(env.DAILY_LIMIT_PER_IP, 40);
+  const perDevice = intVar(env.DAILY_LIMIT_PER_DEVICE, 40);
+  const perNetwork = intVar(env.DAILY_LIMIT_PER_NETWORK, 600);
   const global = intVar(env.GLOBAL_DAILY_LIMIT, 5000);
-  const ipHash = await hashIp(ip, day, env.IP_SALT || "dev-salt");
+  const salt = env.IP_SALT || "dev-salt";
+  const netKey = await hashIp(ip, day, salt);
+  const devKey = "dev:" + (await hashIp(deviceId, day, salt));
 
-  const [mine, site] = await env.DB.batch<{ count: number }>([
-    env.DB.prepare(BUMP).bind(day, ipHash),
+  const [dev, net, site] = await env.DB.batch<{ count: number }>([
+    env.DB.prepare(BUMP).bind(day, devKey),
+    env.DB.prepare(BUMP).bind(day, netKey),
     env.DB.prepare(BUMP).bind(day, "*"),
   ]);
-  const myCount = mine.results[0]?.count ?? 1;
+  const devCount = dev.results[0]?.count ?? 1;
+  const netCount = net.results[0]?.count ?? 1;
   const siteCount = site.results[0]?.count ?? 1;
 
-  if (myCount > perIp) return { ok: false, reason: "personal" };
+  if (devCount > perDevice || netCount > perNetwork) return { ok: false, reason: "personal" };
   if (siteCount > global) return { ok: false, reason: "site" };
-  return { ok: true, remaining: perIp - myCount };
+  return { ok: true, remaining: perDevice - devCount };
 }
 
 // Shares are capped separately so the review queue can't be flooded from one network.

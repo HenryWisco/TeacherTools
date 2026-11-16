@@ -12,11 +12,16 @@ export type Money = { env: Env; supporter: boolean };
 
 export type Placement = "home" | "tool" | "library" | "resource";
 
+// Tools where a teacher is writing about a particular child or family: never show ads beside these.
+export const NO_AD_TOOLS = new Set(["iep-goals", "report-comments", "parent-email", "accommodations"]);
+
 export const adsEnabled = (m: Money): boolean => !m.supporter && !!m.env.ADSENSE_CLIENT;
 
 export function adScript(m: Money) {
   if (!adsEnabled(m)) return "";
-  return html`<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${m.env.ADSENSE_CLIENT}" crossorigin="anonymous"></script>`;
+  // Non-personalized unless the owner opts in: no ad profiling of teachers, and easier for schools to allow.
+  const npa = m.env.ADS_PERSONALIZED ? "" : html`<script>(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;</script>`;
+  return html`${npa}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${m.env.ADSENSE_CLIENT}" crossorigin="anonymous"></script>`;
 }
 
 export function adSlot(m: Money, placement: Placement) {
@@ -62,7 +67,7 @@ const PICKS: Record<string, [string, string][]> = {
     ["Chart paper", "chart paper pad classroom"],
   ],
   default: [
-    ["Flair pens (teacher favourite)", "papermate flair pens"],
+    ["Flair pens (teacher favorite)", "papermate flair pens"],
     ["Personal laminator", "thermal laminator for teachers"],
     ["Clipboards, class set", "clipboards class set"],
   ],

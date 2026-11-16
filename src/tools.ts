@@ -238,7 +238,7 @@ export const TOOLS: Tool[] = [
     group: "Practice",
     blurb: "A 3×3 grid of ways to show learning.",
     intro:
-      "Free choice board generator. Build a 3×3 choice board of varied activities so students can choose how to practise and show what they know.",
+      "Free choice board generator. Build a 3×3 choice board of varied activities so students can choose how to practice and show what they know.",
     fields: [topic("e.g. The water cycle"), details],
     common: FULL,
     libraryType: true,
@@ -437,7 +437,7 @@ export const TOOLS: Tool[] = [
     group: "Communicate",
     blurb: "A warm, clear message home.",
     intro:
-      "Free parent email generator for teachers. Draft a warm, clear, professional message to families about any situation, ready to personalise and send.",
+      "Free parent email generator for teachers. Draft a warm, clear, professional message to families about any situation, ready to personalize and send.",
     fields: [
       {
         name: "topic",
@@ -500,7 +500,7 @@ export const TOOLS: Tool[] = [
     ],
     common: { grade: true },
     instructions:
-      "Draft three measurable annual goal options for the described area of need, each with: condition, observable behaviour, criterion, how it will be measured, and two or three short-term objectives. Add suggested accommodations and progress-monitoring ideas. Use 'the student'. Open with one sentence noting these are draft ideas for the IEP team to adapt, since goals must be individualized by the team.",
+      "Draft three measurable annual goal options for the described area of need, each with: condition, observable behavior, criterion, how it will be measured, and two or three short-term objectives. Add suggested accommodations and progress-monitoring ideas. Use 'the student'. Open with one sentence noting these are draft ideas for the IEP team to adapt, since goals must be individualized by the team.",
   },
   {
     id: "accommodations",

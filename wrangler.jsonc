@@ -21,10 +21,14 @@
     "SITE_URL": "",
     "CONTACT_EMAIL": "",
     "MODEL": "claude-haiku-5-5",
-    "DAILY_LIMIT_PER_IP": "40",
+    // Documents per day: one browser, one network (a whole school shares one), whole site.
+    "DAILY_LIMIT_PER_DEVICE": "40",
+    "DAILY_LIMIT_PER_NETWORK": "600",
     "GLOBAL_DAILY_LIMIT": "5000",
     "ADSENSE_CLIENT": "",
     "ADSENSE_SLOT": "",
+    // Leave blank for non-personalized ads (safer with schools). Set to "1" to allow personalized ads.
+    "ADS_PERSONALIZED": "",
     "AMAZON_TAG": "",
     "SUPPORT_URL": "",
     "SPONSOR_TEXT": "",

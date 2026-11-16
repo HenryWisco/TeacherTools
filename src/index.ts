@@ -11,6 +11,7 @@ import * as views from "./views";
 
 type Ctx = { Bindings: Env; Variables: { money: Money } };
 const app = new Hono<Ctx>();
+const DEVICE_COOKIE = "sc_device";
 
 app.use("*", async (c, next) => {
   const supporter = await isSupporter(c.env, getCookie(c, SUPPORTER_COOKIE));
@@ -124,11 +125,20 @@ app.post("/api/generate", async (c) => {
     throw err;
   }
 
-  const limit = await takeGeneration(c.env, clientIp(c));
+  // A random id per browser so a school sharing one network address isn't treated as one person.
+  let device = getCookie(c, DEVICE_COOKIE) ?? "";
+  if (!/^[0-9a-f-]{36}$/.test(device)) {
+    device = crypto.randomUUID();
+    setCookie(c, DEVICE_COOKIE, device, {
+      path: "/", maxAge: 60 * 60 * 24 * 365, httpOnly: true, sameSite: "Lax",
+      secure: new URL(c.req.url).protocol === "https:",
+    });
+  }
+  const limit = await takeGeneration(c.env, clientIp(c), device);
   if (!limit.ok) {
     const error =
       limit.reason === "personal"
-        ? "You've reached today's limit for this network. It resets at midnight UTC. The library is still open."
+        ? "You've reached today's limit. It resets at midnight UTC, and the library is still open."
         : "The site has hit its daily capacity. Please try again tomorrow; the library is still open.";
     return c.json({ error }, 429);
   }
@@ -138,12 +148,11 @@ app.post("/api/generate", async (c) => {
   const stream = lineStream((send) =>
     env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send) : generateDemo(tool, topic, send),
   );
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "application/x-ndjson; charset=utf-8",
-      "Cache-Control": "no-store",
-      "X-Accel-Buffering": "no",
-    },
+  // c.body (not a bare Response) so the device cookie set above is sent with the stream.
+  return c.body(stream, 200, {
+    "Content-Type": "application/x-ndjson; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Accel-Buffering": "no",
   });
 });
 

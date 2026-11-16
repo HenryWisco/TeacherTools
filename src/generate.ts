@@ -101,7 +101,7 @@ Answer each question. Show your work in the space provided.
 
    ____________________________________________
 
-| Skill | Got it | Still practising |
+| Skill | Got it | Still practicing |
 |---|---|---|
 | Adding fractions | | |
 | Comparing fractions | | |

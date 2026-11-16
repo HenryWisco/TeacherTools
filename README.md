@@ -4,6 +4,16 @@ A free website where teachers describe what they need and get a print-ready less
 
 "Supply Closet" is a placeholder name. Change `SITE_NAME` in `wrangler.jsonc` to rename the whole site.
 
+## Try it in Visual Studio Code (5 minutes)
+
+1. Install [Node.js](https://nodejs.org) (the "LTS" version) and [Visual Studio Code](https://code.visualstudio.com) if you don't have them.
+2. Unzip the project, then in VS Code choose **File → Open Folder…** and pick the `supply-closet` folder.
+3. Press **Ctrl+Shift+P** (**⌘⇧P** on a Mac), type **Run Task**, press Enter, and choose **1. First-time setup (install + database)**. Wait for it to finish (a minute or two).
+4. Run Task again and choose **2. Start the site**.
+5. Open http://localhost:8787 in your browser.
+
+Without an AI key the generator returns a labelled sample, so every button works but the documents are not real yet. To get real ones, create a file named `.dev.vars` in the folder (copy `.dev.vars.example`), paste your [Anthropic API key](https://console.anthropic.com/) after `ANTHROPIC_API_KEY=`, and start the site again.
+
 ## What's in it
 
 | Part | What it does |
@@ -13,7 +23,7 @@ A free website where teachers describe what they need and get a print-ready less
 | **Library** | 27 hand-checked starter resources for grades K–12, browsable by grade, subject and type, each on its own search-friendly page with a "make my own version" button. |
 | **Sharing** | Teachers can share what they make. It gets a private link at once and only appears in the public library (and to search engines) after you approve it at `/admin`. |
 | **Money** | Ad slots, affiliate "classroom picks", a newsletter list, a sponsor line and an ad-free supporter option. All off until you fill in a setting. None of them ever blocks a teacher or prints on a document. |
-| **Protection** | Daily per-network and site-wide caps so nobody can run up your AI bill, a hard length limit per document, and no storage of IP addresses or of what teachers type. |
+| **Protection** | Daily per-browser, per-network and site-wide caps so nobody can run up your AI bill, a hard length limit per document, and no storage of IP addresses or of what teachers type. |
 
 ## How it makes money (and why this way)
 
@@ -31,7 +41,7 @@ The research behind these choices is in `docs/research-report.md`. In short:
 | `SPONSOR_TEXT`, `SPONSOR_URL` | One sponsor line in the footer | When a sponsor pays for it |
 | Newsletter | Always on. Addresses are in `/admin` → "Download list" | Sell one sponsor slot per issue once the list is a few thousand |
 
-**Supporter set-up:** create a payment link (Stripe Payment Links, Ko-fi, etc.) for, say, $30 a year. Set its "after payment" redirect to `https://YOUR-SITE/support/thanks?code=YOUR-CODE`, put the link in `SUPPORT_URL`, and save the same code with `npx wrangler secret put SUPPORTER_CODE`. Visiting that link switches ads off on that device for a year. It is an honour system, which is fine at this price.
+**Supporter set-up:** create a payment link (Stripe Payment Links, Ko-fi, etc.) for, say, $30 a year. Set its "after payment" redirect to `https://YOUR-SITE/support/thanks?code=YOUR-CODE`, put the link in `SUPPORT_URL`, and save the same code with `npx wrangler secret put SUPPORTER_CODE`. Visiting that link switches ads off on that device for a year. It is an honor system, which is fine at this price.
 
 When traffic passes about 1,000 visits a month, apply to a premium ad network (Journey by Mediavine, later Raptive); they pay several times what AdSense does. They replace the AdSense snippet in `src/monetize.ts`.
 

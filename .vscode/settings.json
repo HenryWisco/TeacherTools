@@ -1,0 +1,6 @@
+{
+  "files.exclude": { "**/.wrangler": true },
+  "search.exclude": { "**/node_modules": true, "public/marked.js": true, "seed/seed.sql": true },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": false
+}
