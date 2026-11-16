@@ -25,6 +25,9 @@ export type Tool = {
   // Whether the common grade / subject / standards fields apply.
   common?: { grade?: boolean; subject?: boolean; standards?: boolean };
   libraryType?: boolean; // can be shared to the public library
+  // Who reads the document. Student sheets (the default) get a Name/Date line; these do not.
+  audience?: "teacher" | "family";
+  noKey?: boolean; // never has an answer key (no questions for students)
 };
 
 // ---- Options every tool shares (the "More options" block) ----
@@ -56,12 +59,12 @@ export const VERSIONS: Record<string, { label: string; guide: string }> = {
   ab: {
     label: "Two versions (A and B)",
     guide:
-      'Make two parallel versions so neighbours cannot copy: same skills, same difficulty and same number of questions, but different numbers, examples or question order. Put each under its own heading, exactly "## Version A" and "## Version B", each starting with its own name/date line. Finish with one "## Answer Key" that covers Version A and then Version B.',
+      'Make two parallel versions so neighbours cannot copy: same skills, same difficulty and same number of questions, but different numbers, examples and question order. Every question with a worked-out answer must have a different answer in Version B than in Version A; do not repeat a question word for word. Write nothing between the title and "## Version A" except directions. Put each under its own heading, exactly "## Version A" and "## Version B", each starting with its own name/date line (and no name/date line under the main title). Finish with one "## Answer Key" that covers Version A and then Version B.',
   },
   levels: {
     label: "Three levels (support, on level, challenge)",
     guide:
-      'Make the same task at three levels so the whole class works on the same content. Use exactly these headings: "## Level 1: More support" (shorter, simpler wording, worked example, sentence starters or word bank), "## Level 2: On level", and "## Level 3: Challenge" (deeper reasoning, not just more questions). Each starts with its own name/date line. Finish with one "## Answer Key" covering all three levels.',
+      'Make the same task at three levels so the whole class works on the same content. Use exactly these headings: "## Level 1: More support" (shorter, simpler wording, worked example, sentence starters or word bank), "## Level 2: On level", and "## Level 3: Challenge" (deeper reasoning, not just more questions). The levels must really differ: the support level uses easier numbers or shorter text, not the same questions with hints added. Each level is a complete handout for a different group of students, so it starts with its own name/date line (none under the main title), contains everything those students need, and never refers to the page of another level. If there is a reading passage, rewrite the passage itself for each level (the same content, shorter and simpler for Level 1) rather than printing identical text three times, and make sure the questions at each level can be answered from the passage printed at that level. Write nothing between the title and "## Level 1" except directions. Finish with one "## Answer Key" covering all three levels.',
   },
 };
 
@@ -145,8 +148,9 @@ export const TOOLS: Tool[] = [
     ],
     common: FULL,
     libraryType: true,
+    audience: "teacher",
     instructions:
-      "Write a complete lesson plan a teacher could teach from tomorrow. Include: learning objectives (student-friendly 'I can' statements), standards if given, materials, key vocabulary, a timed sequence (hook, direct instruction, guided practice, independent practice, closure) with minutes for each step that add up to the class length, the exact questions or examples the teacher will use, differentiation for students who need support and for students ready for more, and a quick formative assessment with expected answers.",
+      "Write a complete lesson plan a teacher could teach from tomorrow. Include: learning objectives (student-friendly 'I can' statements), standards if given, materials, key vocabulary, a timed sequence (hook, direct instruction, guided practice, independent practice, closure) with minutes for each step that add up to the class length, the exact questions or examples the teacher will use, differentiation for students who need support and for students ready for more, and one quick formative assessment with expected answers. Be realistic about what fits in the time. If the plan mentions a student handout, card sort or recording sheet, include it in full under its own heading at the end.",
   },
   {
     id: "unit-plan",
@@ -163,6 +167,7 @@ export const TOOLS: Tool[] = [
     ],
     common: FULL,
     libraryType: true,
+    audience: "teacher",
     instructions:
       "Write a unit plan: unit overview, essential questions, what students will know and be able to do, a table with one row per lesson (day, focus, main activity, check for understanding), formative and summative assessments, a culminating task with success criteria, and common misconceptions to watch for.",
   },
@@ -182,8 +187,9 @@ export const TOOLS: Tool[] = [
     ],
     common: { grade: true, subject: true },
     libraryType: true,
+    audience: "teacher",
     instructions:
-      "Write a substitute plan that a non-specialist adult can run with no preparation. Start with a short 'Notes for the substitute' section (routines to expect, what to collect, what to do if students finish early), then timed activities with word-for-word directions to read aloud, self-contained student tasks, and answer keys. Leave blanks like [bell schedule] or [seating chart location] for details only the teacher knows.",
+      "Write a substitute plan that a non-specialist adult can run with no preparation. Start with a short 'Notes for the substitute' section (routines to expect, what to collect, what to do if students finish early), then timed activities with word-for-word directions to read aloud, self-contained student tasks, and answer keys. Details only the teacher knows (bell schedule, seating chart location, office extension, student helpers) go in ONE fill-in table called 'Fill in before you leave this plan', right after the title; do not scatter square-bracket blanks through the rest of the plan. Then list 'What to copy' (each student page and how many). Put each student page under its own heading with a name/date line, separate from the substitute's script. Do not rely on any link, online quiz or file the teacher has not provided: device activities need a paper fallback. For grades 6 to 12, write the plan for one class period of the length given (assume 50 minutes) and say how to repeat it for other periods; a full day for a younger class covers the whole school day. Do not ask the substitute to do anything that needs subject expertise. End with a short 'Report for the teacher' form (absences, what was finished, problems, notes).",
   },
   {
     id: "slide-outline",
@@ -200,6 +206,7 @@ export const TOOLS: Tool[] = [
     ],
     common: FULL,
     libraryType: true,
+    audience: "teacher",
     instructions:
       "Write a slide deck outline. For each slide give: '### Slide N: Title', 3-4 short student-facing bullet points, a suggested visual (described in words), and speaker notes. Include at least two check-for-understanding slides with answers in the speaker notes, and end with a summary slide.",
   },
@@ -244,7 +251,7 @@ export const TOOLS: Tool[] = [
     common: { grade: true, standards: true },
     libraryType: true,
     instructions:
-      "Write math word problems set in realistic, varied, culturally inclusive contexts. Begin with a name/date line. Order problems from easier to harder and include at least one multi-step problem. Use numbers that work out cleanly unless the skill requires otherwise. The answer key must show the worked solution for each problem, not just the final answer. Double-check every calculation.",
+      "Write math word problems set in realistic, varied, culturally inclusive contexts. Begin with a name/date line. Order problems from easier to harder and include at least one multi-step problem; if the skill, standard or teacher's notes call for multi-step problems, every problem needs two or more operations. Each problem must be solvable with the numbers given, make sense in the real world, and contain no hint or information that points away from the solution. Use numbers that work out cleanly unless the skill requires otherwise. The answer key must show the worked solution for each problem, not just the final answer. Double-check every calculation.",
   },
   {
     id: "vocabulary",
@@ -301,14 +308,14 @@ export const TOOLS: Tool[] = [
     name: "Lab or Hands-On Activity",
     icon: "🧪",
     group: "Practice",
-    blurb: "A safe, low-cost investigation with data table.",
+    blurb: "A low-cost investigation with a data table.",
     intro:
-      "Free science lab and hands-on activity generator. Get a safe, low-cost investigation with materials, procedure, data table and analysis questions.",
+      "Free science lab and hands-on activity generator. Get a low-cost investigation with materials, safety notes, procedure, data table and analysis questions.",
     fields: [topic("e.g. Density of liquids"), details],
     common: FULL,
     libraryType: true,
     instructions:
-      "Write a hands-on activity or lab using inexpensive, commonly available materials. Include: question to investigate, background in two or three sentences, materials per group, safety notes, numbered procedure, a blank data table, analysis questions, and teacher notes with expected results and answers. Do not include anything hazardous; flag any step that needs adult handling.",
+      "Write a hands-on activity or lab using inexpensive, commonly available materials. Include: question to investigate, background in two or three sentences, materials per group, safety notes, numbered procedure, a blank data table, analysis questions, and teacher notes with expected results and answers. Do not include anything hazardous; flag any step that needs adult handling. The whole procedure, including set-up and clean-up, must fit the class period the teacher gives (assume 45 minutes if none is given) and say how long each part takes. Quantities must work in practice with the equipment listed, and a comparison must be a fair test (change one thing only).",
   },
   {
     id: "quiz",
@@ -332,7 +339,7 @@ export const TOOLS: Tool[] = [
     common: FULL,
     libraryType: true,
     instructions:
-      "Write a quiz. Begin with a name/date line and a line for the score. Mix recall, application and reasoning questions. Multiple choice questions have four options labelled A-D with exactly one correct answer and plausible distractors based on common mistakes. The answer key gives the correct answer for every question and a one-line explanation, plus a suggested point value.",
+      "Write a quiz. Begin with a name/date line and a line for the score. Mix recall, application and reasoning questions. Multiple choice questions have four options labelled A-D with exactly one correct answer and plausible distractors based on common mistakes. The answer key gives the correct answer for every question and a one-line explanation. Decide the points before you start: 1 point for each multiple choice or true/false question and 2 for each written question unless the teacher says otherwise, add them up, and use that one total in the score line and at the end of the answer key.",
   },
   {
     id: "exit-ticket",
@@ -398,7 +405,7 @@ export const TOOLS: Tool[] = [
     common: FULL,
     libraryType: true,
     instructions:
-      "Write an original reading passage at the stated grade's reading level (sentence length, vocabulary and concept load must fit the grade), accurate if nonfiction. Begin with a name/date line, then the passage under its own title, then comprehension questions that mix literal, inferential and vocabulary-in-context questions and include one that asks for text evidence. End with an answer key. Never reproduce existing published texts.",
+      "Write an original reading passage at the stated grade's reading level (sentence length, vocabulary and concept load must fit the grade), accurate if nonfiction. Begin with a name/date line, then the passage under its own title, then comprehension questions that mix literal, inferential and vocabulary-in-context questions and include one that asks for text evidence. Keep the passage within 10% of the length chosen. End with an answer key that agrees with the passage. Never reproduce existing published texts.",
   },
   {
     id: "text-leveler",
@@ -428,7 +435,7 @@ export const TOOLS: Tool[] = [
     ],
     common: {},
     instructions:
-      "Rewrite the provided text for the target reading level. Keep every key fact and idea and the original order; change sentence length, vocabulary and structure to fit the level. Do not add new facts. Give the rewritten text a title. Add the requested extras after the text. If questions are added, include an answer key.",
+      "Rewrite the provided text for the target reading level. Keep every key fact and idea and the original order; change sentence length, vocabulary and structure to fit the level. Do not add new facts. Give the rewritten text a title. Add the requested extras after the text. A glossary lists only words that appear in your rewritten text. If comprehension questions are requested, write exactly three, each answerable from your rewritten text, and include an answer key. For the youngest and beginner levels keep sentences very short and cut the passage down to its main points.",
   },
   {
     id: "writing-prompts",
@@ -460,8 +467,9 @@ export const TOOLS: Tool[] = [
     fields: [topic("e.g. Chapters 1–3 of the class novel, or any topic", "Text or topic"), details],
     common: { grade: true, subject: true },
     libraryType: true,
+    audience: "teacher",
     instructions:
-      "Write open-ended discussion questions grouped under three headings: Understand, Analyze, and Connect & Evaluate. Give four to five questions per group, plus follow-up probes for the teacher and a suggested discussion routine (for example think-pair-share). No question should be answerable with yes or no.",
+      "Write open-ended discussion questions grouped under three headings: Understand, Analyze, and Connect & Evaluate. Give four to five questions per group (or, if the teacher asks for a number of questions, exactly that many in total), plus follow-up probes for the teacher and a suggested discussion routine (for example think-pair-share). No question should be answerable with yes or no.",
   },
   {
     id: "project",
@@ -503,8 +511,10 @@ export const TOOLS: Tool[] = [
       { name: "language", label: "Language", kind: "text", placeholder: "English (or e.g. English + Spanish)", max: 60 },
     ],
     common: {},
+    audience: "family",
+    noKey: true,
     instructions:
-      "Write an email from a teacher to a family or families. Give a subject line, then the message. Keep it short, plain, respectful and free of jargon; lead with the purpose; state clearly what, if anything, the family needs to do and by when. Use placeholders in square brackets such as [Student], [Teacher name], [date] for anything specific that was not provided. If a second language is requested, give the full message in both languages.",
+      "Write an email from a teacher to a family or families. Give a subject line, then the message. Keep it short, plain, respectful and free of jargon; lead with the purpose; state clearly what, if anything, the family needs to do and by when. Use every detail the teacher gave (dates, times, amounts, items) exactly, and add none of your own. Use placeholders in square brackets such as [Student], [Teacher name], [date] only for specifics that were not provided, and list them once in a line that starts 'Before you send, fill in:' placed directly under the title, above the subject line. Never put notes to the teacher inside the message itself. If a second language is requested, give the full message in both languages.",
   },
   {
     id: "report-comments",
@@ -527,6 +537,8 @@ export const TOOLS: Tool[] = [
       { name: "length", label: "Length", kind: "select", options: ["2-3 sentences", "One short paragraph", "Three versions to choose from"] },
     ],
     common: { grade: true, subject: true },
+    audience: "teacher",
+    noKey: true,
     instructions:
       "Write report card comments using the placeholder [Student] instead of a name and they/them pronouns. Be specific and evidence-based, lead with a genuine strength, name one or two concrete next steps and how the family can help, and keep a warm professional tone. Avoid labels and vague praise.",
   },
@@ -550,6 +562,8 @@ export const TOOLS: Tool[] = [
       },
     ],
     common: { grade: true },
+    audience: "teacher",
+    noKey: true,
     instructions:
       "Draft three measurable annual goal options for the described area of need, each with: condition, observable behavior, criterion, how it will be measured, and two or three short-term objectives. Add suggested accommodations and progress-monitoring ideas. Use 'the student'. Open with one sentence noting these are draft ideas for the IEP team to adapt, since goals must be individualized by the team.",
   },
@@ -573,6 +587,8 @@ export const TOOLS: Tool[] = [
       details,
     ],
     common: { grade: true, subject: true },
+    audience: "teacher",
+    noKey: true,
     instructions:
       "Give practical differentiation ideas for the described lesson, grouped under: Students who need more support, English learners, Students with attention or executive-function needs, and Students ready for more challenge. Each idea must be specific to this lesson and doable tomorrow with ordinary classroom resources. Finish with a version of the task at three levels of scaffolding.",
   },

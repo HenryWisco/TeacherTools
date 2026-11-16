@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import type { Env } from "./env";
 import * as db from "./db";
-import { generate, generateDemo, lineStream } from "./generate";
+import { findProblems, tidy } from "./check";
+import { generate, generateDemo, lineStream, type Checks } from "./generate";
 import { hashIp, pruneUsage, takeGeneration, takeShare, today } from "./limits";
 import { SUPPORTER_COOKIE, adsTxt, isSupporter, supporterToken, type Money } from "./monetize";
 import { InputError, MAX_PREVIOUS, buildUserPrompt, getTool, normalizeInputs, outputBudget } from "./prompt";
@@ -115,11 +116,14 @@ app.post("/api/generate", async (c) => {
   let tool;
   let topic = "";
   let budget = 4096;
+  let checks: Checks = {};
   try {
     tool = getTool(body.tool);
     const inputs = normalizeInputs(tool, (body.inputs ?? {}) as Record<string, unknown>);
     topic = inputs.topic ?? inputs.source ?? "";
-    budget = outputBudget(inputs);
+    budget = outputBudget(inputs, tool);
+    const chosen = tool;
+    checks = { tidy: (doc) => tidy(doc, chosen), findProblems: (doc) => findProblems(doc, chosen, inputs) };
     const previous = typeof body.previous === "string" ? body.previous.slice(0, MAX_PREVIOUS) : "";
     const request = typeof body.refine === "string" ? body.refine.trim() : "";
     userPrompt = buildUserPrompt(tool, inputs, previous && request ? { previous, request } : undefined);
@@ -149,7 +153,7 @@ app.post("/api/generate", async (c) => {
 
   const env = c.env;
   const stream = lineStream((send) =>
-    env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send, budget) : generateDemo(tool, topic, send),
+    env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send, budget, checks) : generateDemo(tool, topic, send),
   );
   // c.body (not a bare Response) so the device cookie set above is sent with the stream.
   return c.body(stream, 200, {

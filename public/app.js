@@ -177,6 +177,9 @@
             if (!line.trim()) return;
             var msg = JSON.parse(line);
             if (msg.t) { markdown += msg.t; schedule(); }
+            if (msg.note) status.textContent = msg.note;
+            // The server re-checked the finished document and sent a cleaned-up copy.
+            if (typeof msg.replace === "string" && msg.replace) { markdown = msg.replace; schedule(); }
             if (msg.error) errorText = msg.error;
           };
           var pump = function () {
@@ -197,7 +200,9 @@
         })
         .then(function () {
           show();
-          status.textContent = "Done. Print it, download it, or ask for changes below. It's saved under My documents on this device.";
+          var lang = (lastInputs.language || "").trim();
+          status.textContent = "Done. Print it, download it, or ask for changes below. It's saved under My documents on this device." +
+            (lang && !/^english$/i.test(lang) ? " This document includes a translation written by AI: please have a fluent speaker check it before it goes to students or families." : "");
           saveDoc();
         })
         .catch(function (err) { failed(err.message || "Something went wrong. Please try again."); })

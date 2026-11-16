@@ -2,13 +2,15 @@ import { createServer, type Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { generate, generateDemo, lineStream, type Line } from "../src/generate";
 import { TOOL_BY_ID } from "../src/tools";
+import { findProblems, tidy } from "../src/check";
 import type { Env } from "../src/env";
 
 // A stand-in for the AI provider that speaks the same streaming format,
 // so the real request/response path is exercised without spending money.
 let server: Server;
 let lastBody: any;
-let mode: "ok" | "refusal" | "overloaded" = "ok";
+let mode: "ok" | "refusal" | "overloaded" | "messy" = "ok";
+let calls = 0;
 
 const sse = (event: string, data: object) => `event: ${event}\ndata: ${JSON.stringify({ type: event, ...data })}\n\n`;
 
@@ -18,6 +20,7 @@ beforeAll(async () => {
     req.on("data", (c) => (raw += c));
     req.on("end", () => {
       lastBody = JSON.parse(raw);
+      calls++;
       if (mode === "overloaded") {
         res.writeHead(529, { "content-type": "application/json" });
         return res.end(JSON.stringify({ type: "error", error: { type: "overloaded_error", message: "Overloaded" } }));
@@ -31,7 +34,16 @@ beforeAll(async () => {
         res.write(sse("content_block_delta", { index: 0, delta: { type: "text_delta", text: "Quiz\n\n1. What is 1/2 + 1/4?" } }));
         res.write(sse("content_block_stop", { index: 0 }));
       }
-      res.write(sse("message_delta", { delta: { stop_reason: mode === "ok" ? "end_turn" : "refusal", stop_sequence: null }, usage: { output_tokens: 5 } }));
+      if (mode === "messy") {
+        // First request: a draft that argues with itself. Second request (the repair): a clean copy.
+        const repair = String(lastBody.messages[0].content).includes("A checker found");
+        const top = "# Fractions Quiz\n\n1. What is 1/2 + 1/4?\n\n## Answer Key\n\n";
+        const text = repair ? top + "1. 3/4" : top + "1. 2/6. Correction: the answer is 3/4.";
+        res.write(sse("content_block_start", { index: 0, content_block: { type: "text", text: "" } }));
+        res.write(sse("content_block_delta", { index: 0, delta: { type: "text_delta", text } }));
+        res.write(sse("content_block_stop", { index: 0 }));
+      }
+      res.write(sse("message_delta", { delta: { stop_reason: mode === "refusal" ? "refusal" : "end_turn", stop_sequence: null }, usage: { output_tokens: 5 } }));
       res.write(sse("message_stop", {}));
       res.end();
     });
@@ -73,7 +85,30 @@ describe("generation", () => {
     await collect((send) => generate(env, "x", send, 8000));
     expect(lastBody.max_tokens).toBe(8000);
     await collect((send) => generate(env, "x", send, 999999));
-    expect(lastBody.max_tokens).toBe(8000);
+    expect(lastBody.max_tokens).toBe(12000);
+  });
+  it("rewrites a draft that corrects itself and swaps in the clean copy", async () => {
+    mode = "messy";
+    calls = 0;
+    const quiz = TOOL_BY_ID["quiz"];
+    const checks = { tidy: (d: string) => tidy(d, quiz), findProblems: (d: string) => findProblems(d, quiz, { topic: "Fractions" }) };
+    const lines = await collect((send) => generate(env, "Document type: Quiz", send, 4096, checks));
+    expect(calls).toBe(2);
+    expect(lines.some((l) => "note" in l)).toBe(true);
+    const swap = lines.find((l) => "replace" in l) as { replace: string };
+    expect(swap.replace).toContain("1. 3/4");
+    expect(swap.replace).not.toContain("Correction");
+    expect(lastBody.messages[0].content).toContain("Correction: the answer is 3/4");
+    expect(lines.at(-1)).toEqual({ done: true });
+  });
+  it("does not pay for a second pass when the draft is clean", async () => {
+    mode = "ok";
+    calls = 0;
+    const quiz = TOOL_BY_ID["quiz"];
+    const checks = { tidy: (d: string) => tidy(d, quiz), findProblems: (d: string) => findProblems(d, quiz, { topic: "Fractions" }) };
+    const lines = await collect((send) => generate(env, "Document type: Quiz", send, 4096, checks));
+    expect(calls).toBe(1);
+    expect(lines.some((l) => "replace" in l)).toBe(false);
   });
   it("explains a declined request instead of showing a blank page", async () => {
     mode = "refusal";

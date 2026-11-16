@@ -98,7 +98,7 @@ describe("request building", () => {
   it("leaves the default options out of the request", () => {
     const out = normalizeInputs(ws, { topic: "Fractions", region: "us", language: "English", versions: "" });
     expect(out).toEqual({ topic: "Fractions" });
-    expect(outputBudget(out)).toBe(4096);
+    expect(outputBudget(out)).toBe(5000);
   });
   it("accepts country, language, versions and pasted material, and rejects junk", () => {
     const out = normalizeInputs(ws, { topic: "Fractions", grade: "4", region: "uk", language: "Spanish", versions: "ab", reference: "My template:\nStarter\nMain\nPlenary" });
