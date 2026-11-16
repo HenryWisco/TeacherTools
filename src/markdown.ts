@@ -38,7 +38,10 @@ export function protectBlanks(md: string): string {
 export function renderMarkdown(md: string): string {
   const html = marked.parse(protectBlanks(md), { async: false }) as string;
   // Mark the answer key so print CSS can start it on a new page.
-  return html.replace(/<h2>(\s*Answer Key\s*)<\/h2>/i, '<h2 class="answer-key">$1</h2>');
+  return html
+    .replace(/<h2>(\s*Answer Key[^<]*)<\/h2>/i, '<h2 class="answer-key">$1</h2>')
+    // Each version or level starts its own printed page.
+    .replace(/<h2>(\s*(?:Version [A-C]|Level [1-3])\b[^<]*)<\/h2>/g, '<h2 class="page-start">$1</h2>');
 }
 
 export function plainSummary(md: string, max = 160): string {

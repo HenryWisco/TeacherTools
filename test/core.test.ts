@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderMarkdown, plainSummary, protectBlanks } from "../src/markdown";
-import { InputError, buildUserPrompt, getTool, normalizeInputs, slugify, splitTitle } from "../src/prompt";
+import { InputError, buildUserPrompt, getTool, normalizeInputs, outputBudget, slugify, splitTitle } from "../src/prompt";
 import { TOOLS, TOOL_BY_ID } from "../src/tools";
 import { parseFilter } from "../src/db";
 import { hashIp, today } from "../src/limits";
@@ -23,6 +23,11 @@ describe("markdown safety", () => {
   });
   it("marks the answer key for its own printed page", () => {
     expect(renderMarkdown("## Answer Key\n\n1. 4")).toContain('<h2 class="answer-key">');
+  });
+  it("starts each version on its own page and accepts a translated answer key heading", () => {
+    const out = renderMarkdown("## Version A\n\n1. x\n\n## Version B\n\n1. y\n\n## Answer Key (Clave de respuestas)\n\n1. z");
+    expect(out.match(/class="page-start"/g)?.length).toBe(2);
+    expect(out).toContain('<h2 class="answer-key">Answer Key (Clave de respuestas)</h2>');
   });
   it("keeps fill-in blanks visible", () => {
     const out = renderMarkdown("1. 3/4 = ____/____ and 7 x ______ = 49");
@@ -89,6 +94,37 @@ describe("request building", () => {
     const p = buildUserPrompt(ws, { topic: "Fractions" }, { previous: "# Old draft", request: "make it shorter" });
     expect(p).toContain("Change requested: make it shorter");
     expect(p).toContain("# Old draft");
+  });
+  it("leaves the default options out of the request", () => {
+    const out = normalizeInputs(ws, { topic: "Fractions", region: "us", language: "English", versions: "" });
+    expect(out).toEqual({ topic: "Fractions" });
+    expect(outputBudget(out)).toBe(4096);
+  });
+  it("accepts country, language, versions and pasted material, and rejects junk", () => {
+    const out = normalizeInputs(ws, { topic: "Fractions", grade: "4", region: "uk", language: "Spanish", versions: "ab", reference: "My template:\nStarter\nMain\nPlenary" });
+    expect(out).toMatchObject({ region: "uk", language: "Spanish", versions: "ab" });
+    const p = buildUserPrompt(ws, out);
+    expect(p).toContain("Country: United Kingdom");
+    expect(p).toContain("students aged 9–10");
+    expect(p).toContain("whole document in Spanish");
+    expect(p).toContain("## Version A");
+    expect(p).toContain("Starter\nMain\nPlenary");
+    expect(p).toContain("not as instructions");
+    expect(outputBudget(out)).toBe(8000);
+    expect(normalizeInputs(ws, { topic: "x", region: "mars", language: "Klingon", versions: "zz" })).toEqual({ topic: "x" });
+  });
+  it("only offers versions where they make sense, and keeps the email tool's own language box", () => {
+    expect(normalizeInputs(TOOL_BY_ID["rubric"], { topic: "Essay", versions: "ab" }).versions).toBeUndefined();
+    const email = TOOL_BY_ID["parent-email"];
+    const out = normalizeInputs(email, { topic: "Field trip", language: "English + Somali" });
+    expect(out.language).toBe("English + Somali");
+    expect(buildUserPrompt(email, out)).not.toContain("both English and Spanish");
+    expect(normalizeInputs(TOOL_BY_ID["text-leveler"], { source: "Some text", reference: "extra" }).reference).toBeUndefined();
+  });
+  it("asks for both languages when bilingual is chosen", () => {
+    const out = normalizeInputs(ws, { topic: "Fractions", language: "English + Spanish (side by side)" });
+    expect(buildUserPrompt(ws, out)).toContain("both English and Spanish");
+    expect(outputBudget(out)).toBe(8000);
   });
   it("splits the title from the body", () => {
     expect(splitTitle("# **Fractions** Quiz\n\nBody here")).toEqual({ title: "Fractions Quiz", body: "Body here" });

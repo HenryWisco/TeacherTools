@@ -11,17 +11,17 @@ Twenty people who would use the site (`personas.md`) were given to five reviewer
 | 1 | **Daily limit per browser, not per network.** A school shares one network address, so 40 a day was 40 for the whole building. | 5 of 5, ranked 1st or 2nd by all | Small | **Done** |
 | 2 | **Answer keys teachers can trust.** Math answers worked out by code, a second-pass check for other quizzes, and an honest "checked / please check Q4" mark. One wrong key loses a teacher for good. | 5 of 5 | Medium | Not built |
 | 3 | **Pass a school privacy review.** Non-personalized ads, no ads beside the IEP / report comment / family email tools, a one-page sheet for school IT staff, no third-party trackers. This decides whether about 15 of the 20 can reach the site at school at all. | 5 of 5 | Small–medium | **Partly done** (ads non-personalized by default; no ads on those tools). IT sheet not written. |
-| 4 | **Versions in one click.** Version B of a quiz, the same task at three levels, simpler / harder, for English learners, in Spanish or side by side. | 5 of 5 | Small–medium | Not built |
-| 5 | **Country and language settings that are remembered.** UK/Australia/Canada Year groups, spelling, metric and A4; Spanish or bilingual output. | 5 of 5 | Small | Not built |
+| 4 | **Versions in one click.** Version B of a quiz, the same task at three levels, simpler / harder, for English learners, in Spanish or side by side. | 5 of 5 | Small–medium | **Done** (versions option + one-click chips) |
+| 5 | **Country and language settings that are remembered.** UK/Australia/Canada Year groups, spelling, metric and A4; Spanish or bilingual output. | 5 of 5 | Small | **Done** (A4 paper size not yet) |
 | 6 | **Accessibility pass.** Real headings and table headers on the page and in Word, blanks a screen reader can announce, one announcement when a document is ready, large-print option; tested with a real screen reader. | 5 of 5 | Medium | Not built |
 
 ## Where four agree
 
 | # | Change | Reviewers | Effort |
 |---|---|---|---|
-| 7 | **Paste your own text or template.** The passage to write questions on; the lesson-plan headings your school or university requires. | Haiku, Sonnet, Opus, Fable | Small |
-| 8 | **"My documents" kept in the browser.** Recent documents and default settings come back on the next visit, still with no account. The skeptic calls this the missing reason to return. | Haiku, Sonnet, Fable, Skeptic | Small–medium |
-| 9 | **Print-first options.** Ink saver, fit to one page, half-sheets, large print, page count shown. | Haiku, Opus, Fable, Skeptic | Small–medium |
+| 7 | **Paste your own text or template.** The passage to write questions on; the lesson-plan headings your school or university requires. | Haiku, Sonnet, Opus, Fable | Small — **done** |
+| 8 | **"My documents" kept in the browser.** Recent documents and default settings come back on the next visit, still with no account. The skeptic calls this the missing reason to return. | Haiku, Sonnet, Fable, Skeptic | Small–medium — **done** |
+| 9 | **Print-first options.** Ink saver, fit to one page, half-sheets, large print, page count shown. | Haiku, Opus, Fable, Skeptic | Small–medium — large print done; the rest not |
 | 10 | **Grow the hand-checked library on purpose.** 27 items is a demo. Aim at gaps: sub packs, K–2, multi-grade, PE, bilingual. Limited by your review time. | Sonnet, Opus, Fable, Skeptic | Large, ongoing |
 | 11 | **Kindergarten–grade 2 layouts drawn by code.** Tracing lines, ten frames, number lines, cut-apart cards, big type. Not AI images. Without these, "K–12" overpromises. | Opus, Fable, Skeptic (Sonnet: near miss) | Medium–large |
 

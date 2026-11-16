@@ -5,7 +5,7 @@ import * as db from "./db";
 import { generate, generateDemo, lineStream } from "./generate";
 import { hashIp, pruneUsage, takeGeneration, takeShare, today } from "./limits";
 import { SUPPORTER_COOKIE, adsTxt, isSupporter, supporterToken, type Money } from "./monetize";
-import { InputError, MAX_PREVIOUS, buildUserPrompt, getTool, normalizeInputs } from "./prompt";
+import { InputError, MAX_PREVIOUS, buildUserPrompt, getTool, normalizeInputs, outputBudget } from "./prompt";
 import { TOOLS, TOOL_BY_ID } from "./tools";
 import * as views from "./views";
 
@@ -95,6 +95,7 @@ app.get("/support/thanks", async (c) => {
   return c.html(views.supportPage({ env: c.env, supporter: true }, true));
 });
 
+app.get("/my", (c) => c.html(views.myDocsPage(c.get("money"))));
 app.get("/about", (c) => c.html(views.aboutPage(c.get("money"))));
 app.get("/privacy", (c) => c.html(views.privacyPage(c.get("money"))));
 app.get("/terms", (c) => c.html(views.termsPage(c.get("money"))));
@@ -113,10 +114,12 @@ app.post("/api/generate", async (c) => {
   let userPrompt: string;
   let tool;
   let topic = "";
+  let budget = 4096;
   try {
     tool = getTool(body.tool);
     const inputs = normalizeInputs(tool, (body.inputs ?? {}) as Record<string, unknown>);
     topic = inputs.topic ?? inputs.source ?? "";
+    budget = outputBudget(inputs);
     const previous = typeof body.previous === "string" ? body.previous.slice(0, MAX_PREVIOUS) : "";
     const request = typeof body.refine === "string" ? body.refine.trim() : "";
     userPrompt = buildUserPrompt(tool, inputs, previous && request ? { previous, request } : undefined);
@@ -146,7 +149,7 @@ app.post("/api/generate", async (c) => {
 
   const env = c.env;
   const stream = lineStream((send) =>
-    env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send) : generateDemo(tool, topic, send),
+    env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send, budget) : generateDemo(tool, topic, send),
   );
   // c.body (not a bare Response) so the device cookie set above is sent with the stream.
   return c.body(stream, 200, {

@@ -96,6 +96,22 @@ label { font-weight: 600; font-size: 0.92rem; }
 .field.wide { grid-column: 1 / -1; }
 .actions { display: flex; align-items: center; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
 .actions .btn.primary { font-size: 1.05rem; padding: 11px 20px; }
+.more { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.more summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--green-dark); width: fit-content; padding: 4px 0; }
+.more[open] summary { margin-bottom: 12px; }
+.more .opt { margin-left: 6px; font-size: 0.85rem; }
+.wrap-chips { flex-wrap: wrap; overflow: visible; margin-bottom: 10px; }
+button.chip { cursor: pointer; font-family: var(--ui); }
+button.chip:hover { border-color: var(--green); color: var(--green-dark); }
+.btn[aria-pressed="true"] { background: var(--green-soft); border-color: var(--green); }
+.doc.large { font-size: 1.4rem; line-height: 1.7; }
+.doc.large h1 { font-size: 2.1rem; }
+.doc.large h2 { font-size: 1.7rem; }
+.my-list { display: grid; gap: 10px; }
+.my-item { display: flex; gap: 12px; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; flex-wrap: wrap; }
+.my-item a.title { font-weight: 700; color: var(--ink); text-decoration: none; }
+.my-item a.title:hover { color: var(--green-dark); text-decoration: underline; }
+.my-item .meta { display: block; font-size: 0.85rem; color: var(--muted); }
 .result { margin-top: 22px; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; position: sticky; top: 0; z-index: 3; background: var(--paper); padding: 8px 0; }
 .is-busy .toolbar .btn { opacity: 0.5; pointer-events: none; }
@@ -217,6 +233,8 @@ form.inline { display: inline-block; margin: 0 0 4px 4px; }
   .paper { border: 0; box-shadow: none; padding: 0; font-size: 12pt; border-radius: 0; }
   .doc[hidden] { display: block !important; }
   .doc table { display: table; }
+  .doc.large { font-size: 17pt; }
+  .doc h2.page-start ~ h2.page-start { break-before: page; page-break-before: always; }
   .doc h2.answer-key { break-before: page; page-break-before: always; border-top: 0; margin-top: 0; padding-top: 0; }
   .doc h2, .doc h3 { break-after: avoid; }
   .doc li, .doc tr { break-inside: avoid; }

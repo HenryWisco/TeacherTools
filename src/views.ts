@@ -4,7 +4,7 @@ import type { Env } from "./env";
 import type { LibraryFilter, Resource } from "./db";
 import { NO_AD_TOOLS, adScript, adSlot, classroomPicks, sponsorStrip, type Money } from "./monetize";
 import { renderMarkdown } from "./markdown";
-import { BANDS, GRADES, SUBJECTS, TOOLS, gradeLabel, typeLabel, TOOL_BY_ID, type Field, type Tool } from "./tools";
+import { BANDS, GRADES, LANGUAGES, MAX_REFERENCE, REGIONS, SUBJECTS, TOOLS, VERSIONS, allowsReference, allowsVersions, gradeLabel, typeLabel, TOOL_BY_ID, type Field, type Tool } from "./tools";
 
 type H = HtmlEscapedString | Promise<HtmlEscapedString> | string;
 
@@ -16,6 +16,7 @@ export type Page = {
   noindex?: boolean;
   jsonLd?: unknown;
   scripts?: boolean; // load the generator script
+  extraScript?: string;
 };
 
 const abs = (env: Env, path: string) => (env.SITE_URL ? env.SITE_URL.replace(/\/$/, "") + path : path);
@@ -48,6 +49,7 @@ ${adScript(p.m)}
     <nav aria-label="Main">
       <a href="/tools" ${p.path.startsWith("/tools") ? raw('aria-current="page"') : ""}>Tools</a>
       <a href="/library" ${p.path.startsWith("/library") ? raw('aria-current="page"') : ""}>Library</a>
+      <a href="/my" ${p.path === "/my" ? raw('aria-current="page"') : ""}>My documents</a>
       <a href="/support" ${p.path.startsWith("/support") ? raw('aria-current="page"') : ""}>Support us</a>
     </nav>
   </div>
@@ -81,6 +83,7 @@ ${body}
 </footer>
 <script src="/site.js" defer></script>
 ${p.scripts ? html`<script src="/marked.js" defer></script><script src="/app.js" defer></script>` : ""}
+${p.extraScript ? html`<script src="${p.extraScript}" defer></script>` : ""}
 </body>
 </html>`;
 }
@@ -131,6 +134,50 @@ function commonFields(tool: Tool, pre: Record<string, string>, idPrefix: string)
       : ""}`;
 }
 
+// Options shared by every tool, tucked away so the simple path stays simple.
+// Country and language are remembered in the browser (see public/app.js).
+function moreOptions(tool: Tool, idp: string) {
+  const ownLanguage = tool.fields.some((f) => f.name === "language");
+  return html`<details class="more">
+    <summary>More options <span class="opt" data-more-summary>versions, country, language, your own text</span></summary>
+    <div class="fields">
+      ${allowsVersions(tool)
+        ? html`<div class="field"><label for="${idp}-versions">Versions</label>
+            <select id="${idp}-versions" name="versions">
+              <option value="">One version</option>
+              ${Object.entries(VERSIONS).map(([k, v]) => html`<option value="${k}">${v.label}</option>`)}
+            </select></div>`
+        : ""}
+      <div class="field"><label for="${idp}-region">Country</label>
+        <select id="${idp}-region" name="region" data-remember>
+          ${Object.entries(REGIONS).map(([k, v]) => html`<option value="${k}">${v.label}</option>`)}
+        </select></div>
+      ${ownLanguage
+        ? ""
+        : html`<div class="field"><label for="${idp}-language">Language</label>
+            <select id="${idp}-language" name="language" data-remember>
+              ${LANGUAGES.map((l) => html`<option>${l}</option>`)}
+            </select></div>`}
+      ${allowsReference(tool)
+        ? html`<div class="field wide"><label for="${idp}-reference">Your own text or template <span class="opt">(optional)</span></label>
+            <textarea id="${idp}-reference" name="reference" rows="4" maxlength="${MAX_REFERENCE}" placeholder="Paste a passage or notes to base this on, or the headings your school's template requires."></textarea>
+            <p class="fine">Only paste text you have the right to use, and leave out student names.</p></div>`
+        : ""}
+    </div>
+  </details>`;
+}
+
+const CHIPS: [string, string][] = [
+  ["Shorter", "Make it shorter, to fit on one page if possible."],
+  ["Easier", "Make it easier: simpler wording, smaller numbers, more scaffolding."],
+  ["Harder", "Make it more challenging, with deeper reasoning rather than just more questions."],
+  ["Version B", "Make a Version B: same skills and difficulty, different numbers, examples and question order."],
+  ["Sentence starters", "Add sentence starters and a word bank to support students who need them."],
+  ["For English learners", "Adapt it for English learners: simpler sentences, key vocabulary defined, sentence frames."],
+  ["In Spanish", "Rewrite the whole document in natural classroom Spanish."],
+  ["More questions", "Add five more questions of the same kind, and add them to the answer key."],
+];
+
 // The generator: a form, a live-updating page of output, and the actions for using it.
 export function generator(tool: Tool, pre: Record<string, string>, opts: { compact?: boolean } = {}) {
   const idp = `g-${tool.id}`;
@@ -140,6 +187,7 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
         ${tool.fields.map((f) => fieldHtml(f, pre[f.name] ?? "", idp))}
         ${commonFields(tool, pre, idp)}
       </div>
+      ${moreOptions(tool, idp)}
       <div class="actions">
         <button class="btn primary" type="submit" data-go>${opts.compact ? "Make it" : `Make my ${tool.name.toLowerCase()}`}</button>
         <span class="fine" data-status role="status" aria-live="polite">Free. No sign-up. Takes about 15 seconds.</span>
@@ -152,6 +200,7 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
         <button class="btn" type="button" data-act="word">⬇ Word</button>
         <button class="btn" type="button" data-act="copy">📋 Copy for Google Docs</button>
         <button class="btn" type="button" data-act="edit">✏ Edit</button>
+        <button class="btn" type="button" data-act="large" aria-pressed="false">🔎 Large print</button>
         ${tool.libraryType ? html`<button class="btn" type="button" data-act="share">🔗 Share</button>` : ""}
       </div>
       <p class="notice no-print" data-notice hidden></p>
@@ -159,6 +208,9 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
       <article class="doc paper" data-doc aria-live="off"></article>
       <form class="refine no-print" data-refine>
         <label for="${idp}-refine">Want it different?</label>
+        <div class="chips wrap-chips" data-chips>
+          ${CHIPS.map(([label, text]) => html`<button class="chip" type="button" data-chip="${text}">${label}</button>`)}
+        </div>
         <div class="row">
           <input id="${idp}-refine" name="request" type="text" maxlength="500" placeholder="e.g. make it shorter · add 5 harder questions · write it for English learners">
           <button class="btn" type="submit">Revise</button>
@@ -225,7 +277,7 @@ export function homePage(m: Money, latest: Resource[]) {
     <section class="wrap section promise">
       <div><h3>Free means free</h3><p>No trial that runs out, no "upgrade to download". The site is paid for by a few quiet ads and optional supporters.</p></div>
       <div><h3>Made to print</h3><p>Clean pages with a name line and an answer key on its own sheet. Print, save as PDF, download for Word or paste into Google Docs.</p></div>
-      <div><h3>Private by design</h3><p>No account, no tracking of what you type, and nothing collected about students. Just don't type their names in.</p></div>
+      <div><h3>Private by design</h3><p>No account. What you make is saved in your own browser, not on our servers, and nothing is collected about students. Just don't type their names in.</p></div>
     </section>`,
   );
 }
@@ -413,6 +465,19 @@ export function resourcePage(m: Money, r: Resource, more: Resource[]) {
   );
 }
 
+// The list itself is drawn by public/my.js from this browser's storage; nothing is on the server.
+export function myDocsPage(m: Money) {
+  return layout(
+    { m, path: "/my", title: "My documents", description: "Documents you've made on this device.", noindex: true, extraScript: "/my.js" },
+    html`<section class="wrap section narrow">
+      <h1>My documents</h1>
+      <p class="lede">The last 20 documents made in this browser. They are saved on this device only: we don't have a copy, and they won't appear on another computer.</p>
+      <div data-my-docs><p class="muted">Loading…</p></div>
+      <noscript><p class="notice">This page needs JavaScript switched on.</p></noscript>
+    </section>`,
+  );
+}
+
 export function supportPage(m: Money, thanks = false) {
   const { env } = m;
   return layout(
@@ -474,6 +539,7 @@ export function privacyPage(m: Money) {
       <h2>What we collect</h2>
       <ul>
         <li><strong>What you type into a tool</strong> is sent to our AI provider (Anthropic) to write your document and is not stored by us after the document is returned.</li>
+        <li><strong>Documents you make</strong> are kept in your own browser's storage so you can find them again under "My documents". They stay on your device; we have no copy. Clearing your browser data removes them.</li>
         <li><strong>Documents you choose to share</strong> are stored and, after review, published in the library. Don't share anything containing personal information. Ask ${contact} to remove a shared document at any time.</li>
         <li><strong>Your email address</strong>, only if you subscribe to the weekly email. Unsubscribe any time; we never sell or rent the list.</li>
         <li><strong>A daily usage counter</strong> tied to a random number kept in a cookie on your device and to a scrambled, one-day version of your network address. It is used only to stop automated abuse and is not linked to who you are or what you typed. We do not store your actual IP address.</li>

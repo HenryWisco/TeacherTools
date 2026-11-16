@@ -68,6 +68,13 @@ describe("generation", () => {
     expect(lastBody.system).toContain("Answer Key");
     expect(lastBody.messages).toEqual([{ role: "user", content: "Document type: Quiz" }]);
   });
+  it("gives bigger documents more room, up to a hard ceiling", async () => {
+    mode = "ok";
+    await collect((send) => generate(env, "x", send, 8000));
+    expect(lastBody.max_tokens).toBe(8000);
+    await collect((send) => generate(env, "x", send, 999999));
+    expect(lastBody.max_tokens).toBe(8000);
+  });
   it("explains a declined request instead of showing a blank page", async () => {
     mode = "refusal";
     const lines = await collect((send) => generate(env, "x", send));

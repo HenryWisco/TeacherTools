@@ -19,6 +19,9 @@ Without an AI key the generator returns a labelled sample, so every button works
 | Part | What it does |
 |---|---|
 | **Generator** | 24 tools (lesson plan, worksheet, quiz, rubric, reading passage, text leveler, sub plan, family email, report card comments, IEP goal ideas…) plus a free-form "ask for anything" box on the home page. Output appears as it is written. |
+| **Options on every tool** | Under "More options": two versions (A and B) or three levels, country (UK, Canada, Australia, New Zealand, Ireland: spelling, units, year groups), language (Spanish, bilingual and others), and a box to paste your own text or required template. Country and language are remembered. |
+| **One-click changes** | Shorter, easier, harder, Version B, sentence starters, for English learners, in Spanish, more questions; plus a large-print switch. |
+| **My documents** | The last 20 documents are kept in the teacher's own browser (no account, nothing on the server) and reopen with their settings. |
 | **Use it anywhere** | Print / save as PDF (answer key on its own page), download for Word, copy into Google Docs with formatting, edit in place, or ask for a revision ("make it shorter"). |
 | **Library** | 27 hand-checked starter resources for grades K–12, browsable by grade, subject and type, each on its own search-friendly page with a "make my own version" button. |
 | **Sharing** | Teachers can share what they make. It gets a private link at once and only appears in the public library (and to search engines) after you approve it at `/admin`. |
@@ -129,7 +132,7 @@ Open http://localhost:8787. Without an API key the generator returns a labelled 
 npm test
 ```
 
-runs the 28 automated checks (safety of shared documents, request building, limits, money switches, and the AI request path against a stand-in server).
+runs the 34 automated checks (safety of shared documents, request building, limits, money switches, and the AI request path against a stand-in server).
 
 ## Not built yet
 

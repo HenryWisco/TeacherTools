@@ -28,7 +28,9 @@
     }).join("\n");
   };
   var render = function (text) {
-    return md.parse(protectBlanks(text)).replace(/<h2>(\s*Answer Key\s*)<\/h2>/i, '<h2 class="answer-key">$1</h2>');
+    return md.parse(protectBlanks(text))
+      .replace(/<h2>(\s*Answer Key[^<]*)<\/h2>/i, '<h2 class="answer-key">$1</h2>')
+      .replace(/<h2>(\s*(?:Version [A-C]|Level [1-3])\b[^<]*)<\/h2>/g, '<h2 class="page-start">$1</h2>');
   };
 
   var remember = function (k, v) { try { localStorage.setItem("sc:" + k, v); } catch (e) {} };
@@ -47,14 +49,68 @@
     var markdown = "";
     var busy = false;
     var lastInputs = {};
+    var docId = "";
+    var params = new URLSearchParams(location.search);
 
-    // Convenience: remember grade and subject between visits (this browser only).
-    ["grade", "subject"].forEach(function (name) {
+    // Convenience: remember grade, subject, country and language between visits (this browser only).
+    ["grade", "subject", "region", "language"].forEach(function (name) {
       var el = form.elements[name];
-      if (!el) return;
-      if (!el.value && !new URLSearchParams(location.search).has(name)) el.value = recall(name);
+      if (!el || el.tagName !== "SELECT") return;
+      var saved = recall(name);
+      if (saved && !params.has(name) && (!el.value || el.hasAttribute("data-remember"))) {
+        el.value = saved;
+        if (el.selectedIndex < 0) el.selectedIndex = 0;
+      }
       el.addEventListener("change", function () { remember(name, el.value); });
     });
+
+    // Outside the US, show ages beside grades so "Grade 4" isn't a guess.
+    var gradeEl = form.elements.grade;
+    var regionEl = form.elements.region;
+    function labelGrades() {
+      if (!gradeEl || !regionEl) return;
+      var us = regionEl.value === "us";
+      Array.prototype.forEach.call(gradeEl.options, function (o) {
+        if (!o.value) return;
+        if (!o.dataset.us) o.dataset.us = o.textContent;
+        var n = o.value === "K" ? 0 : parseInt(o.value, 10);
+        o.textContent = us ? o.dataset.us : "Ages " + (n + 5) + "–" + (n + 6) + " (US " + o.dataset.us + ")";
+      });
+    }
+
+    // Show which options are switched on, so a remembered setting is never a surprise.
+    var more = root.querySelector(".more");
+    var moreSummary = root.querySelector("[data-more-summary]");
+    var moreDefault = moreSummary ? moreSummary.textContent : "";
+    function describeOptions() {
+      if (!moreSummary) return;
+      var on = [];
+      var f = form.elements;
+      if (f.versions && f.versions.value) on.push(f.versions.options[f.versions.selectedIndex].text);
+      if (f.region && f.region.value !== "us") on.push(f.region.options[f.region.selectedIndex].text);
+      if (f.language && f.language.tagName === "SELECT" && f.language.value !== "English") on.push(f.language.value);
+      if (f.reference && f.reference.value.trim()) on.push("your own text");
+      moreSummary.textContent = on.length ? "· " + on.join(" · ") : moreDefault;
+    }
+    if (more) {
+      more.addEventListener("change", function () { labelGrades(); describeOptions(); });
+      more.addEventListener("input", describeOptions);
+    }
+    labelGrades();
+    describeOptions();
+
+    function saveDoc() {
+      if (!markdown) return;
+      if (!docId) docId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      var title = (markdown.match(/^\s*#\s+(.+)/) || [])[1] || "Untitled document";
+      var stored = SC.docs.save({
+        id: docId, tool: tool, title: title.replace(/[*_`]/g, "").slice(0, 140),
+        markdown: markdown, inputs: lastInputs, at: new Date().toISOString(),
+      });
+      if (stored) {
+        try { history.replaceState(null, "", "/tools/" + tool + "?doc=" + docId); } catch (e) {}
+      }
+    }
 
     function inputs() {
       var out = {};
@@ -81,6 +137,7 @@
       if (!form.reportValidity()) return;
       lastInputs = inputs();
       var body = Object.assign({ tool: tool, inputs: lastInputs }, extra || {});
+      if (!extra) docId = "";
       markdown = "";
       editor.hidden = true;
       doc.hidden = false;
@@ -140,8 +197,8 @@
         })
         .then(function () {
           show();
-          status.textContent = "Done. Print it, download it, or ask for changes below.";
-          try { sessionStorage.setItem("sc:last:" + tool, markdown); } catch (e) {}
+          status.textContent = "Done. Print it, download it, or ask for changes below. It's saved under My documents on this device.";
+          saveDoc();
         })
         .catch(function (err) { failed(err.message || "Something went wrong. Please try again."); })
         .then(function () { setBusy(false); });
@@ -158,11 +215,22 @@
       refine.reset();
     });
 
+    refine.querySelector("[data-chips]").addEventListener("click", function (e) {
+      var chip = e.target.closest("[data-chip]");
+      if (!chip || busy || !markdown) return;
+      if (!editor.hidden) markdown = editor.value;
+      run({ previous: markdown, refine: chip.dataset.chip });
+    });
+
     root.querySelector(".toolbar").addEventListener("click", function (e) {
       var b = e.target.closest("[data-act]");
       if (!b || busy || !markdown) return;
       var act = b.dataset.act;
-      if (act !== "edit" && !editor.hidden) { markdown = editor.value; show(); editor.hidden = true; doc.hidden = false; setEditLabel(); }
+      if (act !== "edit" && !editor.hidden) { markdown = editor.value; show(); editor.hidden = true; doc.hidden = false; setEditLabel(); saveDoc(); }
+      if (act === "large") {
+        var on = doc.classList.toggle("large");
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      }
       if (act === "print") window.print();
       if (act === "word") SC.downloadWord(doc);
       if (act === "copy") SC.copyRich(doc, root);
@@ -187,6 +255,7 @@
         show();
         editor.hidden = true;
         doc.hidden = false;
+        saveDoc();
       }
       setEditLabel();
     }
@@ -221,12 +290,22 @@
         .catch(function () { SC.notice(root, "Couldn't share just now. Please try again.", "bad"); });
     }
 
-    // Bring back the last document after an accidental refresh.
-    try {
-      var saved = sessionStorage.getItem("sc:last:" + tool);
-      if (saved) { markdown = saved; show(); result.hidden = false; }
-    } catch (e) {}
-
-    // "Make my own version" links arrive with the topic filled in: nothing else to do but press the button.
+    // Reopen a saved document (from My documents, or after a refresh): restore the form and the page.
+    var wanted = params.get("doc");
+    var saved = wanted ? SC.docs.get(wanted) : null;
+    if (saved && saved.tool === tool) {
+      docId = saved.id;
+      markdown = saved.markdown;
+      lastInputs = saved.inputs || {};
+      Object.keys(lastInputs).forEach(function (name) {
+        var el = form.elements[name];
+        if (el && "value" in el) el.value = lastInputs[name];
+      });
+      labelGrades();
+      describeOptions();
+      show();
+      result.hidden = false;
+      status.textContent = "Reopened from My documents.";
+    }
   });
 })();

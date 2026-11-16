@@ -61,8 +61,36 @@
     } else fallback();
   }
 
-  // Shared with app.js
-  window.SC = { notice: notice, downloadWord: downloadWord, copyRich: copyRich, docTitle: docTitle };
+  // "My documents": the last 20 documents, kept in this browser only (never sent anywhere).
+  var DOCS_KEY = "sc:docs";
+  var MAX_DOCS = 20;
+  var docs = {
+    list: function () {
+      try { var v = JSON.parse(localStorage.getItem(DOCS_KEY) || "[]"); return Array.isArray(v) ? v : []; }
+      catch (e) { return []; }
+    },
+    get: function (id) {
+      return docs.list().filter(function (d) { return d.id === id; })[0] || null;
+    },
+    // Adds or updates a document. Returns its id, or "" if the browser won't store it.
+    save: function (doc) {
+      var all = docs.list().filter(function (d) { return d.id !== doc.id; });
+      all.unshift(doc);
+      all = all.slice(0, MAX_DOCS);
+      // If storage is full, drop the oldest until it fits.
+      while (all.length) {
+        try { localStorage.setItem(DOCS_KEY, JSON.stringify(all)); return doc.id; }
+        catch (e) { all.pop(); }
+      }
+      return "";
+    },
+    remove: function (id) {
+      try { localStorage.setItem(DOCS_KEY, JSON.stringify(docs.list().filter(function (d) { return d.id !== id; }))); } catch (e) {}
+    },
+  };
+
+  // Shared with app.js and my.js
+  window.SC = { notice: notice, downloadWord: downloadWord, copyRich: copyRich, docTitle: docTitle, docs: docs };
 
   // Library pages: a finished document with a toolbar.
   var bar = document.querySelector("[data-static-doc]");

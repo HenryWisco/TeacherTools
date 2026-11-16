@@ -9,8 +9,8 @@ import type { Tool } from "./tools";
 //   {"done":true}       finished
 export type Line = { t: string } | { error: string } | { done: true; demo?: boolean };
 
-// Hard ceiling on what one generation can cost. ~3,500 tokens is a long worksheet plus key.
-const MAX_OUTPUT_TOKENS = 4096;
+// Hard ceiling on what one generation can cost, whatever the caller asks for.
+const MAX_OUTPUT_TOKENS = 8000;
 
 export function lineStream(run: (send: (line: Line) => void) => Promise<void>): ReadableStream<Uint8Array> {
   const enc = new TextEncoder();
@@ -42,11 +42,11 @@ export function friendlyError(err: unknown): string {
   return "Something went wrong while writing that. Please try again.";
 }
 
-export async function generate(env: Env, userPrompt: string, send: (line: Line) => void): Promise<void> {
+export async function generate(env: Env, userPrompt: string, send: (line: Line) => void, maxTokens = 4096): Promise<void> {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1 });
   const stream = client.messages.stream({
     model: env.MODEL || "claude-haiku-5-5",
-    max_tokens: MAX_OUTPUT_TOKENS,
+    max_tokens: Math.min(Math.max(maxTokens, 256), MAX_OUTPUT_TOKENS),
     // Thinking is billed as output; these are single-pass documents, so keep cost flat.
     thinking: { type: "disabled" },
     system: SYSTEM_PROMPT,

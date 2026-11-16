@@ -27,6 +27,57 @@ export type Tool = {
   libraryType?: boolean; // can be shared to the public library
 };
 
+// ---- Options every tool shares (the "More options" block) ----
+
+export const REGIONS: Record<string, { label: string; guide: string }> = {
+  us: { label: "United States", guide: "" },
+  uk: { label: "United Kingdom", guide: "British spelling, metric units, pounds (£), UK year groups and key stages (US Grade N is roughly Year N+1 in England), and National Curriculum terms" },
+  ca: { label: "Canada", guide: "Canadian spelling, metric units, Canadian dollars, and Canadian grade names and provincial curriculum terms" },
+  au: { label: "Australia", guide: "Australian spelling, metric units, Australian dollars, Australian year levels (US Grade N is roughly Year N), and Australian Curriculum terms" },
+  nz: { label: "New Zealand", guide: "New Zealand spelling, metric units, New Zealand dollars, and New Zealand year levels (US Grade N is roughly Year N+1)" },
+  ie: { label: "Ireland", guide: "Irish/British spelling, metric units, euro (€), and Irish class names (US Grade N is roughly class N in primary school)" },
+  other: { label: "Another country", guide: "international English, metric units, and neutral terms that do not assume the US school system or US currency" },
+};
+
+export const LANGUAGES = [
+  "English",
+  "Spanish",
+  "English + Spanish (side by side)",
+  "French",
+  "Portuguese",
+  "Chinese (Simplified)",
+  "Vietnamese",
+  "Arabic",
+  "Tagalog",
+  "Haitian Creole",
+];
+
+export const VERSIONS: Record<string, { label: string; guide: string }> = {
+  ab: {
+    label: "Two versions (A and B)",
+    guide:
+      'Make two parallel versions so neighbours cannot copy: same skills, same difficulty and same number of questions, but different numbers, examples or question order. Put each under its own heading, exactly "## Version A" and "## Version B", each starting with its own name/date line. Finish with one "## Answer Key" that covers Version A and then Version B.',
+  },
+  levels: {
+    label: "Three levels (support, on level, challenge)",
+    guide:
+      'Make the same task at three levels so the whole class works on the same content. Use exactly these headings: "## Level 1: More support" (shorter, simpler wording, worked example, sentence starters or word bank), "## Level 2: On level", and "## Level 3: Challenge" (deeper reasoning, not just more questions). Each starts with its own name/date line. Finish with one "## Answer Key" covering all three levels.',
+  },
+};
+
+// Tools where A/B versions or levelled versions make sense.
+const VERSION_TOOLS = new Set(["worksheet", "word-problems", "quiz", "exit-ticket", "reading-passage", "vocabulary", "study-guide", "bell-ringer", "anything"]);
+export const allowsVersions = (tool: Tool): boolean => VERSION_TOOLS.has(tool.id);
+// Every tool can take a pasted text or template except the leveler, which already has its own text box.
+export const allowsReference = (tool: Tool): boolean => tool.id !== "text-leveler";
+export const MAX_REFERENCE = 7000;
+
+// Ages shown beside grades for teachers outside the US.
+export function gradeAges(g: string): string {
+  const n = g === "K" ? 0 : parseInt(g, 10);
+  return `${n + 5}–${n + 6}`;
+}
+
 export const GRADES = ["K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 export const SUBJECTS: Record<string, string> = {
