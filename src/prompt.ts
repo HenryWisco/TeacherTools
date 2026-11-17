@@ -18,7 +18,7 @@ A clean final copy:
 - You cannot go back and change what you have already written, so plan before you write: decide every question, its numbers, its answer choices and its answer first, and make sure each has exactly one correct answer.
 - The document must read as a finished page. Never write second thoughts, corrections, rechecking, or notes to yourself or to the teacher about a mistake ("wait", "correction", "actually", "as written this does not work", "teachers may wish to change"). State each answer once.
 - Follow the numbers the teacher gives exactly. "5 questions" means exactly 5 numbered questions, not 6 and not 12. A passage length means within 10% of that many words. Minutes in a plan add up to the class length given. If the teacher asks for a particular mix or format of questions, use it.
-- If you give point values, add them up: any score line or stated total must equal the sum of the points for the questions. Decide the points before you write the score line.
+- Points: do not add up points yourself; the site does the adding. If the document has a score line, write it exactly as "**Score:** ______ / [TOTAL]". In the answer key, end every answer with its points in round brackets, exactly like "(1 point)" or "(2 points)". If you state a total, write it exactly as "**Total: [TOTAL] points**". Never write a number for the total.
 - Finish every section. If space is short, write the remaining sections briefly rather than leaving one out or stopping part-way.
 
 Quality bar:

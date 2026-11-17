@@ -1,3 +1,4 @@
+import { findArithmeticSlips } from "./arith";
 import type { Inputs } from "./prompt";
 import type { Tool } from "./tools";
 
@@ -33,7 +34,55 @@ export function tidy(doc: string, tool: Tool): string {
     }
     out = lines.join("\n");
   }
+  out = fixTotals(out);
   return out.trimEnd() === doc.trimEnd() ? doc : out.trimEnd() + "\n";
+}
+
+// Adds up the points. The model is asked to mark each answer "(2 points)" and to
+// write "[TOTAL]" wherever the total belongs, because when it does the adding
+// itself the score line is often wrong (it writes "/ 30" before it has written
+// the questions). A total it wrote anyway is corrected the same way. If the marks
+// are incomplete the total is left blank for the teacher rather than guessed.
+export function fixTotals(doc: string): string {
+  const blank = (s: string) => s.replace(/^.*\bTotal\b.*\[TOTAL\].*\n?/gim, "").replace(/\[TOTAL\]/g, "______");
+  const at = doc.search(/\n##\s*Answer Key[^\n]*\n/i);
+  if (at < 0) return blank(doc);
+  const body = doc.slice(0, at);
+  const chunks = doc.slice(at).split(/\n(?=###\s)/);
+
+  // One sum per part of the key that has numbered answers (one part, or one per version).
+  const sums: (number | null)[] = [];
+  const chunkSum = chunks.map((chunk) => {
+    const answers = chunk.split(/\n(?=[ \t]*(?:\*\*)?\d+[.)]\s)/).slice(1);
+    if (!answers.length) return undefined;
+    const marks = answers.map((a) => a.match(/\((\d+)\s*(?:points?|pts?|puntos?)\b/i));
+    const sum = marks.every(Boolean) ? marks.reduce((t, m) => t + parseInt(m![1], 10), 0) : null;
+    sums.push(sum);
+    return sum;
+  });
+  if (!sums.length) return blank(doc);
+
+  const scoreLine = /^(.*\bScore\b.*?\/\s*)(\[TOTAL\]|\d+)(.*)$/gim;
+  const scoreLines = body.match(scoreLine)?.length ?? 0;
+  const same = sums.every((s) => s === sums[0]);
+  let n = 0;
+  const newBody = body.replace(scoreLine, (line, start: string, shown: string, rest: string) => {
+    const sum = scoreLines === sums.length ? sums[n++] : same ? sums[0] : null;
+    if (sum === null) return shown === "[TOTAL]" ? `${start}______${rest}` : line;
+    return `${start}${sum}${rest}`;
+  });
+
+  const newKey = chunks
+    .map((chunk, i) => {
+      const sum = chunkSum[i] === undefined ? (sums.length === 1 ? sums[0] : same ? sums[0] : null) : chunkSum[i];
+      return chunk.replace(/^(\W*(?:Version [A-C] )?Total\b[^\d[\n]*)(\[TOTAL\]|\d+)(\s*(?:points?|pts?|puntos?))[^\n]*$/gim, (line, start: string, shown: string, unit: string) => {
+        if (sum === null || sum === undefined) return shown === "[TOTAL]" ? "" : line;
+        // A corrected total drops whatever sums or notes followed the old one.
+        return shown === String(sum) ? line : `${start}${sum}${unit}${/^\s*\*\*/.test(start) ? "**" : ""}`;
+      });
+    })
+    .join("\n");
+  return blank(newBody + newKey);
 }
 
 const SECOND_THOUGHTS: RegExp[] = [
@@ -47,6 +96,8 @@ const SECOND_THOUGHTS: RegExp[] = [
   /\bcorrect answer is\b[^.\n]{0,40}\bnot\b/i,
   /\bNote:\s*the correct (?:answer|choice|option|letter) is\b/i,
   /\b(?:intentionally|is|are) replaced below\b/i,
+  /\bNote (?:for|to) (?:the )?teacher\b.{0,120}\b(?:should (?:be|read)|not \d|incorrect|error|mistake|typo|please correct)\b/i,
+  /\bSee note below\b/i,
   /\b(?:drafted hastily|check the list again|would need checking|is actually correct)\b/i,
   /\bas written, (?:the|this)\b/i,
   /\bteachers? may wish to (?:change|replace|adjust)\b/i,
@@ -117,22 +168,13 @@ export function findProblems(doc: string, tool: Tool, inputs: Inputs): string[] 
     }
   }
 
-  // A printed total that disagrees with the points in the answer key. Only trusted
-  // when every numbered answer carries exactly one point value; otherwise the sum
-  // here would be a guess, and a wrong "fix" is worse than none.
-  if (key && !inputs.versions) {
-    const answers = key.split("\n").filter((l) => /^\s*(?:\*\*)?(?:Question\s+)?\d+[.):]/.test(l));
-    const marks = answers.map((l) => [...l.matchAll(/\b(\d+)\s*(?:points?|pts?|puntos?)\b/gi)].map((m) => parseInt(m[1], 10)));
-    if (answers.length >= 3 && marks.every((m) => m.length === 1)) {
-      const sum = marks.reduce((a, m) => a + m[0], 0);
-      const printed = new Set<number>();
-      for (const m of body.matchAll(/^.*\bScore\b.*?\/\s*(\d+)\b.*$/gim)) printed.add(parseInt(m[1], 10));
-      for (const m of key.matchAll(/^\W*Total\W+(\d+)\s*(?:points?|pts?|puntos?)/gim)) printed.add(parseInt(m[1], 10));
-      const wrong = [...printed].filter((n) => n !== sum);
-      if (wrong.length) {
-        problems.push(`The points for the ${answers.length} questions in the answer key appear to add up to ${sum}, but the document prints a total of ${wrong.join(" and ")}. Recount, then make the score line and any stated total equal the real sum of the question points.`);
-      }
-    }
+  // Calculations in the answer key, worked out by code (see arith.ts).
+  const slips = findArithmeticSlips(key);
+  if (slips.length) {
+    problems.push(
+      "A calculator check found arithmetic in the answer key that does not work out. Redo each calculation and everything that depends on it, including the answer choices if the answer changes:\n" +
+        slips.map((s) => `  - "${s.shown}" is wrong: the left side comes to ${s.correct}`).join("\n"),
+    );
   }
 
   return problems;

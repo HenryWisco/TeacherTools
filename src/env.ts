@@ -12,6 +12,7 @@ export type Env = {
   SITE_URL: string;
   CONTACT_EMAIL: string;
   MODEL: string;
+  CHECK_ANSWERS?: string; // "0" switches off the second pass that re-works answer keys
   DAILY_LIMIT_PER_DEVICE: string;
   DAILY_LIMIT_PER_NETWORK: string;
   GLOBAL_DAILY_LIMIT: string;

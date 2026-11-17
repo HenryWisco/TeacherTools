@@ -190,7 +190,7 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
       ${moreOptions(tool, idp)}
       <div class="actions">
         <button class="btn primary" type="submit" data-go>${opts.compact ? "Make it" : `Make my ${tool.name.toLowerCase()}`}</button>
-        <span class="fine" data-status role="status" aria-live="polite">Free. No sign-up. Takes about 15 seconds.</span>
+        <span class="fine" data-status role="status" aria-live="polite">Free. No sign-up. Takes about 20 seconds.</span>
       </div>
     </form>
 
@@ -404,7 +404,7 @@ export function libraryPage(m: Money, f: LibraryFilter, items: Resource[], hasMo
             <div class="card-grid">${items.slice(6).map(resourceCard)}</div>`
         : html`<div class="empty">
             <p><strong>Nothing here yet${filtered ? " for that combination" : ""}.</strong></p>
-            <p>Make exactly what you need instead. It takes about 15 seconds.</p>
+            <p>Make exactly what you need instead. It takes about 20 seconds.</p>
             <a class="btn primary" href="/tools/${f.type ?? "anything"}${f.q ? `?topic=${encodeURIComponent(f.q)}` : ""}">Make one now</a>
           </div>`}
       <nav class="pager" aria-label="Pages">

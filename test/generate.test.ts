@@ -1,6 +1,7 @@
 import { createServer, type Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { generate, generateDemo, lineStream, type Line } from "../src/generate";
+import { flagUnsure, generate, generateDemo, lineStream, plainLabel, type CheckReport, type Line } from "../src/generate";
+import { VERIFY_SYSTEM, hasAnswerKey, parseVerdict } from "../src/verify";
 import { TOOL_BY_ID } from "../src/tools";
 import { findProblems, tidy } from "../src/check";
 import type { Env } from "../src/env";
@@ -9,8 +10,10 @@ import type { Env } from "../src/env";
 // so the real request/response path is exercised without spending money.
 let server: Server;
 let lastBody: any;
-let mode: "ok" | "refusal" | "overloaded" | "messy" = "ok";
+let mode: "ok" | "refusal" | "overloaded" | "messy" | "keyed" = "ok";
 let calls = 0;
+let draftKey = "3/4";
+let repairKey = "3/4";
 
 const sse = (event: string, data: object) => `event: ${event}\ndata: ${JSON.stringify({ type: event, ...data })}\n\n`;
 
@@ -39,6 +42,26 @@ beforeAll(async () => {
         const repair = String(lastBody.messages[0].content).includes("A checker found");
         const top = "# Fractions Quiz\n\n1. What is 1/2 + 1/4?\n\n## Answer Key\n\n";
         const text = repair ? top + "1. 3/4" : top + "1. 2/6. Correction: the answer is 3/4.";
+        res.write(sse("content_block_start", { index: 0, content_block: { type: "text", text: "" } }));
+        res.write(sse("content_block_delta", { index: 0, delta: { type: "text_delta", text } }));
+        res.write(sse("content_block_stop", { index: 0 }));
+      }
+      if (mode === "keyed") {
+        // A document with an answer key. `draftKey` and `repairKey` are what the first
+        // draft and the rewrite say the answer is; the checker accepts only 3/4.
+        const content = String(lastBody.messages[0].content);
+        const top = "# Fractions Quiz\n\n1. What is 1/2 + 1/4?\n\n## Answer Key\n\n";
+        let text: string;
+        if (lastBody.system === VERIFY_SYSTEM) {
+          const key = content.slice(content.lastIndexOf("## Answer Key"));
+          text = key.includes("1. 3/4")
+            ? "Q1 | 2/4 + 1/4 = 3/4 | OK\nPROBLEMS: 0"
+            : "Q1 | 2/4 + 1/4 = 3/4 | PROBLEM: the key says 2/6; the correct answer is 3/4\nPROBLEMS: 1";
+        } else if (content.includes("A checker found")) {
+          text = top + "1. " + repairKey;
+        } else {
+          text = top + "1. " + draftKey;
+        }
         res.write(sse("content_block_start", { index: 0, content_block: { type: "text", text: "" } }));
         res.write(sse("content_block_delta", { index: 0, delta: { type: "text_delta", text } }));
         res.write(sse("content_block_stop", { index: 0 }));
@@ -109,6 +132,80 @@ describe("generation", () => {
     const lines = await collect((send) => generate(env, "Document type: Quiz", send, 4096, checks));
     expect(calls).toBe(1);
     expect(lines.some((l) => "replace" in l)).toBe(false);
+  });
+  describe("checking the answer key", () => {
+    const run = async () => {
+      mode = "keyed";
+      calls = 0;
+      const lines = await collect((send) => generate(env, "Document type: Quiz", send, 4096, { verify: true }));
+      const report = (lines.find((l) => "check" in l) as { check: CheckReport } | undefined)?.check;
+      const swap = (lines.find((l) => "replace" in l) as { replace: string } | undefined)?.replace;
+      return { lines, report, swap };
+    };
+    it("re-works a correct key once and leaves the document alone", async () => {
+      draftKey = "3/4";
+      const { lines, report, swap } = await run();
+      expect(calls).toBe(2); // the draft, then the check
+      expect(lastBody.system).toBe(VERIFY_SYSTEM);
+      expect(swap).toBeUndefined();
+      expect(report).toEqual({ checked: 1, fixed: 0, unsure: [] });
+      expect(lines.at(-1)).toEqual({ done: true });
+    });
+    it("fixes a wrong answer and confirms the fix", async () => {
+      draftKey = "2/6";
+      repairKey = "3/4";
+      const { report, swap } = await run();
+      expect(calls).toBe(4); // draft, check, rewrite, check again
+      expect(swap).toContain("1. 3/4");
+      expect(swap).not.toContain("Please check");
+      expect(report).toEqual({ checked: 1, fixed: 1, unsure: [] });
+    });
+    it("tells the teacher when an answer is still in doubt", async () => {
+      draftKey = "2/6";
+      repairKey = "2/6"; // the rewrite does not fix it
+      const { report, swap } = await run();
+      expect(report?.unsure).toEqual(["question 1"]);
+      expect(report?.fixed).toBe(0);
+      expect(swap).toContain("## Answer Key\n\n> **Please check before use:**");
+      expect(swap).toContain("question 1");
+    });
+    it("is skipped for documents with no answer key, and when switched off", async () => {
+      mode = "ok";
+      calls = 0;
+      const lines = await collect((send) => generate(env, "Document type: Rubric", send, 4096, { verify: true }));
+      expect(calls).toBe(1);
+      expect(lines.some((l) => "check" in l)).toBe(false);
+      mode = "keyed";
+      draftKey = "2/6";
+      calls = 0;
+      await collect((send) => generate(env, "Document type: Quiz", send, 4096, {}));
+      expect(calls).toBe(1);
+    });
+    it("reads the checker's reply, whatever shape the labels take", () => {
+      const v = parseVerdict(
+        [
+          "Q1 | 2 + 2 = 4 | OK",
+          "Q2 (A) | 6y = 42, y = 7; key says C (y = 6) | PROBLEM: the key letter is wrong; the correct answer is D",
+          "**B3** | 5y = 45, y = 9 | PROBLEM: the key gives two answers",
+          "L1-4 | from the passage | OK",
+          "Q5a | same value | PROBLEM: no error in value, so this is OK on reflection.",
+          "Some chatter that is not a verdict line",
+          "PROBLEMS: 2",
+        ].join("\n"),
+      );
+      expect(v.checked).toBe(5);
+      expect(v.problems.map((p) => p.label)).toEqual(["Q2", "B3"]);
+      expect(parseVerdict("I could not read this document.")).toEqual({ checked: 0, problems: [] });
+    });
+    it("names doubtful questions in plain words on the answer key page", () => {
+      expect([plainLabel("Q4"), plainLabel("B10"), plainLabel("L2-3"), plainLabel("Q6b")]).toEqual(["question 4", "Version B question 10", "Level 2 question 3", "question 6b"]);
+      const doc = "# Quiz\n\n1. 2 + 2\n\n## Answer Key (Clave de respuestas)\n\n1. 4\n";
+      const flagged = flagUnsure(doc, ["question 1"]);
+      expect(flagged.indexOf("Please check before use")).toBeGreaterThan(flagged.indexOf("## Answer Key"));
+      expect(flagged.indexOf("Please check before use")).toBeLessThan(flagged.indexOf("1. 4"));
+      expect(hasAnswerKey(doc)).toBe(true);
+      expect(hasAnswerKey("# Rubric\n\nNo questions here.")).toBe(false);
+    });
   });
   it("explains a declined request instead of showing a blank page", async () => {
     mode = "refusal";

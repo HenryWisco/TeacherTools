@@ -21,6 +21,9 @@
     "SITE_URL": "",
     "CONTACT_EMAIL": "",
     "MODEL": "claude-haiku-5-5",
+    // Work every answer key a second time and fix what is wrong before the teacher prints it.
+    // Adds roughly half again to the cost of a document (more when a rewrite is needed). "0" turns it off.
+    "CHECK_ANSWERS": "1",
     // Documents per day: one browser, one network (a whole school shares one), whole site.
     "DAILY_LIMIT_PER_DEVICE": "40",
     "DAILY_LIMIT_PER_NETWORK": "600",

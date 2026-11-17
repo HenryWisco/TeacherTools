@@ -339,7 +339,7 @@ export const TOOLS: Tool[] = [
     common: FULL,
     libraryType: true,
     instructions:
-      "Write a quiz. Begin with a name/date line and a line for the score. Mix recall, application and reasoning questions. Multiple choice questions have four options labelled A-D with exactly one correct answer and plausible distractors based on common mistakes. The answer key gives the correct answer for every question and a one-line explanation. Decide the points before you start: 1 point for each multiple choice or true/false question and 2 for each written question unless the teacher says otherwise, add them up, and use that one total in the score line and at the end of the answer key.",
+      "Write a quiz. Begin with a name/date line and a line for the score. Mix recall, application and reasoning questions. Multiple choice questions have four options labelled A-D with exactly one correct answer and plausible distractors based on common mistakes. The answer key gives the correct answer for every question and a one-line explanation. Points: 1 for each multiple choice or true/false question and 2 for each written question unless the teacher says otherwise. End every answer in the key with its points, like (1 point) or (2 points). Write the score line as '**Score:** ______ / [TOTAL]' and end the key with '**Total: [TOTAL] points**'; the site fills in the total, so never write that number yourself.",
   },
   {
     id: "exit-ticket",

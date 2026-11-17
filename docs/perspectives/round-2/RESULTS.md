@@ -50,6 +50,17 @@ Effort: S = under an hour, M = a few hours, L = a day or more.
 
 ### Batch 2. Checked answer keys (`src/generate.ts`) — the big one
 
+**Status: done on 17 November 2026.** Every document with an answer key now gets (1) a second request that works each answer again and reports mismatches (`src/verify.ts`), (2) a calculator check of the arithmetic written in the key (`src/arith.ts`), and (3) its point totals added up by code (`fixTotals` in `src/check.ts`). Problems trigger one rewrite, which is checked again; anything still in doubt is named in a "Please check before use" note on the answer key page, and the page tells the teacher what the check did.
+
+How well it works, measured on the same eleven hard document types (chemistry, math, music, Spanish, shop safety, reading), with every answer worked independently by a stronger AI model:
+
+| | Questions | Definite mistakes |
+|---|---|---|
+| Second opinion only | 147 | 7 (three wrong point totals, one wrong calculation, a Spanish grammar rule counted twice, one impossible problem) |
+| Second opinion + calculator + totals by code | 149 | 3 (a multiple-choice question with two true options, in both versions of one quiz; one key line giving two answers) |
+
+On the reviewers' old documents the second opinion found real errors in 9 of 13 known-bad documents, including two the reviewers had missed, with no false alarms on 8 known-good ones. These are small samples from one run each, so treat the numbers as a direction, not a rate. Mistakes still get through, most often where the model's own subject knowledge is wrong (for example Spanish *ser* with events), because the second opinion shares that blind spot. Cost: roughly half again per document by token count (an estimate, not a measured bill), and about 30 seconds instead of 15 when a rewrite is needed.
+
 | # | Change | Raised by | Effort |
 |---|---|---|---|
 | 12 | **A second pass that re-works every answer key before the teacher sees it**: solve each question again, confirm exactly one multiple-choice option is right, confirm the key agrees with the passage it sits under, fix or flag what fails. This roughly doubles the cost of a document (still a fraction of a cent). Wrong or self-contradicting key entries appeared in more than half the reports, in chemistry, math, music, Spanish, shop safety, civics and reading. Already item 2 in CLAUDE.md. | 17+ of 30 | L |

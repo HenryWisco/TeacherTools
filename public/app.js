@@ -28,7 +28,8 @@
     }).join("\n");
   };
   var render = function (text) {
-    return md.parse(protectBlanks(text))
+    // "[TOTAL]" is filled in by the server once the document is finished.
+    return md.parse(protectBlanks(text).split("[TOTAL]").join("…"))
       .replace(/<h2>(\s*Answer Key[^<]*)<\/h2>/i, '<h2 class="answer-key">$1</h2>')
       .replace(/<h2>(\s*(?:Version [A-C]|Level [1-3])\b[^<]*)<\/h2>/g, '<h2 class="page-start">$1</h2>');
   };
@@ -48,6 +49,7 @@
     var goLabel = go.textContent;
     var markdown = "";
     var busy = false;
+    var checkInfo = null;
     var lastInputs = {};
     var docId = "";
     var params = new URLSearchParams(location.search);
@@ -145,7 +147,7 @@
       doc.innerHTML = '<p class="writing">Writing your document…</p>';
       SC.notice(root, "");
       setBusy(true);
-      status.textContent = "Writing… this usually takes 10 to 20 seconds.";
+      status.textContent = "Writing… this usually takes 10 to 20 seconds, plus a few more to check the answers.";
       if (!extra) result.scrollIntoView({ behavior: "smooth", block: "start" });
 
       var failed = function (message) {
@@ -168,6 +170,7 @@
           var buffer = "";
           var pending = false;
           var errorText = "";
+          checkInfo = null;
           var schedule = function () {
             if (pending) return;
             pending = true;
@@ -180,6 +183,7 @@
             if (msg.note) status.textContent = msg.note;
             // The server re-checked the finished document and sent a cleaned-up copy.
             if (typeof msg.replace === "string" && msg.replace) { markdown = msg.replace; schedule(); }
+            if (msg.check) checkInfo = msg.check;
             if (msg.error) errorText = msg.error;
           };
           var pump = function () {
@@ -201,7 +205,19 @@
         .then(function () {
           show();
           var lang = (lastInputs.language || "").trim();
-          status.textContent = "Done. Print it, download it, or ask for changes below. It's saved under My documents on this device." +
+          // Say plainly what the answer check did, and never more than it did.
+          var checked = "";
+          if (checkInfo && checkInfo.checked) {
+            var n = checkInfo.checked + (checkInfo.checked === 1 ? " answer" : " answers");
+            if (checkInfo.unsure && checkInfo.unsure.length) {
+              checked = " A second pass re-worked " + n + " and could not settle " + checkInfo.unsure.length + ": see the note at the top of the answer key.";
+            } else if (checkInfo.fixed) {
+              checked = " A second pass re-worked " + n + " and corrected the document. Please still look it over.";
+            } else {
+              checked = " A second pass re-worked " + n + " and found no mistakes. Please still look it over.";
+            }
+          }
+          status.textContent = "Done. Print it, download it, or ask for changes below. It's saved under My documents on this device." + checked +
             (lang && !/^english$/i.test(lang) ? " This document includes a translation written by AI: please have a fluent speaker check it before it goes to students or families." : "");
           saveDoc();
         })

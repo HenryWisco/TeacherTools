@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { findProblems, tidy } from "../src/check";
+import { evaluate, findArithmeticSlips } from "../src/arith";
+import { findProblems, fixTotals, tidy } from "../src/check";
 import { buildUserPrompt, normalizeInputs, outputBudget } from "../src/prompt";
 import { TOOL_BY_ID } from "../src/tools";
 
@@ -72,11 +73,13 @@ describe("finding problems in a finished document", () => {
     // Two versions are counted separately by the model, so the simple count is skipped.
     expect(findProblems(cleanQuiz, quiz, { topic: "Density", count: "5", versions: "ab" })).toEqual([]);
   });
-  it("catches a score line that does not match the points", () => {
-    const doc = cleanQuiz.replace("/ 4", "/ 30");
-    expect(findProblems(doc, quiz, { topic: "Density", count: "3" }).join(" ")).toContain("add up to 4");
-    const totalled = cleanQuiz + "\n**Total: 20 points**\n";
-    expect(findProblems(totalled, quiz, { topic: "Density", count: "3" }).join(" ")).toContain("20");
+  it("checks the arithmetic in the answer key with a calculator", () => {
+    const wrong = cleanQuiz.replace("2. 2 g/mL. (1 point)", "2. 120,000 x (1.0379)^14 = 120,000 x 1.6976 = 203,712 people. (1 point)");
+    const found = findProblems(wrong, quiz, { topic: "Density", count: "3" }).join(" ");
+    expect(found).toContain("calculator check");
+    expect(found).toContain("202003");
+    const right = cleanQuiz.replace("2. 2 g/mL. (1 point)", "2. n = (1.50 x 4.00)/(0.0821 x 300) = 6.00/24.63 = 0.244 mol. (1 point)");
+    expect(findProblems(right, quiz, { topic: "Density", count: "3" })).toEqual([]);
   });
 });
 
@@ -135,5 +138,85 @@ describe("what the model is told", () => {
     expect(outputBudget({ topic: "x", reference: "my template" }, quiz)).toBe(8000);
     expect(outputBudget({ topic: "x", versions: "levels" }, rp)).toBe(12000);
     expect(outputBudget({ topic: "x", versions: "ab", language: "English + Spanish (side by side)" }, quiz)).toBe(12000);
+  });
+});
+
+describe("arithmetic worked out by code", () => {
+  it("evaluates plain arithmetic and nothing else", () => {
+    expect(evaluate("3 x 4 + 2")).toBe(14);
+    expect(evaluate("(1.50 × 4.00)/(0.0821 × 300)")).toBeCloseTo(0.2436, 4);
+    expect(evaluate("2^10")).toBe(1024);
+    expect(evaluate("83 ÷ 4")).toBe(20.75);
+    expect(evaluate("1 7/12")).toBeCloseTo(19 / 12, 9);
+    expect(evaluate("11,630 - 630")).toBe(11000);
+    expect(evaluate("2(4) - 5")).toBe(3);
+    expect(evaluate("2x - 3")).toBeNull();
+    expect(evaluate("1. 26 + 9")).toBeNull();
+    expect(evaluate("sqrt(16)")).toBeNull();
+  });
+  it("flags a result that does not match its calculation", () => {
+    expect(findArithmeticSlips("11. A = 8000 × 1.025^15 = 8000 × 1.453790 = 11,630")).toHaveLength(1);
+    expect(findArithmeticSlips("3. 12 x 12 = 154")[0].correct).toBe("144");
+    expect(findArithmeticSlips("Density = 135 / 50 = 3.7 g/cm^3")).toHaveLength(1);
+  });
+  it("accepts correct working, rounding, fractions, mixed numbers and remainders", () => {
+    const fine = [
+      "1. 26 + 9 = 35",
+      "2. 3/4 + 5/6 = 9/12 + 10/12 = 19/12 = 1 7/12",
+      "3. 7.50/28.74 = 0.261 mol",
+      "4. 83 ÷ 4 = 20 remainder 3, so 20 books with 3 left over",
+      "5. 0.100 x 58.44 = 5.84 g",
+      "6. 12 × 24. 12 × 20 = 240 and 12 × 4 = 48. 240 + 48 = 288",
+      "7. 15/20 = 75%",
+      "8. V = 3.14 x 9 x 7 = 197.82, about 197.8",
+      "9. 100/3 ≈ 33",
+      "10. 1/3 = 4/12 and 1/4 = 3/12, so 4/12 + 3/12 = 7/12",
+    ].join("\n");
+    expect(findArithmeticSlips(fine)).toEqual([]);
+  });
+  it("leaves algebra, units, constants and deliberate mistakes alone", () => {
+    const leave = [
+      "11. g = 2 (5g + 10 - 3 = 4g + 9, so 5g + 7 = 4g + 9)",
+      "dV/dt = 4 pi (25)(2) = 200 pi cm^3/s",
+      "t = ln 2 / 0.06 = 0.693 / 0.06 = 11.55 years",
+      "A = 5000e^(0.06 × 8) = 5000 × 1.616",
+      "Jamal says 1/2 + 1/3 = 2/5, which is wrong because he added the denominators.",
+      "Distractor B: 20.0/2463 = 0.812 forgets the decimal.",
+      "y = 2x - 3 = 1 when x = 2",
+      "10. 2 divided by (1/3) = 2 x 3 = 6 servings",
+    ].join("\n");
+    expect(findArithmeticSlips(leave)).toEqual([]);
+  });
+});
+
+describe("adding up the points", () => {
+  const key = "\n## Answer Key\n\n1. B (1 point)\n2. C (1 point)\n3. Ice is less dense. (2 points: 1 for the idea, 1 for the reason)\n\n**Total: [TOTAL] points**\n";
+  it("fills in the total the model was told to leave to the site", () => {
+    const out = fixTotals("# Quiz\n\n**Score:** ______ / [TOTAL]\n\n1. Q\n2. Q\n3. Q\n" + key);
+    expect(out).toContain("**Score:** ______ / 4");
+    expect(out).toContain("**Total: 4 points**");
+    expect(out).not.toContain("[TOTAL]");
+  });
+  it("corrects a total the model wrote wrongly, and drops its excuse", () => {
+    const doc = "# Quiz\n\n**Score:** ______ / 16 points\n\n1. Q\n" + key.replace("**Total: [TOTAL] points**", "**Total: 16 points** (6 at 1 point = 6; 4 at 2 = 8; total 14. See note below.)");
+    const out = fixTotals(doc);
+    expect(out).toContain("**Score:** ______ / 4 points");
+    expect(out).toContain("**Total: 4 points**");
+    expect(out).not.toContain("See note below");
+  });
+  it("gives each version its own total", () => {
+    const doc = "# Quiz\n\n## Version A\n\n**Score:** ______ / [TOTAL]\n\n1. Q\n\n## Version B\n\n**Score:** ______ / [TOTAL]\n\n1. Q\n\n## Answer Key\n\n### Version A\n\n1. B (1 point)\n2. x = 2 (2 points)\n\n### Version B\n\n1. C (1 point)\n2. x = 5 (3 points)\n";
+    const out = fixTotals(doc);
+    expect(out.match(/\/ (\d+)/g)).toEqual(["/ 3", "/ 4"]);
+  });
+  it("leaves a blank instead of guessing when an answer has no points", () => {
+    const out = fixTotals("# Quiz\n\n**Score:** ______ / [TOTAL]\n\n1. Q\n" + key.replace("2. C (1 point)", "2. C"));
+    expect(out).toContain("**Score:** ______ / ______");
+    expect(out).not.toContain("Total");
+    expect(fixTotals("# Rubric\n\nScore: ____ / [TOTAL]\n")).toContain("/ ______");
+  });
+  it("does not touch a document whose total is already right", () => {
+    const doc = "# Quiz\n\n**Score:** ______ / 4\n\n1. Q\n" + key.replace("[TOTAL]", "4");
+    expect(fixTotals(doc)).toBe(doc);
   });
 });

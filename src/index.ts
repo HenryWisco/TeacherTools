@@ -123,7 +123,12 @@ app.post("/api/generate", async (c) => {
     topic = inputs.topic ?? inputs.source ?? "";
     budget = outputBudget(inputs, tool);
     const chosen = tool;
-    checks = { tidy: (doc) => tidy(doc, chosen), findProblems: (doc) => findProblems(doc, chosen, inputs) };
+    checks = {
+      tidy: (doc) => tidy(doc, chosen),
+      findProblems: (doc) => findProblems(doc, chosen, inputs),
+      // Every document with an answer key gets its answers worked a second time.
+      verify: !chosen.noKey && c.env.CHECK_ANSWERS !== "0",
+    };
     const previous = typeof body.previous === "string" ? body.previous.slice(0, MAX_PREVIOUS) : "";
     const request = typeof body.refine === "string" ? body.refine.trim() : "";
     userPrompt = buildUserPrompt(tool, inputs, previous && request ? { previous, request } : undefined);
