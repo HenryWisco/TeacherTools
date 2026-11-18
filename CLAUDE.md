@@ -15,7 +15,7 @@ A free website where teachers describe what they need and get a print-ready clas
 npm install
 npm run db:local   # creates the local database and loads the 43 starter resources
 npm run dev        # http://localhost:8787
-npm test           # 75 checks
+npm test           # 78 checks
 npx tsc --noEmit
 ```
 
@@ -58,7 +58,7 @@ Cloudflare Worker, Hono, server-rendered HTML, D1 (SQLite), no front-end framewo
 
 ## Background reading in this repo
 
-- `docs/perspectives/round-2/RESULTS.md`: thirty AI reviewers used the live site with a real key (November 2026) and the to-do list that came out of it. Batch 1 (writing rules, clean-copy second pass, length limits) and Batch 2 (checked answer keys) are done; Batch 4 (name catching, two-column bilingual pages, 16 more library pages, per-tool revise buttons, combined grades, print options) is mostly done; its status note lists what is left. Batch 3 (owner name, contact email, privacy and terms pages, which need details from the owner) is not started. The site has now been run against the real model: about 130 documents.
+- `docs/perspectives/round-2/RESULTS.md`: thirty AI reviewers used the live site with a real key (November 2026) and the to-do list that came out of it. Batch 1 (writing rules, clean-copy second pass, length limits) and Batch 2 (checked answer keys) are done; Batch 4 (name catching, two-column bilingual pages, 16 more library pages, per-tool revise buttons, combined grades, print options) is mostly done; its status note lists what is left. Batch 3 is built: the pages name the owner and contact address from `OWNER_NAME` and `CONTACT_EMAIL` in `wrangler.jsonc`, there is a `/schools` page, and `/privacy` says what the AI provider keeps. **Both settings are still blank because the owner has not chosen them**; `/admin` shows a reminder until they are set. The lawyer items (Batch 3 #17) are open. The site has now been run against the real model: about 130 documents.
 - `docs/research-report.md`: market and monetization research. Caveat: most sources were read only as search summaries; ad-rate figures are weak.
 - `docs/perspectives/SYNTHESIS.md`: five AI reviews of 20 user personas, combined and ranked, with what's done.
 
@@ -66,14 +66,14 @@ Cloudflare Worker, Hono, server-rendered HTML, D1 (SQLite), no front-end framewo
 
 1. ~~Test with a real API key~~ Done (round 2).
 2. ~~**Checked answer keys**~~ Done: a second opinion on every key, arithmetic and point totals worked out by code, and a "please check" note for answers still in doubt. An independent check still found 3 mistakes in 149 questions afterwards, so the "review before use" wording stays. Next for accuracy: subject blind spots the second opinion shares with the writer (e.g. Spanish grammar), and multiple-choice questions with two true options.
-   Then Batch 3 in `docs/perspectives/round-2/RESULTS.md`: set `CONTACT_EMAIL` in `wrangler.jsonc`, name the owner, remove the notes-to-self on `/privacy` and `/terms`.
-3. One-page "For schools and IT" sheet; accessibility pass tested with a real screen reader.
+   Then get the owner's name and a public contact email and put them in `OWNER_NAME` and `CONTACT_EMAIL` in `wrangler.jsonc`. Also ask the owner to confirm their Anthropic account has not opted in to sharing data for training, because `/privacy` and `/schools` say so.
+3. ~~One-page "For schools and IT" sheet~~ Done (`/schools`). Accessibility pass tested with a real screen reader.
 4. Print options (fit to one page, half-sheets, A4 for non-US); kindergarten–grade 2 layouts drawn by code (tracing lines, ten frames).
 5. Keep growing the hand-checked library, aimed at gaps (sub packs, K–2, PE, bilingual).
 6. Before launch: legal review of `/privacy` and `/terms`, including state student-privacy laws (e.g. California's SOPIPA) and advertising; newsletter unsubscribe handling (export the list to an email service); a bot challenge (Turnstile) if abuse appears.
 
 ## Known rough edges
 
-- Starter library content was written and self-checked by AI, not by a teacher; several standards codes were written from memory.
+- Starter library content was written by AI and every answer re-worked by a second, separate AI check (November 2026), not by a teacher. Standards codes were written from memory; the check kept only those it was confident of, and none was looked up.
 - Supporter ad-removal is an honour-system link (`/support/thanks?code=…`), no payment verification.
 - The newsletter only collects addresses; nothing sends email.

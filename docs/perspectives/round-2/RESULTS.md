@@ -68,6 +68,15 @@ On the reviewers' old documents the second opinion found real errors in 9 of 13 
 
 ### Batch 3. Things only you can supply (`src/views.ts`, then a legal review)
 
+**Status: built on 18 November 2026; two blanks left for the owner.**
+
+- 14: built. The footer and the About, Privacy, Terms, Support and new For schools pages show who runs the site and a contact address, taken from `OWNER_NAME` and `CONTACT_EMAIL` in `wrangler.jsonc`. **Both are still blank**, so the live pages say contact details are coming; `/admin` shows a reminder. The "Site owner: review this page…" notes are gone.
+- 15: done. `/privacy` and the new `/schools` page say what the AI provider keeps, taken from Anthropic's published policy pages as read on 18 November 2026: not used for training unless the customer opts in, deleted within 30 days, up to 2 years if flagged for breaking its usage rules. The pages also say "we have not allowed" training use, which the owner should confirm for their account.
+- 16: done. One sentence about how the site is paid for is used on Home, About, Support and For schools. The newsletter box no longer says "nothing else".
+- 17: not done, needs a lawyer. Added in the meantime: an effective date, the daily limit as a number, and a line on how to report a problem or ask for removal. Still missing: liability limit, governing law, a licence for shared documents, a formal copyright complaints process, cookie consent for UK and Ireland.
+- 18: done. About says who checks the library, and each library page says how it was checked and has a "Report a problem" link (shown once the contact address is set). To make the wording true, the 27 original library pages were given the same independent re-working as the 16 new ones: no wrong answers found; six small corrections (one standards code that covered a different topic was removed, a density figure and a class-time total were corrected, a four-sound word was taken out of a three-sound phonics list, two summaries no longer promise something the page lacks). The reported problem with the Grade 4 equivalent fractions teacher notes could not be reproduced: the problem numbers do print.
+- 19: done. `/ads.txt` returns "not found" until ads are switched on.
+
 | # | Change | Raised by | Effort |
 |---|---|---|---|
 | 14 | **Name who runs the site and give a contact email**, on Privacy, Terms, About, Support and the footer. Remove the visible "Site owner: review this page…" notes. | 17 of 30, incl. all 6 administrators | S once you choose a name and email |

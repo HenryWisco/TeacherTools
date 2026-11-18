@@ -3,7 +3,7 @@ import { renderMarkdown, plainSummary, prettyMath, protectBlanks } from "../src/
 import { InputError, buildUserPrompt, getTool, normalizeInputs, outputBudget, slugify, splitTitle } from "../src/prompt";
 import { TOOLS, TOOL_BY_ID, gradeAges, secondLanguage } from "../src/tools";
 import { redactStudentDetails } from "../src/names";
-import { chipsFor } from "../src/views";
+import { aboutPage, chipsFor, privacyPage, schoolsPage, supportPage, termsPage } from "../src/views";
 import { parseFilter } from "../src/db";
 import { hashIp, today } from "../src/limits";
 import { adSlot, adsTxt, classroomPicks, supporterToken } from "../src/monetize";
@@ -235,6 +235,38 @@ describe("limits", () => {
   });
   it("uses UTC days", () => {
     expect(today(new Date("2026-11-16T23:59:59Z"))).toBe("2026-11-16");
+  });
+});
+
+describe("who runs the site", () => {
+  const site = (over: Partial<Env> = {}) => ({ env: env({ SITE_NAME: "Supply Closet", SITE_TAGLINE: "", SITE_URL: "", CONTACT_EMAIL: "", ...over }), supporter: false });
+  const pages = [privacyPage, termsPage, aboutPage, schoolsPage, supportPage] as const;
+  it("names the owner and the contact address on every policy page and in the footer", async () => {
+    const m = site({ OWNER_NAME: "Example Owner LLC", CONTACT_EMAIL: "hello@example.org" });
+    for (const page of pages) {
+      const out = String(await page(m));
+      expect(out).toContain("run by Example Owner LLC");
+      expect(out).toContain("mailto:hello@example.org");
+    }
+  });
+  it("never shows notes meant for the site owner, with or without the details filled in", async () => {
+    for (const m of [site(), site({ OWNER_NAME: "Example Owner LLC", CONTACT_EMAIL: "hello@example.org" })]) {
+      for (const page of pages) {
+        const out = String(await page(m));
+        expect(out).not.toMatch(/Site owner:|qualified adviser|the site owner/i);
+      }
+    }
+  });
+  it("says what the AI provider keeps, and tells one story about money", async () => {
+    const m = site();
+    const privacy = String(await privacyPage(m));
+    expect(privacy).toContain("within 30 days");
+    expect(privacy).toContain("does not use what is sent");
+    const schools = String(await schoolsPage(m));
+    expect(schools).toContain("No student data");
+    const story = "a small number of ads, links to classroom supplies that may earn a commission, an occasional named sponsor, and optional supporters";
+    for (const page of [aboutPage, schoolsPage, supportPage]) expect(String(await page(m))).toContain(story);
+    expect(String(await aboutPage(m))).not.toContain("nothing else");
   });
 });
 

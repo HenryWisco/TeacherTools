@@ -1026,7 +1026,7 @@ ______________________________________________________________
 - **Nationalism:** intense pride in and loyalty to one''s nation or ethnic group, often with the belief that it should have its own independent state. Examples: Serbian nationalists wanted to unite the South Slavs, which threatened multi-ethnic Austria-Hungary; France resented the loss of Alsace-Lorraine to Germany in 1871; Russia''s support for fellow Slavs (Pan-Slavism) tied it to Serbia; the assassin of Franz Ferdinand was motivated by nationalism.
 
 *Look for:* a correct definition (1 point), two accurate and specific examples (1 point each), and an explanation of how each example raised tension or made war more likely (2 points).', 'published', 'seed', 0, '2026-10-30T18:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
-INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-a76e8f215cb6da27', 'cell-organelles-study-guide-grade-9', 'Cell Organelles and Their Functions Study Guide', 'study-guide', '9', 'science', 'A complete review of eukaryotic cell organelles with a function table, plant vs. animal and prokaryote vs. eukaryote comparisons, common misconceptions, memory analogies, and a 13-question self-check quiz with answers.', 'NGSS HS-LS1-2', '## How to Use This Guide
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-a76e8f215cb6da27', 'cell-organelles-study-guide-grade-9', 'Cell Organelles and Their Functions Study Guide', 'study-guide', '9', 'science', 'A complete review of eukaryotic cell organelles with a function table, plant vs. animal and prokaryote vs. eukaryote comparisons, common misconceptions, memory analogies, and a 13-question self-check quiz with answers.', '', '## How to Use This Guide
 
 1. Read each section once without trying to memorize anything.
 2. Cover the Function column of the organelle table with a sheet of paper and try to say each function out loud.
@@ -1969,7 +1969,7 @@ ______________________________________________________________
 - These beat values are for 4/4 time, where the quarter note gets one beat.
 - In Part 3, a rest of the same length also fills the measure (a half rest for item 10, a quarter rest for item 11). The directions ask for a note, so decide whether you will accept a rest and tell students before they begin.
 - Follow-up: have students clap and count each measure from Part 2 aloud, saying "1 and 2 and 3 and 4 and" and staying silent on the rests.', 'published', 'seed', 0, '2026-10-29T00:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
-INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-6b297696e6a745d9', 'counting-comparing-numbers-to-10-worksheet-kindergarten', 'Counting and Comparing Numbers to 10 Worksheet', 'worksheet', 'K', 'math', 'A 15-item kindergarten worksheet where students count dots, write numerals, compare numbers and groups (more, fewer, the same), fill in missing numbers, and draw a set. Includes read-aloud directions and an answer key.', 'CCSS.MATH.CONTENT.K.CC.A.2, CCSS.MATH.CONTENT.K.CC.B.5, CCSS.MATH.CONTENT.K.CC.C.6, CCSS.MATH.CONTENT.K.CC.C.7', '**Name:** ______________________  **Date:** ____________
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-6b297696e6a745d9', 'counting-comparing-numbers-to-10-worksheet-kindergarten', 'Counting and Comparing Numbers to 10 Worksheet', 'worksheet', 'K', 'math', 'A 15-item kindergarten worksheet where students count dots, write numerals, compare numbers and groups (bigger, smaller, more, the same), fill in missing numbers, and draw a set. Includes read-aloud directions and an answer key.', 'CCSS.MATH.CONTENT.K.CC.A.2, CCSS.MATH.CONTENT.K.CC.B.5, CCSS.MATH.CONTENT.K.CC.C.6, CCSS.MATH.CONTENT.K.CC.C.7', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Listen as your teacher reads each part. Touch each dot as you count. Take your time!
 
@@ -2354,7 +2354,7 @@ ______________________________________________
 | Corn syrup | 27.4 | 20 | 1.37 |
 | Honey | 28.4 | 20 | 1.42 |
 
-Notes for the teacher: 91% rubbing alcohol is less dense (about 0.80 g/mL) and gives the same order. Dish soap brands range from about 1.02 to 1.06 g/mL. Honey and corn syrup are close in density (roughly 1.36 to 1.45 g/mL), so some groups may calculate corn syrup as slightly denser than honey; either order for those two can be accepted if it matches the group''s own data. Thick liquids are the hardest to measure accurately because they cling to the cylinder.
+Notes for the teacher: 91% rubbing alcohol is less dense (about 0.82 g/mL) and gives the same order. Dish soap brands range from about 1.02 to 1.06 g/mL. Honey and corn syrup are close in density (roughly 1.36 to 1.45 g/mL), so some groups may calculate corn syrup as slightly denser than honey; either order for those two can be accepted if it matches the group''s own data. Thick liquids are the hardest to measure accurately because they cling to the cylinder.
 
 **Expected order, bottom to top:** honey, corn syrup, dish soap, water, vegetable oil, rubbing alcohol.
 
@@ -3305,7 +3305,7 @@ Complete this before you turn in your essay. Be honest. The goal is to find what
 |---|---|
 | The narrator describes the house as dark and silent | By describing the house only through what is absent (light, sound, movement), the narrator makes the setting reflect the family''s unspoken grief |
 | The main character lies to her sister | The lie, told in the same calm tone the character uses everywhere else, suggests that deception has become ordinary to her |', 'published', 'seed', 0, '2026-10-25T19:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
-INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b802e1918a90fd0a', 'multiplication-division-facts-quiz-grade-3', 'Multiplication and Division Facts Within 100 Quiz', 'quiz', '3', 'math', 'A 15-question quiz on multiplication and division facts within 100: basic facts, missing-number equations, a fact family, and two word problems. Includes an answer key and scoring guide.', 'CCSS.MATH.CONTENT.3.OA.A.3, CCSS.MATH.CONTENT.3.OA.A.4, CCSS.MATH.CONTENT.3.OA.B.6, CCSS.MATH.CONTENT.3.OA.C.7', '**Name:** ______________________  **Date:** ____________
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b802e1918a90fd0a', 'multiplication-division-facts-quiz-grade-3', 'Multiplication and Division Facts Within 100 Quiz', 'quiz', '3', 'math', 'A 15-question quiz on multiplication and division facts within 100: basic facts, missing-number equations, and two word problems. Includes an answer key and scoring guide.', 'CCSS.MATH.CONTENT.3.OA.A.3, CCSS.MATH.CONTENT.3.OA.A.4, CCSS.MATH.CONTENT.3.OA.B.6, CCSS.MATH.CONTENT.3.OA.C.7', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Solve each problem. Write your answer on the line. For the word problems, show your work and label your answer.
 
@@ -3943,7 +3943,7 @@ Keep the Answer Key at the end of this packet for yourself.
 
 ## Schedule
 
-Times are flexible. Adjust them to the bell schedule. The plan fills about five hours of class time.
+Times are flexible. Adjust them to the bell schedule. The plan fills about four hours of class time, not counting lunch and recess.
 
 | Block | Time needed | Activity |
 |---|---|---|
@@ -5299,7 +5299,7 @@ Use these words anywhere in the lesson. Every word is a real, decodable CVC word
 |---|---|---|---|---|
 | cat | bed | pig | dog | sun |
 | map | hen | lip | mop | bug |
-| bag | net | sit | box | cup |
+| bag | net | sit | top | cup |
 | fan | red | fin | hot | tub |
 | hat | web | kid | log | nut |
 | jam | pen | zip | pot | rug |

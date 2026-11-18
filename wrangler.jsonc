@@ -19,6 +19,9 @@
     "SITE_NAME": "Supply Closet",
     "SITE_TAGLINE": "Free classroom materials, made in seconds.",
     "SITE_URL": "",
+    // Who runs the site and how to reach them. Both are shown publicly: in the footer and on
+    // the About, Privacy, Terms and For schools pages. Fill in both before launch.
+    "OWNER_NAME": "",
     "CONTACT_EMAIL": "",
     "MODEL": "claude-haiku-5-5",
     // Work every answer key a second time and fix what is wrong before the teacher prints it.

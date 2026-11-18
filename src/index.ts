@@ -99,6 +99,7 @@ app.get("/support/thanks", async (c) => {
 
 app.get("/my", (c) => c.html(views.myDocsPage(c.get("money"))));
 app.get("/about", (c) => c.html(views.aboutPage(c.get("money"))));
+app.get("/schools", (c) => c.html(views.schoolsPage(c.get("money"))));
 app.get("/privacy", (c) => c.html(views.privacyPage(c.get("money"))));
 app.get("/terms", (c) => c.html(views.termsPage(c.get("money"))));
 
@@ -260,6 +261,7 @@ app.get("/sitemap.xml", async (c) => {
     `<url><loc>${base}/</loc></url>`,
     `<url><loc>${base}/tools</loc></url>`,
     `<url><loc>${base}/library</loc></url>`,
+    `<url><loc>${base}/schools</loc></url>`,
     ...TOOLS.map((t) => `<url><loc>${base}/tools/${t.id}</loc></url>`),
     ...(await db.sitemapSlugs(c.env)).map(
       (r) => `<url><loc>${base}/library/${r.slug}</loc><lastmod>${r.created_at.slice(0, 10)}</lastmod></url>`,
@@ -271,7 +273,11 @@ app.get("/sitemap.xml", async (c) => {
   });
 });
 
-app.get("/ads.txt", (c) => c.text(adsTxt(c.env)));
+// Only exists once ads are switched on; an empty file looked unfinished to a reviewer.
+app.get("/ads.txt", (c) => {
+  const body = adsTxt(c.env);
+  return body ? c.text(body) : c.text("Not found", 404);
+});
 
 app.get("/healthz", async (c) => {
   const day = today();

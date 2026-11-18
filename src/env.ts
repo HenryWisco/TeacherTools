@@ -11,6 +11,7 @@ export type Env = {
   SITE_TAGLINE: string;
   SITE_URL: string;
   CONTACT_EMAIL: string;
+  OWNER_NAME?: string; // the person or business that runs the site, shown on every page
   MODEL: string;
   CHECK_ANSWERS?: string; // "0" switches off the second pass that re-works answer keys
   DAILY_LIMIT_PER_DEVICE: string;
