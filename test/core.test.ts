@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { renderMarkdown, plainSummary, protectBlanks } from "../src/markdown";
+import { renderMarkdown, plainSummary, prettyMath, protectBlanks } from "../src/markdown";
 import { InputError, buildUserPrompt, getTool, normalizeInputs, outputBudget, slugify, splitTitle } from "../src/prompt";
-import { TOOLS, TOOL_BY_ID } from "../src/tools";
+import { TOOLS, TOOL_BY_ID, gradeAges, secondLanguage } from "../src/tools";
+import { redactStudentDetails } from "../src/names";
+import { chipsFor } from "../src/views";
 import { parseFilter } from "../src/db";
 import { hashIp, today } from "../src/limits";
 import { adSlot, adsTxt, classroomPicks, supporterToken } from "../src/monetize";
@@ -37,6 +39,30 @@ describe("markdown safety", () => {
   it("leaves a full line of underscores as a writing line", () => {
     expect(protectBlanks("__________")).toBe("__________");
     expect(renderMarkdown("Explain.\n\n__________\n")).toContain("<hr");
+  });
+  it("lays two languages out in matching columns, question beside question", () => {
+    const doc = "# Fractions / Fracciones\n\n## English\n\n**Name:** ____\n\n### Practice\n\n1. Add 1/2 + 1/4.\n2. Add 1/3 + 1/3.\n\n## Spanish\n\n**Nombre:** ____\n\n### Práctica\n\n1. Suma 1/2 + 1/4.\n2. Suma 1/3 + 1/3.\n\n## Answer Key\n\n1. 3/4\n2. 2/3";
+    const out = renderMarkdown(doc);
+    expect(out).toContain('<table class="bilingual">');
+    expect(out).toContain("<th>Español</th>");
+    expect(out.match(/<tr><td>/g)?.length).toBe(4); // name, heading, question 1, question 2
+    expect(out).toMatch(/<td><ol start="2">\s*<li>Add 1\/3[\s\S]*?<\/td><td dir="auto"><ol start="2">\s*<li>Suma 1\/3/);
+    expect(out).toContain('<h2 class="answer-key">');
+    expect(out).not.toContain("<h2>English</h2>");
+  });
+  it("still shows both languages when the two sides do not match up", () => {
+    const out = renderMarkdown("## English\n\nOne.\n\nTwo.\n\n## French\n\nUn.");
+    expect(out.match(/<tr><td>/g)?.length).toBe(1);
+    expect(out).toContain("Two.");
+    expect(out).toContain("Un.");
+    expect(renderMarkdown("## English\n\nJust a heading a teacher wrote.")).not.toContain("bilingual");
+  });
+  it("shows exponents, roots and inequalities as real notation, but not inside tags", () => {
+    expect(prettyMath("<p>x^2 + e^(-2x) + 10^-3 and sqrt(16) + sqrt(x + 1), x &lt;= 3</p>")).toBe(
+      "<p>x<sup>2</sup> + e<sup>-2x</sup> + 10<sup>-3</sup> and √16 + √(x + 1), x ≤ 3</p>",
+    );
+    expect(prettyMath('<a href="https://e.com/a^2">a</a> <code>x^2</code>')).toBe('<a href="https://e.com/a^2">a</a> <code>x^2</code>');
+    expect(renderMarkdown("f(x) = (3x + 1)^4")).toContain("(3x + 1)<sup>4</sup>");
   });
   it("renders tables", () => {
     expect(renderMarkdown("| a | b |\n|---|---|\n| 1 | 2 |")).toContain("<table>");
@@ -123,8 +149,37 @@ describe("request building", () => {
   });
   it("asks for both languages when bilingual is chosen", () => {
     const out = normalizeInputs(ws, { topic: "Fractions", language: "English + Spanish (side by side)" });
-    expect(buildUserPrompt(ws, out)).toContain("both English and Spanish");
+    const p = buildUserPrompt(ws, out);
+    expect(p).toContain('headed exactly "## English"');
+    expect(p).toContain('headed exactly "## Spanish"');
     expect(outputBudget(out)).toBe(8000);
+    // Any listed language can sit beside English; with versions the columns are dropped.
+    const ar = normalizeInputs(ws, { topic: "Fractions", language: "English + Arabic (side by side)" });
+    expect(buildUserPrompt(ws, ar)).toContain('"## Arabic"');
+    const both = normalizeInputs(ws, { topic: "Fractions", language: "English + Spanish (side by side)", versions: "ab" });
+    expect(buildUserPrompt(ws, both)).toContain("both English and Spanish");
+    expect(secondLanguage("Spanish")).toBe("");
+  });
+  it("accepts a combined class and warns the model that kindergarten pages have no pictures", () => {
+    const out = normalizeInputs(ws, { topic: "Fractions", grade: "5-6" });
+    expect(out.grade).toBe("5-6");
+    expect(buildUserPrompt(ws, out)).toContain("Grades 5 and 6");
+    expect(buildUserPrompt(ws, out)).toContain("combined class");
+    expect(normalizeInputs(ws, { topic: "x", grade: "5-7" }).grade).toBeUndefined();
+    expect(gradeAges("5-6")).toBe("10–12");
+    const k = buildUserPrompt(ws, normalizeInputs(ws, { topic: "Counting", grade: "K" }));
+    expect(k).toContain("cannot print pictures");
+    expect(normalizeInputs(ws, { topic: "x", subject: "cte" }).subject).toBe("cte");
+  });
+  it("offers revise buttons that fit the tool", () => {
+    const labels = (id: string) => chipsFor(TOOL_BY_ID[id]).map((c) => c[0]);
+    expect(labels("parent-email")).not.toContain("Harder");
+    expect(labels("parent-email")).not.toContain("More questions");
+    expect(labels("parent-email")).toContain("Warmer");
+    expect(labels("iep-goals")).toContain("More measurable");
+    expect(labels("quiz")).toContain("Version B");
+    expect(labels("rubric")).not.toContain("Version B");
+    expect(labels("lesson-plan")).not.toContain("More questions");
   });
   it("splits the title from the body", () => {
     expect(splitTitle("# **Fractions** Quiz\n\nBody here")).toEqual({ title: "Fractions Quiz", body: "Body here" });
@@ -133,6 +188,33 @@ describe("request building", () => {
   it("makes URL-safe slugs", () => {
     expect(slugify("Équivalent Fractions: 3/4 & more!")).toBe("equivalent-fractions-3-4-more");
     expect(slugify("x".repeat(200)).length).toBeLessThanOrEqual(70);
+  });
+});
+
+describe("student names", () => {
+  const r = (s: string) => redactStudentDetails(s);
+  it("takes out a first name, a full name and a possessive", () => {
+    expect(r("Maria reads 45 words per minute.").text).toBe("[Student] reads 45 words per minute.");
+    expect(r("Reading fluency for Jamal Washington, grade 3").text).toBe("Reading fluency for [Student], grade 3");
+    expect(r("Sofia's mom asked about homework").text).toBe("[Student]'s mom asked about homework");
+    expect(r("Maria reads well").found).toEqual(["Maria"]);
+  });
+  it("catches a name it does not know when the sentence introduces one", () => {
+    expect(r("I have a student named Oluwaseun who needs help").text).toContain("named [Student] who");
+  });
+  it("treats names that are also words as names only when they act like a person", () => {
+    expect(r("Grace is a strong reader but rushes").text).toBe("[Student] is a strong reader but rushes");
+    expect(r("Conferences are in May and the art show is in June.").found).toEqual([]);
+    expect(r("Will need extra time on tests").found).toEqual([]);
+  });
+  it("leaves ordinary classroom text and adults' titles alone", () => {
+    const text = "Reminder about Friday's field trip: permission slips due Thursday. Contact Ms. Rivera in Room 12. Students read English and Spanish texts.";
+    expect(r(text)).toEqual({ text, found: [] });
+  });
+  it("takes out ID numbers and dates of birth", () => {
+    const out = r("Student ID: 4471902, DOB 03/14/2015, reads at grade 2 level");
+    expect(out.text).toBe("[ID removed], [date of birth removed], reads at grade 2 level");
+    expect(out.found).toEqual(["an ID number", "a date of birth"]);
   });
 });
 

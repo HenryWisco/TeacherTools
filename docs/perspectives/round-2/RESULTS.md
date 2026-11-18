@@ -79,6 +79,16 @@ On the reviewers' old documents the second opinion found real errors in 9 of 13 
 
 ### Batch 4. Bigger features
 
+**Status: mostly done on 18 November 2026.** Tried on the running site with eleven real documents (four two-language pages, two with student details typed in, two sub plans, kindergarten, a combined class, calculus).
+
+- 20: done (`src/names.ts`). On the IEP, report comment, family email and differentiation tools, what looks like a student's name, ID number or date of birth is replaced with a placeholder before the request goes to the AI, and the teacher is told. It knows about 450 common first names plus phrases such as "a student named …"; an unusual name with no such phrase still gets through, so the "don't type names" wording stays.
+- 21: done. "English + Spanish (side by side)" now prints as two columns matched paragraph by paragraph and question by question, and the same choice exists for all eight other languages on every tool with the language menu, including the text leveler. Tables are stacked rather than squeezed. Not done: columns together with A/B or three-level versions (those still print one language after the other), and the family email, which keeps its own language box.
+- 22: 16 new library pages (43 in total) covering ESL, world languages, kindergarten, art and music, PE and health, SEL, computer science, career and technical, calculus and precalculus, and a high school sub plan. Each was written by one AI and every answer re-worked by a second; that check found no wrong answers and corrected two sentences. Still AI-written and AI-checked, not teacher-checked. Supply links now differ for grades 6 and up in math and English.
+- 23: the warning is done, and kindergarten requests now ask for pages built from typed shapes, numerals and read-aloud directions instead of missing pictures (the test page had no picture notes). Layouts drawn by code (tracing lines, ten frames) are not done.
+- 24: done. Each tool has its own revise buttons.
+- 25: done: Career & Technical subject; combined classes (K–1 up to 11–12); a period-length choice on sub plans, where a full day now means one period plan plus a period-by-period table, or about five hours for a class that stays together; a "Save paper" print button; an optional "Drafted with AI assistance" line, and a fixed "check every answer" line on the answer key page; exponents, roots and ≤ ≥ shown as real notation. Not done: fraction bars, integral and sigma signs.
+- Not checked: how the new pages look on a real phone, and the Word download of a two-column page.
+
 | # | Change | Raised by | Effort |
 |---|---|---|---|
 | 20 | **Catch student names before they are sent.** The IEP tool warns against names but accepted one and printed it in the title. Check the text first and always write "the student". | 4 [07 18 19 25] | M |

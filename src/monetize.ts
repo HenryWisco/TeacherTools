@@ -66,6 +66,17 @@ const PICKS: Record<string, [string, string][]> = {
     ["Timeline bulletin board set", "history timeline bulletin board set"],
     ["Chart paper", "chart paper pad classroom"],
   ],
+  // Older students: a calculus page should not suggest fraction tiles.
+  "math-upper": [
+    ["Graph paper notebooks", "graph paper notebooks bulk classroom"],
+    ["Dry-erase boards, class set", "student dry erase boards class set"],
+    ["Rulers, protractors & compasses", "geometry set ruler protractor compass classroom"],
+  ],
+  "ela-upper": [
+    ["Sticky notes for annotating", "sticky notes bulk classroom"],
+    ["Highlighters, class set", "highlighters bulk classroom"],
+    ["Composition notebooks", "composition notebooks bulk"],
+  ],
   default: [
     ["Flair pens (teacher favorite)", "papermate flair pens"],
     ["Personal laminator", "thermal laminator for teachers"],
@@ -73,10 +84,11 @@ const PICKS: Record<string, [string, string][]> = {
   ],
 };
 
-export function classroomPicks(m: Money, subject: string) {
+export function classroomPicks(m: Money, subject: string, grade = "") {
   const tag = m.env.AMAZON_TAG;
   if (!tag && !m.env.SHOW_AD_PLACEHOLDERS) return "";
-  const picks = PICKS[subject] ?? PICKS.default;
+  const upper = parseInt(grade, 10) >= 6;
+  const picks = (upper && PICKS[`${subject}-upper`]) || PICKS[subject] || PICKS.default;
   const link = (q: string) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(q)}${tag ? `&tag=${encodeURIComponent(tag)}` : ""}`;
   return html`<aside class="picks no-print">

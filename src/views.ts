@@ -4,7 +4,7 @@ import type { Env } from "./env";
 import type { LibraryFilter, Resource } from "./db";
 import { NO_AD_TOOLS, adScript, adSlot, classroomPicks, sponsorStrip, type Money } from "./monetize";
 import { renderMarkdown } from "./markdown";
-import { BANDS, GRADES, LANGUAGES, MAX_REFERENCE, REGIONS, SUBJECTS, TOOLS, VERSIONS, allowsReference, allowsVersions, gradeLabel, typeLabel, TOOL_BY_ID, type Field, type Tool } from "./tools";
+import { BANDS, COMBINED_GRADES, GRADES, MAX_REFERENCE, OTHER_LANGUAGES, sideBySide, REGIONS, SUBJECTS, TOOLS, VERSIONS, allowsReference, allowsVersions, gradeLabel, typeLabel, TOOL_BY_ID, type Field, type Tool } from "./tools";
 
 type H = HtmlEscapedString | Promise<HtmlEscapedString> | string;
 
@@ -119,7 +119,11 @@ function commonFields(tool: Tool, pre: Record<string, string>, idPrefix: string)
           <select id="${idPrefix}-grade" name="grade">
             <option value="">Any / not sure</option>
             ${GRADES.map((g) => html`<option value="${g}" ${pre.grade === g ? raw("selected") : ""}>${gradeLabel(g)}</option>`)}
-          </select></div>`
+            <optgroup label="Combined classes">
+              ${COMBINED_GRADES.map((g) => html`<option value="${g}">${gradeLabel(g)}</option>`)}
+            </optgroup>
+          </select>
+          <p class="fine" data-k-note hidden>Kindergarten pages are words, numbers and simple shapes for now: no pictures, tracing lines or ten frames. Where a picture is needed you will see a note such as [Picture: 4 balls] to draw or paste in.</p></div>`
       : ""}
     ${c.subject
       ? html`<div class="field"><label for="${idPrefix}-subject">Subject</label>
@@ -156,7 +160,11 @@ function moreOptions(tool: Tool, idp: string) {
         ? ""
         : html`<div class="field"><label for="${idp}-language">Language</label>
             <select id="${idp}-language" name="language" data-remember>
-              ${LANGUAGES.map((l) => html`<option>${l}</option>`)}
+              <option>English</option>
+              ${Object.keys(OTHER_LANGUAGES).map((l) => html`<option>${l}</option>`)}
+              <optgroup label="Two languages, in two columns">
+                ${Object.keys(OTHER_LANGUAGES).map((l) => html`<option>${sideBySide(l)}</option>`)}
+              </optgroup>
             </select></div>`}
       ${allowsReference(tool)
         ? html`<div class="field wide"><label for="${idp}-reference">Your own text or template <span class="opt">(optional)</span></label>
@@ -167,16 +175,37 @@ function moreOptions(tool: Tool, idp: string) {
   </details>`;
 }
 
-const CHIPS: [string, string][] = [
-  ["Shorter", "Make it shorter, to fit on one page if possible."],
-  ["Easier", "Make it easier: simpler wording, smaller numbers, more scaffolding."],
-  ["Harder", "Make it more challenging, with deeper reasoning rather than just more questions."],
-  ["Version B", "Make a Version B: same skills and difficulty, different numbers, examples and question order."],
-  ["Sentence starters", "Add sentence starters and a word bank to support students who need them."],
-  ["For English learners", "Adapt it for English learners: simpler sentences, key vocabulary defined, sentence frames."],
-  ["In Spanish", "Rewrite the whole document in natural classroom Spanish."],
-  ["More questions", "Add five more questions of the same kind, and add them to the answer key."],
-];
+type Chip = [string, string];
+const SHORTER: Chip = ["Shorter", "Make it shorter, to fit on one page if possible."];
+const SPANISH: Chip = ["In Spanish", "Rewrite the whole document in natural classroom Spanish."];
+const LEARNERS: Chip = ["For English learners", "Adapt it for English learners: simpler sentences, key vocabulary defined, sentence frames."];
+const EASIER: Chip = ["Easier", "Make it easier: simpler wording, smaller numbers, more scaffolding."];
+const HARDER: Chip = ["Harder", "Make it more challenging, with deeper reasoning rather than just more questions."];
+const WARMER: Chip = ["Warmer", "Make the tone warmer and more personal, without making it longer."];
+const FORMAL: Chip = ["More formal", "Make the tone more formal and professional."];
+
+// One-tap revisions that make sense for this kind of document. A family email is
+// never offered "Harder" or "More questions".
+export function chipsFor(tool: Tool): Chip[] {
+  switch (tool.id) {
+    case "parent-email":
+      return [SHORTER, WARMER, FORMAL, ["Firmer", "Make the request and the deadline clearer and firmer, while staying respectful."], SPANISH, ["Add Spanish below", "Keep the English message and add the full message in Spanish below it."]];
+    case "report-comments":
+      return [SHORTER, WARMER, FORMAL, ["More specific next steps", "Make the next steps more specific and say how the family can help."], SPANISH];
+    case "iep-goals":
+      return [["More measurable", "Make every goal more measurable: a clear condition, behavior, criterion and how it is measured."], ["Simpler wording", "Rewrite in plainer language a family can follow, keeping the goals measurable."], ["Smaller steps", "Break each goal into smaller short-term objectives."], ["Progress monitoring", "Add specific ways to collect data and how often."]];
+    case "accommodations":
+      return [["More ideas", "Add more ideas in each group, all specific to this lesson."], ["Most practical only", "Cut it down to the three most practical ideas in each group."], LEARNERS, ["Low prep", "Keep only ideas that need no extra materials or preparation."]];
+  }
+  if (tool.audience === "teacher") {
+    return [SHORTER, ["More detail", "Add more detail to each step: what the teacher says and does, and what students do."], EASIER, HARDER, LEARNERS, SPANISH];
+  }
+  const chips: Chip[] = [SHORTER, EASIER, HARDER];
+  if (allowsVersions(tool)) chips.push(["Version B", "Make a Version B: same skills and difficulty, different numbers, examples and question order."]);
+  chips.push(["Sentence starters", "Add sentence starters and a word bank to support students who need them."], LEARNERS, SPANISH);
+  if (!["rubric", "choice-board", "project", "lab-activity"].includes(tool.id)) chips.push(["More questions", "Add five more questions of the same kind, and add them to the answer key."]);
+  return chips;
+}
 
 // The generator: a form, a live-updating page of output, and the actions for using it.
 export function generator(tool: Tool, pre: Record<string, string>, opts: { compact?: boolean } = {}) {
@@ -201,6 +230,8 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
         <button class="btn" type="button" data-act="copy">📋 Copy for Google Docs</button>
         <button class="btn" type="button" data-act="edit">✏ Edit</button>
         <button class="btn" type="button" data-act="large" aria-pressed="false">🔎 Large print</button>
+        <button class="btn" type="button" data-act="compact" aria-pressed="false" title="Smaller type and tighter spacing when printed, to use fewer sheets">🌿 Save paper</button>
+        <button class="btn" type="button" data-act="ailabel" aria-pressed="false" title="Adds the line 'Drafted with AI assistance.' at the foot of the student pages">🏷 AI label</button>
         ${tool.libraryType ? html`<button class="btn" type="button" data-act="share">🔗 Share</button>` : ""}
       </div>
       <p class="notice no-print" data-notice hidden></p>
@@ -209,7 +240,7 @@ export function generator(tool: Tool, pre: Record<string, string>, opts: { compa
       <form class="refine no-print" data-refine>
         <label for="${idp}-refine">Want it different?</label>
         <div class="chips wrap-chips" data-chips>
-          ${CHIPS.map(([label, text]) => html`<button class="chip" type="button" data-chip="${text}">${label}</button>`)}
+          ${chipsFor(tool).map(([label, text]) => html`<button class="chip" type="button" data-chip="${text}">${label}</button>`)}
         </div>
         <div class="row">
           <input id="${idp}-refine" name="request" type="text" maxlength="500" placeholder="e.g. make it shorter · add 5 harder questions · write it for English learners">
@@ -458,7 +489,7 @@ export function resourcePage(m: Money, r: Resource, more: Resource[]) {
       </div>
       <aside class="resource-side no-print">
         ${adSlot(m, "resource")}
-        ${classroomPicks(m, r.subject)}
+        ${classroomPicks(m, r.subject, r.grade)}
         ${more.length ? html`<h3>More like this</h3><div class="side-cards">${more.map(resourceCard)}</div>` : ""}
       </aside>
     </section>`,

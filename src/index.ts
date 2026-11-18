@@ -5,7 +5,8 @@ import * as db from "./db";
 import { findProblems, tidy } from "./check";
 import { generate, generateDemo, lineStream, type Checks } from "./generate";
 import { hashIp, pruneUsage, takeGeneration, takeShare, today } from "./limits";
-import { SUPPORTER_COOKIE, adsTxt, isSupporter, supporterToken, type Money } from "./monetize";
+import { NO_AD_TOOLS, SUPPORTER_COOKIE, adsTxt, isSupporter, supporterToken, type Money } from "./monetize";
+import { redactStudentDetails } from "./names";
 import { InputError, MAX_PREVIOUS, buildUserPrompt, getTool, normalizeInputs, outputBudget } from "./prompt";
 import { TOOLS, TOOL_BY_ID } from "./tools";
 import * as views from "./views";
@@ -117,9 +118,19 @@ app.post("/api/generate", async (c) => {
   let topic = "";
   let budget = 4096;
   let checks: Checks = {};
+  const hidden: string[] = [];
   try {
     tool = getTool(body.tool);
     const inputs = normalizeInputs(tool, (body.inputs ?? {}) as Record<string, unknown>);
+    // On the tools about one child or family, take out anything that looks like a
+    // student's name before it goes to the AI model.
+    const scrub = (text: string): string => {
+      if (!NO_AD_TOOLS.has(tool!.id)) return text;
+      const r = redactStudentDetails(text);
+      for (const f of r.found) if (!hidden.includes(f)) hidden.push(f);
+      return r.text;
+    };
+    for (const name of ["topic", "details", "reference"]) if (inputs[name]) inputs[name] = scrub(inputs[name]);
     topic = inputs.topic ?? inputs.source ?? "";
     budget = outputBudget(inputs, tool);
     const chosen = tool;
@@ -130,7 +141,7 @@ app.post("/api/generate", async (c) => {
       verify: !chosen.noKey && c.env.CHECK_ANSWERS !== "0",
     };
     const previous = typeof body.previous === "string" ? body.previous.slice(0, MAX_PREVIOUS) : "";
-    const request = typeof body.refine === "string" ? body.refine.trim() : "";
+    const request = typeof body.refine === "string" ? scrub(body.refine.trim()) : "";
     userPrompt = buildUserPrompt(tool, inputs, previous && request ? { previous, request } : undefined);
   } catch (err) {
     if (err instanceof InputError) return c.json({ error: err.message }, 400);
@@ -157,9 +168,10 @@ app.post("/api/generate", async (c) => {
   if (Math.random() < 0.01) c.executionCtx.waitUntil(pruneUsage(c.env));
 
   const env = c.env;
-  const stream = lineStream((send) =>
-    env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send, budget, checks) : generateDemo(tool, topic, send),
-  );
+  const stream = lineStream((send) => {
+    if (hidden.length) send({ hidden });
+    return env.ANTHROPIC_API_KEY ? generate(env, userPrompt, send, budget, checks) : generateDemo(tool, topic, send);
+  });
   // c.body (not a bare Response) so the device cookie set above is sent with the stream.
   return c.body(stream, 200, {
     "Content-Type": "application/x-ndjson; charset=utf-8",

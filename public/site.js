@@ -21,7 +21,9 @@
     "body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.45;color:#000}" +
     "h1{font-size:20pt}h2{font-size:15pt;margin-top:18pt}h3{font-size:13pt}" +
     "table{border-collapse:collapse;width:100%}th,td{border:1px solid #444;padding:5pt 7pt;vertical-align:top;text-align:left}" +
-    "th{background:#eee}li{margin-bottom:6pt}h2.answer-key{page-break-before:always}";
+    "th{background:#eee}li{margin-bottom:6pt}h2.answer-key{page-break-before:always}" +
+    "table.bilingual td{width:50%;border:0;border-bottom:1px solid #ccc}table.bilingual td+td{border-left:1px solid #666}" +
+    ".key-note,.ai-label{font-family:Arial,sans-serif;font-size:9pt;color:#444}";
 
   function downloadWord(doc) {
     var title = docTitle(doc);

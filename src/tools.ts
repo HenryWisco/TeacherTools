@@ -42,18 +42,24 @@ export const REGIONS: Record<string, { label: string; guide: string }> = {
   other: { label: "Another country", guide: "international English, metric units, and neutral terms that do not assume the US school system or US currency" },
 };
 
-export const LANGUAGES = [
-  "English",
-  "Spanish",
-  "English + Spanish (side by side)",
-  "French",
-  "Portuguese",
-  "Chinese (Simplified)",
-  "Vietnamese",
-  "Arabic",
-  "Tagalog",
-  "Haitian Creole",
-];
+// Each language with its own name for itself (shown above its column in a two-language document).
+export const OTHER_LANGUAGES: Record<string, string> = {
+  Spanish: "Español",
+  French: "Français",
+  Portuguese: "Português",
+  "Chinese (Simplified)": "中文",
+  Vietnamese: "Tiếng Việt",
+  Arabic: "العربية",
+  Tagalog: "Tagalog",
+  "Haitian Creole": "Kreyòl ayisyen",
+};
+export const sideBySide = (language: string): string => `English + ${language} (side by side)`;
+export const LANGUAGES = ["English", ...Object.keys(OTHER_LANGUAGES), ...Object.keys(OTHER_LANGUAGES).map(sideBySide)];
+// "English + Spanish (side by side)" -> "Spanish"; "" for a one-language choice.
+export function secondLanguage(choice: string | undefined): string {
+  const m = (choice ?? "").match(/^English \+ (.+?) \(side by side\)$/);
+  return m && m[1] in OTHER_LANGUAGES ? m[1] : "";
+}
 
 export const VERSIONS: Record<string, { label: string; guide: string }> = {
   ab: {
@@ -77,11 +83,15 @@ export const MAX_REFERENCE = 7000;
 
 // Ages shown beside grades for teachers outside the US.
 export function gradeAges(g: string): string {
-  const n = g === "K" ? 0 : parseInt(g, 10);
-  return `${n + 5}–${n + 6}`;
+  const [low, high] = g.split("-").map((p) => (p === "K" ? 0 : parseInt(p, 10)));
+  return `${low + 5}–${(high ?? low) + 6}`;
 }
 
 export const GRADES = ["K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+// Two grades taught together in one room ("5-6"). Offered on the generator only;
+// the library files a shared document under the lower grade.
+export const COMBINED_GRADES = GRADES.slice(0, -1).map((g, i) => `${g}-${GRADES[i + 1]}`);
+export const isGrade = (g: string): boolean => GRADES.includes(g) || COMBINED_GRADES.includes(g);
 
 export const SUBJECTS: Record<string, string> = {
   math: "Math",
@@ -94,6 +104,7 @@ export const SUBJECTS: Record<string, string> = {
   sel: "Social-Emotional Learning",
   "cs-tech": "Computer Science & Tech",
   esl: "ESL / ELL",
+  cte: "Career & Technical (CTE)",
 };
 
 export const BANDS: Record<string, { label: string; grades: string[] }> = {
@@ -105,6 +116,10 @@ export const BANDS: Record<string, { label: string; grades: string[] }> = {
 
 export function gradeLabel(g: string): string {
   if (!g) return "";
+  if (g.includes("-")) {
+    const [low, high] = g.split("-");
+    return low === "K" ? "Kindergarten and Grade 1" : `Grades ${low} and ${high}`;
+  }
   return g === "K" ? "Kindergarten" : `Grade ${g}`;
 }
 
@@ -182,6 +197,7 @@ export const TOOLS: Tool[] = [
     fields: [
       topic("e.g. Review of the solar system", "What should students work on?"),
       { name: "duration", label: "How long", kind: "select", options: ["One class period", "Half day", "Full day"] },
+      { name: "period", label: "Class period length", kind: "select", options: ["50 minutes", "40 minutes", "45 minutes", "60 minutes", "90 minutes (block)", "No periods (one class all day)"] },
       { name: "tech", label: "Technology", kind: "select", options: ["No devices", "Student devices available"] },
       details,
     ],
@@ -189,7 +205,7 @@ export const TOOLS: Tool[] = [
     libraryType: true,
     audience: "teacher",
     instructions:
-      "Write a substitute plan that a non-specialist adult can run with no preparation. Start with a short 'Notes for the substitute' section (routines to expect, what to collect, what to do if students finish early), then timed activities with word-for-word directions to read aloud, self-contained student tasks, and answer keys. Details only the teacher knows (bell schedule, seating chart location, office extension, student helpers) go in ONE fill-in table called 'Fill in before you leave this plan', right after the title; do not scatter square-bracket blanks through the rest of the plan. Then list 'What to copy' (each student page and how many). Put each student page under its own heading with a name/date line, separate from the substitute's script. Do not rely on any link, online quiz or file the teacher has not provided: device activities need a paper fallback. For grades 6 to 12, write the plan for one class period of the length given (assume 50 minutes) and say how to repeat it for other periods; a full day for a younger class covers the whole school day. Do not ask the substitute to do anything that needs subject expertise. End with a short 'Report for the teacher' form (absences, what was finished, problems, notes).",
+      "Write a substitute plan that a non-specialist adult can run with no preparation. Start with a short 'Notes for the substitute' section (routines to expect, what to collect, what to do if students finish early), then timed activities with word-for-word directions to read aloud, self-contained student tasks, and answer keys. Details only the teacher knows (bell schedule, seating chart location, office extension, student helpers) go in ONE fill-in table called 'Fill in before you leave this plan', right after the title; do not scatter square-bracket blanks through the rest of the plan. Then list 'What to copy' (each student page and how many). Put each student page under its own heading with a name/date line, separate from the substitute's script. Do not rely on any link, online quiz or file the teacher has not provided: device activities need a paper fallback. Timing: if the class changes rooms by period (the usual case in grades 6 to 12, and whenever a period length in minutes is given), write one complete period plan whose minutes add up to exactly that period length. For a half day or full day of periods, the teacher usually has several sections of the same course, so after the period plan add a section 'Rest of the day' with a table that has one row per period (six rows for a full day, three for a half day; columns: period, class or section, what to do, done?) telling the substitute to repeat the plan each period, plus one extra self-contained task of about 20 minutes for a class that finishes early. If there are no periods (one class all day, the usual case up to grade 5), a full day means timed activities that add up to about five hours of teaching, not counting lunch and recess, and a half day about two and a half hours; say the total at the top. Do not ask the substitute to do anything that needs subject expertise. End with a short 'Report for the teacher' form (absences, what was finished, problems, notes).",
   },
   {
     id: "slide-outline",

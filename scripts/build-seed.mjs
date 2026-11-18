@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 const dir = new URL("../seed/", import.meta.url);
 const q = (s) => "'" + String(s ?? "").replace(/'/g, "''") + "'";
 const TYPES = new Set(["lesson-plan","worksheet","quiz","rubric","reading-passage","exit-ticket","vocabulary","discussion-questions","sub-plan","unit-plan","bell-ringer","choice-board","word-problems","writing-prompts","study-guide","project","lab-activity","slide-outline"]);
-const SUBJECTS = new Set(["math","ela","science","social-studies","world-languages","arts","pe-health","sel","cs-tech","esl"]);
+const SUBJECTS = new Set(["math","ela","science","social-studies","world-languages","arts","pe-health","sel","cs-tech","esl","cte"]);
 const GRADES = new Set(["K","1","2","3","4","5","6","7","8","9","10","11","12"]);
 
 const files = readdirSync(dir).filter((f) => f.endsWith(".json")).sort();

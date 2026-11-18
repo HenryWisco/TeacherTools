@@ -16,6 +16,7 @@ export type Line =
   | { note: string }
   | { replace: string }
   | { check: CheckReport }
+  | { hidden: string[] } // student details removed before the request was sent (see names.ts)
   | { error: string }
   | { done: true; demo?: boolean };
 

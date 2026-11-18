@@ -13,9 +13,9 @@ A free website where teachers describe what they need and get a print-ready clas
 
 ```bash
 npm install
-npm run db:local   # creates the local database and loads the 27 starter resources
+npm run db:local   # creates the local database and loads the 43 starter resources
 npm run dev        # http://localhost:8787
-npm test           # 65 checks
+npm test           # 75 checks
 npx tsc --noEmit
 ```
 
@@ -37,6 +37,7 @@ Cloudflare Worker, Hono, server-rendered HTML, D1 (SQLite), no front-end framewo
 | `src/check.ts` | Checks on a finished document: `tidy` (fixes code can make, including adding up the points) and `findProblems` (self-corrections, wrong question count, arithmetic that doesn't work out) |
 | `src/arith.ts` | A calculator for "calculation = result" statements in answer keys |
 | `src/verify.ts` | The second opinion: a request that works every answer again and reports mismatches. `CHECK_ANSWERS` in `wrangler.jsonc` switches it off |
+| `src/names.ts` | Takes student names, IDs and birth dates out of the request on the four tools about one child or family, before anything is sent |
 | `src/limits.ts` | Daily caps: per browser (cookie), per network, site-wide |
 | `src/monetize.ts` | Ads, affiliate links, sponsor, supporter cookie. All off until configured |
 | `src/db.ts` | Library queries, sharing, admin |
@@ -45,7 +46,7 @@ Cloudflare Worker, Hono, server-rendered HTML, D1 (SQLite), no front-end framewo
 | `public/app.js` | Generator UI; `public/site.js` print/Word/copy + browser-saved documents; `public/my.js` |
 | `seed/*.json` | Starter library (format in `seed/FORMAT.md`); `npm run db:local` reloads it |
 
-`public/app.js` repeats the Markdown safety rules from `src/markdown.ts`; change both together.
+`public/app.js` repeats the Markdown safety rules from `src/markdown.ts`, and also its two-column layout for two-language documents (`pairLanguages`) and its math display (`prettyMath`); change both together. A new subject id must also be added to `scripts/build-seed.mjs`.
 
 ## Decisions already made (don't reopen without a reason)
 
@@ -57,7 +58,7 @@ Cloudflare Worker, Hono, server-rendered HTML, D1 (SQLite), no front-end framewo
 
 ## Background reading in this repo
 
-- `docs/perspectives/round-2/RESULTS.md`: thirty AI reviewers used the live site with a real key (November 2026) and the to-do list that came out of it. Batch 1 (writing rules, clean-copy second pass, length limits) and Batch 2 (checked answer keys) are done; Batch 3 (owner name, contact email, privacy and terms pages, which need details from the owner) and Batch 4 (bigger features) are not. The site has now been run against the real model: about 130 documents.
+- `docs/perspectives/round-2/RESULTS.md`: thirty AI reviewers used the live site with a real key (November 2026) and the to-do list that came out of it. Batch 1 (writing rules, clean-copy second pass, length limits) and Batch 2 (checked answer keys) are done; Batch 4 (name catching, two-column bilingual pages, 16 more library pages, per-tool revise buttons, combined grades, print options) is mostly done; its status note lists what is left. Batch 3 (owner name, contact email, privacy and terms pages, which need details from the owner) is not started. The site has now been run against the real model: about 130 documents.
 - `docs/research-report.md`: market and monetization research. Caveat: most sources were read only as search summaries; ad-rate figures are weak.
 - `docs/perspectives/SYNTHESIS.md`: five AI reviews of 20 user personas, combined and ranked, with what's done.
 

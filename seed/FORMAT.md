@@ -17,7 +17,7 @@ Type ids: lesson-plan, worksheet, quiz, rubric, reading-passage, exit-ticket, vo
 discussion-questions, sub-plan, unit-plan, bell-ringer, choice-board, word-problems,
 writing-prompts, study-guide, project, lab-activity, slide-outline
 
-Subject ids: math, ela, science, social-studies, world-languages, arts, pe-health, sel, cs-tech, esl
+Subject ids: math, ela, science, social-studies, world-languages, arts, pe-health, sel, cs-tech, esl, cte
 
 Body rules (Markdown):
 - Do NOT repeat the title as a heading; start with content. Use `##` for sections, `###` below.

@@ -1,4 +1,4 @@
-import { GRADES, LANGUAGES, MAX_REFERENCE, REGIONS, SUBJECTS, TOOL_BY_ID, VERSIONS, allowsReference, allowsVersions, gradeAges, gradeLabel, type Tool } from "./tools";
+import { LANGUAGES, MAX_REFERENCE, REGIONS, SUBJECTS, TOOL_BY_ID, VERSIONS, allowsReference, allowsVersions, gradeAges, gradeLabel, isGrade, secondLanguage, type Tool } from "./tools";
 
 export const SYSTEM_PROMPT = `You write classroom materials for K-12 teachers. You are an experienced teacher and curriculum writer: accurate, practical and clear. A teacher will print what you write and use it with students, often the next morning.
 
@@ -58,8 +58,8 @@ export function normalizeInputs(tool: Tool, raw: Record<string, unknown>): Input
     if (v) out[f.name] = v;
   }
   if (tool.common?.grade) {
-    const g = clean(raw.grade, 3);
-    if (GRADES.includes(g)) out.grade = g;
+    const g = clean(raw.grade, 5);
+    if (isGrade(g)) out.grade = g;
   }
   if (tool.common?.subject) {
     const s = clean(raw.subject, 30);
@@ -100,6 +100,12 @@ export function buildUserPrompt(
         ? `Grade: US ${gradeLabel(inputs.grade)} (students aged ${gradeAges(inputs.grade)}). Refer to it by the local name for that age group.`
         : `Grade: ${gradeLabel(inputs.grade)}`,
     );
+    if (inputs.grade.includes("-")) {
+      lines.push("This is one combined class with both grades in the room. Write one document the whole class can use: the core task fits the lower grade, and clearly marked extension parts stretch the higher grade. Name both grades under the title.");
+    }
+    if (inputs.grade.startsWith("K")) {
+      lines.push("Most of these students cannot read yet, and the site cannot print pictures. Build student pages from things that can be typed: numerals, letters, shapes such as ● ■ ▲ ★, and short directions the teacher reads aloud. Do not write tasks that depend on a picture (no \"circle the picture that starts with m\"). If a picture truly cannot be avoided, mark the spot as [Picture: what to draw] and keep these to three or fewer.");
+    }
   }
   if (inputs.subject) lines.push(`Subject: ${SUBJECTS[inputs.subject]}`);
   if (inputs.standards) lines.push(`Standards to align to: ${inputs.standards} (print this code exactly as typed; do not describe it or quote its wording)`);
@@ -132,11 +138,17 @@ export function buildUserPrompt(
   if (inputs.language && forLearners && !inputs.language.includes("+")) {
     lines.push(`Language: these students are learning English, so write the rewritten text, glossary terms and questions in simplified English. After each part, give the same part in ${inputs.language} as home-language support, in natural language a native speaker would use.`);
   } else if (inputs.language && !tool.fields.some((f) => f.name === "language")) {
-    lines.push(
-      inputs.language.includes("+")
-        ? "Language: write the document in both English and Spanish. Give each section in English, then the same section in Spanish, so a student or family can read either. The Spanish must be natural classroom Spanish as a native-speaking teacher would write it, not a word-for-word translation."
-        : `Language: write the whole document in ${inputs.language}, in natural classroom language as a native-speaking teacher would write it, not a word-for-word translation from English.`,
-    );
+    const second = secondLanguage(inputs.language);
+    if (second && inputs.versions) {
+      // Versions already split the page; two columns inside each would be too much to keep in step.
+      lines.push(`Language: write the document in both English and ${second}. Give each section in English, then the same section in ${second}, so a student or family can read either. The ${second} must be natural classroom language as a native-speaking teacher would write it, not a word-for-word translation.`);
+    } else if (second) {
+      lines.push(
+        `Language: write this as a two-language document, English and ${second}. The site prints the two languages in two columns side by side, so use exactly this structure. Line 1: the title in both languages, "# English title / ${second} title". Then a section headed exactly "## English" with the complete page in English. Then a section headed exactly "## ${second}" with the same complete page in ${second}. Inside those two sections use "###" for headings, never "##". The two sections must match piece for piece: the same headings, paragraphs, numbered questions and tables, in the same order and the same number of each, so that question 3 in English sits beside question 3 in ${second}. If it is a student page, each of the two sections starts with its own name/date line. Write nothing between the title and "## English". If the page has questions, finish with one "## Answer Key" after both sections, in English, with ${second} added where the expected answer is in ${second}. The ${second} must be natural classroom language as a native-speaking teacher would write it, not a word-for-word translation.`,
+      );
+    } else {
+      lines.push(`Language: write the whole document in ${inputs.language}, in natural classroom language as a native-speaking teacher would write it, not a word-for-word translation from English.`);
+    }
   }
   if (inputs.language || tool.fields.some((f) => f.name === "language")) {
     lines.push("Translate dates, times and deadlines precisely. \"By Friday\" in Spanish is \"a más tardar el viernes\", not \"antes del viernes\". Keep every amount, date and instruction the teacher gave the same in each language.");

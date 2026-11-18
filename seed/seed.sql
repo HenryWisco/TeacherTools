@@ -115,6 +115,158 @@ ______________________________________________
 **Practice 3: Use It Yourself**
 
 19-20. Answers will vary. Give credit when the word is used with the correct meaning and part of speech, and the sentence gives enough context to show understanding. Example: In science, we had to justify our hypothesis by explaining what we already knew about plants. A sentence such as I will analyze does not show understanding and should be revised.', 'published', 'seed', 0, '2026-11-01T12:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b29fbb0c0eae8d8e', 'algorithms-and-debugging-unplugged-worksheet-grade-5', 'Robot on the Grid: Algorithms and Debugging Worksheet (No Computer Needed)', 'worksheet', '5', 'cs-tech', 'An unplugged computer science worksheet with 10 items. Students trace step-by-step programs for a robot on a 5-by-5 grid, find and fix the bug in four short programs, and write two programs of their own. Includes an answer key with every path traced square by square.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Read the rules, then use the grid to answer each question. Trace every program one step at a time with your finger or a pencil. You do not need a computer.
+
+**Words to know:**
+
+- An **algorithm** is a list of steps, in order, for doing a task.
+- A **program** is an algorithm written in commands a computer can follow.
+- A **bug** is a mistake in a program. **Debugging** means finding the bug and fixing it.
+
+## The Grid
+
+Columns have letters (A to E). Rows have numbers (1 to 5). Row 1 is at the top. A square is named by its column letter and then its row number, so the robot''s START square is A5.
+
+| | A | B | C | D | E |
+|---|---|---|---|---|---|
+| **1** | | | WALL | | STAR |
+| **2** | | WALL | | | |
+| **3** | | | GEM | WALL | |
+| **4** | | | WALL | | |
+| **5** | START | | | | FLAG |
+
+## The Rules
+
+- The robot understands four commands. Each command moves it exactly one square.
+  - **UP** moves toward row 1 (A5 to A4).
+  - **DOWN** moves toward row 5 (A4 to A5).
+  - **RIGHT** moves toward column E (A5 to B5).
+  - **LEFT** moves toward column A (B5 to A5).
+- **REPEAT 3 [UP]** means do the command in the brackets 3 times. The number can change.
+- The robot follows the commands in order, from first to last.
+- If a command would move the robot into a WALL square or off the grid, the program **crashes** and stops.
+- The robot starts on A5 unless the question says something else.
+
+## Part A: Follow the Program
+
+1. Program: RIGHT, RIGHT, RIGHT, RIGHT
+
+    On which square does the robot stop? ______________  What is on that square? ______________
+
+2. Program: UP, UP, RIGHT, RIGHT
+
+    On which square does the robot stop? ______________  What is on that square? ______________
+
+3. Program: UP, UP, RIGHT, RIGHT, UP, RIGHT, RIGHT, UP
+
+    On which square does the robot stop? ______________
+
+    List every square the robot moves to, in order.
+
+______________________________________________
+
+4. Program: REPEAT 4 [RIGHT], REPEAT 4 [UP]
+
+    How many moves does the robot make in all? ______________  On which square does it stop? ______________
+
+## Part B: Find the Bug
+
+Each program below has one bug. Trace it to find out what goes wrong, then fix it.
+
+5. **Goal:** Move from START (A5) to the FLAG (E5).
+
+    Program: RIGHT, RIGHT, RIGHT, UP
+
+    Where does the robot stop? ______________  Which step is the bug? ______________
+
+    Fixed program: ______________________________________________
+
+6. **Goal:** Move from START (A5) to the GEM (C3).
+
+    Program: RIGHT, RIGHT, UP, UP
+
+    Fixed program: ______________________________________________
+
+    At which step does the program crash, and why?
+
+______________________________________________
+
+7. **Goal:** Move from START (A5) to the STAR (E1).
+
+    Program: UP, UP, RIGHT, RIGHT, UP, RIGHT, UP
+
+    Where does the robot stop? ______________
+
+    What is wrong with the program, and how would you fix it?
+
+______________________________________________
+
+8. **Goal:** Move from START (A5) to square A1.
+
+    Program: REPEAT 5 [UP]
+
+    Fixed program: ______________________________________________
+
+    What goes wrong with the first program?
+
+______________________________________________
+
+## Part C: Write Your Own
+
+9. Write a program that moves the robot from START (A5) to the GEM (C3) and then on to the FLAG (E5). The robot must not crash.
+
+______________________________________________
+
+______________________________________________
+
+10. This time the robot starts on the STAR (E1). Write a program that takes it home to START (A5). Use REPEAT at least once.
+
+______________________________________________
+
+______________________________________________
+
+**When you finish:** Trade papers with a partner. Trace each other''s programs for questions 9 and 10, one step at a time. If you find a bug, show your partner the step where it happens.
+
+## Answer Key
+
+In every trace below, the robot starts on the first square listed and each arrow is one command.
+
+**Part A**
+
+1. The robot stops on **E5**, the **FLAG**. Trace: A5 > B5 > C5 > D5 > E5.
+2. The robot stops on **C3**, the **GEM**. Trace: A5 > A4 > A3 > B3 > C3.
+3. Squares in order: A4, A3, B3, C3, C2, D2, E2, E1. The robot stops on **E1** (the STAR).
+
+| Step | Command | Robot moves to |
+|---|---|---|
+| 1 | UP | A4 |
+| 2 | UP | A3 |
+| 3 | RIGHT | B3 |
+| 4 | RIGHT | C3 |
+| 5 | UP | C2 |
+| 6 | RIGHT | D2 |
+| 7 | RIGHT | E2 |
+| 8 | UP | E1 |
+
+4. **8 moves** (4 + 4 = 8). The robot stops on **E1** (the STAR). Trace: A5 > B5 > C5 > D5 > E5 > E4 > E3 > E2 > E1.
+
+**Part B**
+
+5. The robot stops on **D4**. Trace: A5 > B5 > C5 > D5 > D4. The bug is **step 4**: UP should be RIGHT. Fixed program: RIGHT, RIGHT, RIGHT, RIGHT. Trace: A5 > B5 > C5 > D5 > E5.
+6. The program crashes at **step 3**. Trace: A5 > B5 > C5, then UP would move the robot into C4, which is a WALL. Sample fixed program: UP, UP, RIGHT, RIGHT. Trace: A5 > A4 > A3 > B3 > C3. Also correct: RIGHT, UP, UP, RIGHT. Trace: A5 > B5 > B4 > B3 > C3. Accept any program that reaches C3 without crashing.
+7. The robot stops on **D1**, one square to the left of the STAR. Trace: A5 > A4 > A3 > B3 > C3 > C2 > D2 > D1. A step is missing. Sample fix: add RIGHT at the end, which moves the robot from D1 to E1. Also correct: add RIGHT just before the last UP, so the program ends RIGHT, RIGHT, UP. Trace of that ending: C2 > D2 > E2 > E1.
+8. The loop repeats one time too many. Trace: A5 > A4 > A3 > A2 > A1, then the fifth UP would move the robot off the top of the grid, so the program crashes. Fixed program: REPEAT 4 [UP].
+
+**Part C**
+
+9. Answers will vary. Check each program by tracing it: it must reach C3, end on E5, and never enter a WALL (C1, B2, D3, C4) or leave the grid. The robot cannot go straight DOWN or RIGHT from the GEM, because C4 and D3 are WALLs, so it has to leave C3 by going UP or LEFT. The shortest correct programs have 10 moves. Two samples:
+
+    - UP, UP, RIGHT, RIGHT, UP, RIGHT, RIGHT, DOWN, DOWN, DOWN. Trace: A5 > A4 > A3 > B3 > C3 > C2 > D2 > E2 > E3 > E4 > E5.
+    - UP, UP, RIGHT, RIGHT, LEFT, DOWN, DOWN, RIGHT, RIGHT, RIGHT. Trace: A5 > A4 > A3 > B3 > C3 > B3 > B4 > B5 > C5 > D5 > E5.
+
+10. Answers will vary. The program must use REPEAT, end on A5, and never crash. Sample: REPEAT 4 [DOWN], REPEAT 4 [LEFT]. Trace: E1 > E2 > E3 > E4 > E5 > D5 > C5 > B5 > A5. Note that REPEAT 4 [LEFT], REPEAT 4 [DOWN] does not work: after one move the robot is on D1, and the next LEFT would move it into the WALL at C1.', 'published', 'seed', 0, '2026-11-01T05:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-0194835657b67068', 'american-revolution-choice-board-grade-5', 'American Revolution Choice Board', 'choice-board', '5', 'social-studies', 'A 3x3 tic-tac-toe choice board with nine American Revolution activities, including a timeline, map, Patriot and Loyalist chart, biography card, and a soldier''s letter. Includes student directions, requirements for each activity, a scoring checklist, and a teacher fact reference.', '', '## Student Directions
 
 Show what you know about the American Revolution! Choose **three** activities that make a line on the board, like tic-tac-toe. Your line can go across, down, or diagonally. Every line includes a different mix of writing, drawing, and research.
@@ -304,7 +456,7 @@ Sample Loyalist reasons: They felt loyal to the king and saw themselves as Briti
 - **James Armistead Lafayette (about 1748 to 1830), Virginia:** enslaved man who served as a spy for the Americans before Yorktown and later won his freedom.
 - **Thomas Paine (1737 to 1809), born in England:** wrote the pamphlet Common Sense in 1776, which argued for independence.
 - **Marquis de Lafayette (1757 to 1834), France:** French officer who served as a general under Washington.
-- **King George III (1738 to 1820), Great Britain:** king of Great Britain during the Revolution.', 'published', 'seed', 0, '2026-11-01T05:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- **King George III (1738 to 1820), Great Britain:** king of Great Britain during the Revolution.', 'published', 'seed', 0, '2026-10-31T22:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-08e3e2f4f7aceaa4', 'argumentative-writing-prompts-with-counterclaims-grade-10', '12 Argumentative Writing Prompts with Counterclaims', 'writing-prompts', '10', 'ela', 'Twelve debatable prompts on issues teens actually argue about, each paired with a suggested counterclaim to address and ideas for evidence. Includes a planning frame, sentence starters for rebuttals, and a student checklist.', 'CCSS.ELA-LITERACY.W.9-10.1, CCSS.ELA-LITERACY.W.9-10.1.A, CCSS.ELA-LITERACY.W.9-10.1.B', '## Teacher Notes
 
 **Ways to use these prompts**
@@ -469,7 +621,7 @@ ______________________________________________________________
 - [ ] My rebuttal answers the counterclaim directly.
 - [ ] I used transitions to connect my ideas.
 - [ ] I kept a formal tone and avoided phrases like *I think* and *in my opinion*.
-- [ ] My conclusion does more than repeat my introduction.', 'published', 'seed', 0, '2026-10-31T22:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- [ ] My conclusion does more than repeat my introduction.', 'published', 'seed', 0, '2026-10-31T15:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-f127ff75f13f39e5', 'balancing-chemical-equations-worksheet-grade-11', 'Balancing Chemical Equations Worksheet', 'worksheet', '11', 'science', 'Twelve equations to balance, arranged from simple synthesis reactions to combustion and reactions with polyatomic ions, plus a bonus. Includes a step-by-step method, a worked example, and an answer key with atom counts for every equation.', 'NGSS HS-PS1-7', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Balance each equation by writing a whole-number coefficient on each blank. If the coefficient is 1, write 1. Use the smallest whole numbers that work. Never change a subscript.
@@ -574,7 +726,171 @@ Coefficients are listed in the order the substances appear. Atom counts are the 
 
 14. Changing a subscript changes the identity of the substance. H2O is water, and H2O2 is hydrogen peroxide, a different compound with different properties. The reaction makes water, so only coefficients (how many molecules) may be changed.
 
-15. The law of conservation of mass. In a chemical reaction, matter is neither created nor destroyed, so the atoms present in the reactants are rearranged into the products and the number of each kind of atom stays the same.', 'published', 'seed', 0, '2026-10-31T15:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+15. The law of conservation of mass. In a chemical reaction, matter is neither created nor destroyed, so the atoms present in the reactants are rearranged into the products and the number of each kind of atom stays the same.', 'published', 'seed', 0, '2026-10-31T08:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-f17b3a4c68db6678', 'beginning-sounds-m-s-t-lesson-plan-kindergarten', 'Beginning Sounds m, s and t Lesson Plan (No Pictures Needed)', 'lesson-plan', 'K', 'ela', 'A 30-minute kindergarten lesson on hearing the first sound in a word for the letters m, s and t. It uses real classroom objects, word lists the teacher says aloud and movement, so there is nothing to print or cut out.', '', '## Overview
+
+**Time:** 30 minutes
+
+**Group:** whole class, seated on the carpet
+
+**Students will:**
+
+- listen to a spoken word and tell whether it starts with /m/, /s/ or /t/
+- match each of the three sounds to its letter
+
+**How to read this plan:** A letter between slashes, such as /m/, means the sound, not the letter name. Words in *italics* are the exact words to say to the class.
+
+## Materials
+
+- 3 sheets of paper. Write one large lowercase letter on each: m, s, t.
+- A bag or box with 9 real objects inside:
+  - marker, magnet, mitten
+  - sock, soap, sack (a paper lunch bag)
+  - tape, tissue, timer
+- A board and something to write with
+
+**If you do not have an object, swap it for one of these:**
+
+| Sound | Other objects that work |
+|---|---|
+| /m/ | mug, mask, mat |
+| /s/ | sandal, seed, sunglasses |
+| /t/ | towel, tub, tag |
+
+Do not use objects that start with sh, th, st or tr, such as a shoe, a thimble, a stapler or a truck. Their first sounds are harder to hear and will confuse this lesson.
+
+## How to Say the Three Sounds
+
+- **/m/** Close your lips and hum: mmmm. You can stretch this sound.
+- **/s/** Put your teeth together and hiss: ssss. You can stretch this sound.
+- **/t/** Tap your tongue once behind your top teeth. Keep it short and quiet. Do not add "uh" to the end.
+
+## Lesson Steps
+
+### Step 1: Listen for the first sound (3 minutes)
+
+Say: *Today we are going to listen for the first sound in a word. The first sound is the sound your mouth makes at the very start. Listen to this word: mmmop. Mop. My mouth starts with /m/. Say it with me: /m/, mop.*
+
+Do the same with two more words.
+
+- Say: *Listen: sssun. Sun. My mouth starts with /s/. Say it with me: /s/, sun.*
+- Say: *Listen: ten. Ten. My mouth starts with /t/. Say it with me: /t/, ten.*
+
+### Step 2: Three sounds, three moves (6 minutes)
+
+Teach one move for each sound. Hold up the matching letter paper as you teach it.
+
+| Sound | Move | What to say |
+|---|---|---|
+| /m/ | Rub your tummy | *This letter is m. It makes the sound /m/. When we hear /m/, we rub our tummy and say mmmm. Show me.* |
+| /s/ | Slide one hand through the air in a wavy line | *This letter is s. It makes the sound /s/. When we hear /s/, we slide our hand and say ssss. Show me.* |
+| /t/ | Tap two fingers on your knee | *This letter is t. It makes the sound /t/. When we hear /t/, we tap our knee and say /t/, /t/, /t/. Show me.* |
+
+Practice. Say: *Now I will say only a sound. You show me the move.*
+
+Say the sounds in this order, and wait for the move each time: /s/, /m/, /t/, /t/, /m/, /s/.
+
+### Step 3: Sort real objects (8 minutes)
+
+Lay the three letter papers on the floor in a row where everyone can see them.
+
+Take one object out of the bag at a time. Name the object yourself so that everyone uses the same word. For each object, use these words.
+
+Say: *This is a sock. Say sock. What sound do you hear at the start of sock?*
+
+Children answer /s/.
+
+Say: *Yes. Sock starts with /s/.* Then choose one child and say: *Please put the sock on the letter s.*
+
+Take the objects out in this order.
+
+| Order | Object | First sound | Goes on letter |
+|---|---|---|---|
+| 1 | sock | /s/ | s |
+| 2 | marker | /m/ | m |
+| 3 | tape | /t/ | t |
+| 4 | mitten | /m/ | m |
+| 5 | soap | /s/ | s |
+| 6 | tissue | /t/ | t |
+| 7 | timer | /t/ | t |
+| 8 | magnet | /m/ | m |
+| 9 | sack | /s/ | s |
+
+If a child picks the wrong letter, say the word again slowly and give two choices. Say: *Listen again: mmmitten. Watch my mouth. Is that /m/ or /t/?*
+
+To finish, touch each pile and name what is in it. Say: *Marker, mitten, magnet. They all start with /m/.* Do the same for the s pile (sock, soap, sack) and the t pile (tape, tissue, timer).
+
+### Step 4: Stand up and move (6 minutes)
+
+Children stand in their own space.
+
+Say: *I will say a word. Listen for the first sound. Then show me the move for that sound. Rub your tummy for /m/, slide your hand for /s/, tap your knee for /t/.*
+
+Say each word clearly. After the children move, say the answer. For example: *Moon. /m/. Moon starts with /m/.*
+
+| Order | Word | First sound | Move |
+|---|---|---|---|
+| 1 | moon | /m/ | rub tummy |
+| 2 | sand | /s/ | slide hand |
+| 3 | top | /t/ | tap knee |
+| 4 | mud | /m/ | rub tummy |
+| 5 | tiger | /t/ | tap knee |
+| 6 | seven | /s/ | slide hand |
+| 7 | table | /t/ | tap knee |
+| 8 | mouse | /m/ | rub tummy |
+| 9 | sink | /s/ | slide hand |
+| 10 | milk | /m/ | rub tummy |
+| 11 | soup | /s/ | slide hand |
+| 12 | toe | /t/ | tap knee |
+
+### Step 5: Match the sound to the letter (4 minutes)
+
+Children sit down. Write m, s and t on the board in large lowercase letters, with space between them.
+
+1. Point to each letter and say: *What sound does this letter make?* Children answer /m/, /s/, /t/.
+2. Say: *Use your finger to write the letter in the air with me. Say the sound while you write.* Write each letter slowly on the board again while the children write in the air.
+3. Say: *Now I will say a word. Point to the letter that starts the word.* Say these three words, one at a time: map (children point to m), sit (children point to s), tub (children point to t).
+
+### Step 6: Quick check (3 minutes)
+
+Say: *Last job. Close your eyes so that you do your own thinking. I will say a word. Show me the move for the first sound.*
+
+Say the six words in the Answer Key at the end of this plan, one at a time. Watch the moves. Write down the names of children who miss two or more words, and work with them in a small group tomorrow.
+
+Most of the class should show the right move for at least five of the six words.
+
+To close, say: *Open your eyes. Today you listened for /m/, /s/ and /t/ at the start of words. Listen for those sounds all day long.*
+
+## Time Check
+
+| Step | Minutes |
+|---|---|
+| 1. Listen for the first sound | 3 |
+| 2. Three sounds, three moves | 6 |
+| 3. Sort real objects | 8 |
+| 4. Stand up and move | 6 |
+| 5. Match the sound to the letter | 4 |
+| 6. Quick check | 3 |
+| **Total** | **30** |
+
+## Make It Easier or Harder
+
+- **Easier:** Use only /m/ and /s/ at first. Both sounds can be stretched, so they are easier to hear. Add /t/ on another day.
+- **Harder:** Ask a child to think of a new word that starts with /m/, /s/ or /t/. This lesson is about sounds, so accept any word that starts with the right sound, even if it is spelled with a different letter. "City" starts with /s/.
+- If a child offers a word such as "ship" for s, say: *Ship starts with /sh/. That is a different sound. Listen: sssock, shhhip.*
+
+## Answer Key
+
+**Quick check (Step 6)**
+
+| Order | Word to say | First sound | Move the child should show |
+|---|---|---|---|
+| 1 | sun | /s/ | slide hand |
+| 2 | mop | /m/ | rub tummy |
+| 3 | ten | /t/ | tap knee |
+| 4 | map | /m/ | rub tummy |
+| 5 | six | /s/ | slide hand |
+| 6 | tail | /t/ | tap knee |', 'published', 'seed', 0, '2026-10-31T01:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-9f7acaa492a29892', 'causes-of-world-war-i-quiz-grade-10', 'Causes of World War I Quiz', 'quiz', '10', 'social-studies', 'A 30-point quiz on the long-term and immediate causes of World War I: militarism, alliances, imperialism, nationalism, the assassination at Sarajevo, and the July Crisis. Ten multiple choice and two short answer questions with a scoring guide.', '', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** This quiz has two parts. In Part 1, circle the letter of the best answer (2 points each). In Part 2, answer each question in a well-developed paragraph (5 points each). Total: 30 points.
@@ -709,7 +1025,7 @@ ______________________________________________________________
 - **Imperialism:** the policy of extending a nation''s power by taking control of other lands. Examples: European powers competed for colonies and trade in Africa and Asia; Germany, a newer empire, wanted colonies to match those of Britain and France; France and Germany clashed over Morocco in 1905 and 1911, which deepened distrust and pushed Britain and France closer together.
 - **Nationalism:** intense pride in and loyalty to one''s nation or ethnic group, often with the belief that it should have its own independent state. Examples: Serbian nationalists wanted to unite the South Slavs, which threatened multi-ethnic Austria-Hungary; France resented the loss of Alsace-Lorraine to Germany in 1871; Russia''s support for fellow Slavs (Pan-Slavism) tied it to Serbia; the assassin of Franz Ferdinand was motivated by nationalism.
 
-*Look for:* a correct definition (1 point), two accurate and specific examples (1 point each), and an explanation of how each example raised tension or made war more likely (2 points).', 'published', 'seed', 0, '2026-10-31T08:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+*Look for:* a correct definition (1 point), two accurate and specific examples (1 point each), and an explanation of how each example raised tension or made war more likely (2 points).', 'published', 'seed', 0, '2026-10-30T18:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-a76e8f215cb6da27', 'cell-organelles-study-guide-grade-9', 'Cell Organelles and Their Functions Study Guide', 'study-guide', '9', 'science', 'A complete review of eukaryotic cell organelles with a function table, plant vs. animal and prokaryote vs. eukaryote comparisons, common misconceptions, memory analogies, and a 13-question self-check quiz with answers.', 'NGSS HS-LS1-2', '## How to Use This Guide
 
 1. Read each section once without trying to memorize anything.
@@ -905,7 +1221,7 @@ ______________________________________________________________
 
 13. Differences (any one): prokaryotic cells have no nucleus; they have no membrane-bound organelles; they are usually smaller. Similarities (any one): both have a cell membrane, cytoplasm, ribosomes, and DNA.
 
-**Score yourself:** 12 to 13 correct means you are ready. 9 to 11 correct means review the rows of the organelle table you missed. 8 or fewer means re-read the guide and retake the quiz tomorrow.', 'published', 'seed', 0, '2026-10-31T01:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+**Score yourself:** 12 to 13 correct means you are ready. 9 to 11 correct means review the rows of the organelle table you missed. 8 or fewer means re-read the guide and retake the quiz tomorrow.', 'published', 'seed', 0, '2026-10-30T11:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-5b5b12b4856ad2d9', 'civil-rights-primary-source-analysis-lesson-plan-grade-11', 'Analyzing Primary Sources from the Civil Rights Movement', 'lesson-plan', '11', 'social-studies', 'A 50-minute lesson in which small groups analyze different types of civil rights era primary sources (photograph, flyer, government document, news report, oral history) and compare what each reveals and leaves out. Includes a source selection guide, analysis organizer, differentiation, and an exit ticket with scoring guide.', 'CCSS.ELA-LITERACY.RH.11-12.1, CCSS.ELA-LITERACY.RH.11-12.2, CCSS.ELA-LITERACY.RH.11-12.6, CCSS.ELA-LITERACY.RH.11-12.9', '## Overview
 
 **Time:** 50 minutes
@@ -1123,7 +1439,302 @@ Answers depend on the sources you select. Use these look-fors when checking orga
 - Agreement usually appears on basic facts: date, place, and what action took place.
 - Differences usually appear in tone, labels for participants, explanations of cause, and judgments about who was responsible. Strong answers explain the difference by pointing to the creator''s audience or purpose.
 
-**Exit ticket:** See the scoring guide under Assessment. A full-credit example for a movement flyer: *The flyer was made by a local organizing committee to tell Black residents to stay off the buses on a certain day. It shows the boycott was carefully planned, because it gives a specific date and tells people to find other ways to work. It does not tell us whether people actually took part. The news photograph of nearly empty buses helped answer that.*', 'published', 'seed', 0, '2026-10-30T18:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+**Exit ticket:** See the scoring guide under Assessment. A full-credit example for a movement flyer: *The flyer was made by a local organizing committee to tell Black residents to stay off the buses on a certain day. It shows the boycott was carefully planned, because it gives a specific date and tells people to find other ways to work. It does not tell us whether people actually took part. The news photograph of nearly empty buses helped answer that.*', 'published', 'seed', 0, '2026-10-30T04:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-7aa5ca455e9d536c', 'classroom-survival-vocabulary-newcomers-grade-6', 'Classroom Survival Vocabulary for Newcomers', 'vocabulary', '6', 'esl', 'Twenty words and phrases a new English learner needs in the first weeks of school: school objects, places in the building and polite requests. Each has a simple meaning and an example sentence, followed by a 20-item practice page with answer key.', '', '**For the teacher:** This list is for students who are new to English. Read each word aloud and have students repeat it. Point to the real object or walk to the real place when you can. Students may write the word in their home language in the last column. The practice page can be done with a partner.
+
+## Part 1: School Objects
+
+| Word | What it means | Example sentence | In my language |
+|---|---|---|---|
+| backpack | a bag that you carry on your back | My books are in my backpack. | |
+| notebook | a book of blank paper that you write in | I write new words in my notebook. | |
+| textbook | a book that you use to study a subject at school | Open your science textbook to page 12. | |
+| eraser | a small piece of rubber that removes pencil marks | I made a mistake, so I used my eraser. | |
+| locker | a small metal closet at school where you keep your things | I put my jacket in my locker. | |
+| schedule | a list that shows your classes and the time of each one | My schedule says math starts at 9:00. | |
+| homework | school work that you do at home | I do my homework after dinner. | |
+
+## Part 2: Places at School
+
+| Word | What it means | Example sentence | In my language |
+|---|---|---|---|
+| cafeteria | the room where students eat lunch | We eat lunch in the cafeteria at 12:00. | |
+| gym | a big room for sports and PE class | We play basketball in the gym. | |
+| hallway | the long space outside the classrooms that you walk through | My locker is in the hallway. | |
+| library | a room with many books that you can borrow | I found a good book in the library. | |
+| nurse''s office | the room where you go when you are sick or hurt | I cut my finger, so I went to the nurse''s office. | |
+| office | the room where the principal and the school secretary work | If you come to school late, sign in at the office. | |
+| restroom | a room with toilets and sinks (also called the bathroom) | The restroom is next to the gym. | |
+
+## Part 3: Useful Requests
+
+These are polite sentences. Practice saying them aloud.
+
+| Say this | Use it when | 
+|---|---|
+| May I go to the restroom? | you need to use the bathroom |
+| Can you repeat that, please? | you did not hear what a person said |
+| I don''t understand. | you heard the words, but you do not know what they mean |
+| May I borrow a pencil? | you need to use a pencil that belongs to another person |
+| How do you say ___ in English? | you know a word in your language, but not in English |
+| Where is the ___? | you cannot find a place or a thing |
+
+## Practice
+
+**Name:** ______________________  **Date:** ____________
+
+### A. Match the word to its meaning
+
+Write the letter of the meaning on the line.
+
+1. backpack ____
+2. eraser ____
+3. homework ____
+4. locker ____
+5. schedule ____
+6. textbook ____
+
+**Meanings**
+
+- **a.** school work that you do at home
+- **b.** a list that shows your classes and the time of each one
+- **c.** a bag that you carry on your back
+- **d.** a book that you use to study a subject at school
+- **e.** a small piece of rubber that removes pencil marks
+- **f.** a small metal closet at school where you keep your things
+
+### B. Finish the sentence
+
+Choose a word from the box. Use each word one time.
+
+**Word box:** cafeteria, gym, hallway, library, notebook, nurse''s office, office, restroom
+
+7. I am hungry. It is time to eat lunch in the ______________.
+8. I fell and hurt my knee. I need to go to the ______________.
+9. I want to borrow a book about animals. I will go to the ______________.
+10. I came to school late. I have to sign in at the ______________.
+11. Please write these five sentences in your ______________.
+12. I need to wash my hands. May I go to the ______________?
+13. We play basketball in the ______________ during PE class.
+14. Do not run in the ______________. Walk to your next class.
+
+### C. What do you say?
+
+Read what happens. Write the best request from Part 3. Use each request one time.
+
+15. You need to use the bathroom during class.
+
+______________________________________________
+
+16. The teacher said the page number, but the bell was ringing and you did not hear it.
+
+______________________________________________
+
+17. You left your pencil at home and you need one for the test.
+
+______________________________________________
+
+18. You know the name of a fruit in your language. You want to learn its name in English.
+
+______________________________________________
+
+19. It is your first day. It is time for lunch, but you cannot find the cafeteria.
+
+______________________________________________
+
+20. You heard every word of the directions, but you do not know what they mean.
+
+______________________________________________
+
+## Answer Key
+
+**A. Match the word to its meaning**
+
+1. c
+2. e
+3. a
+4. f
+5. b
+6. d
+
+**B. Finish the sentence**
+
+7. cafeteria
+8. nurse''s office
+9. library
+10. office
+11. notebook
+12. restroom
+13. gym
+14. hallway
+
+**C. What do you say?**
+
+15. May I go to the restroom?
+16. Can you repeat that, please?
+17. May I borrow a pencil?
+18. How do you say ___ in English? (Students may point to the fruit or say its name in their language in place of the blank.)
+19. Where is the cafeteria?
+20. I don''t understand.', 'published', 'seed', 0, '2026-10-29T21:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-effdc12cb52cae73', 'color-wheel-mixing-secondary-colors-lesson-plan-grade-3', 'Color Wheel Lesson Plan: Mixing Secondary Colors', 'lesson-plan', '3', 'arts', 'A 45-minute grade 3 art lesson in which students paint a six-part color wheel and mix orange, green and purple from red, yellow and blue. Works with tempera or watercolor and includes timed steps, set-up and clean-up, a safety section and a quick check with answers.', '', '## Overview
+
+**Time:** 45 minutes, including set-up and clean-up
+
+**Students will:**
+
+- name the three primary colors and the three secondary colors
+- mix each secondary color from two primary colors
+- place all six colors in the correct order on a color wheel
+
+**Key words**
+
+- **Primary colors:** red, yellow and blue. In a paint set, these are the starting colors used to mix the others.
+- **Secondary colors:** orange, green and purple (also called violet). Each one is made by mixing two primary colors.
+- **Color wheel:** a circle that shows colors in order, so that each mixed color sits between the two colors that make it.
+
+## Materials
+
+**For each student**
+
+- 1 sheet of heavy white paper (watercolor paper or construction paper)
+- 1 pencil
+- 1 paintbrush, medium size
+- 1 paper towel
+- A smock or old shirt
+
+**For each table group**
+
+- Red, yellow and blue paint only. Use tempera (a spoonful of each color on a paper plate) OR watercolor sets (cover or remove the other colors if you can).
+- 1 extra paper plate or a plastic lid for mixing
+- 1 container of water, half full
+- 1 paper plate or bowl to trace around, about 8 inches across
+- Newspaper or a table cover
+
+**For the teacher**
+
+- A board or chart paper and a marker
+- Your own set of paint, brush, water and paper for the demonstration
+- A flat place for wet paintings to dry
+- Damp sponges or cloths for wiping tables
+
+## Safety
+
+Check every step against your school''s safety rules and the manufacturer''s instructions before use.
+
+- Use only paint labeled non-toxic and made for children. Read the label before the lesson.
+- Check for any student with a skin sensitivity or allergy before handing out paint.
+- Paint, paint water and brushes stay away from mouths and eyes. Paint water is not for drinking.
+- Wipe up spilled water or paint on the floor right away so that no one slips.
+- Students wear smocks and wash their hands with soap and water at the end.
+- Stay with the class the whole time, including during clean-up at the sink.
+
+## Lesson Steps
+
+### Step 1: Set-up (5 minutes)
+
+Cover the tables. Students put on smocks and write their names in pencil on the back of their paper. Table helpers hand out brushes, paper towels, water and paint. Paint stays in the middle of the table, untouched, until Step 4.
+
+### Step 2: Introduce and draw the wheel (7 minutes)
+
+Say: *Today you will be color scientists. You will start with only three colors of paint and end with six.*
+
+Ask: *Which three colors are on your table?* (Red, yellow and blue.) Say: *These are called the primary colors. We use them to mix other colors.*
+
+Draw a large circle on the board. Draw three straight lines through the center so that the circle is cut into six equal slices, like a pizza. Students do the same on their paper:
+
+1. Trace around the plate or bowl with a pencil.
+2. Draw three lines through the middle to make six slices.
+3. Lightly write a letter near the outside edge of every other slice. Start at the top slice and go around like a clock: Y in the first slice, skip a slice, R in the next, skip a slice, B in the next, skip a slice.
+
+Check that each student has an empty slice between Y and R, between R and B, and between B and Y.
+
+### Step 3: Demonstrate mixing (4 minutes)
+
+Gather students where they can see your paper. Show these three habits.
+
+- **Wash, wipe, dip.** Swish the brush in the water, wipe it on the paper towel, then dip into a new color. Do this every time you change colors.
+- **Start with the lighter color.** Put the lighter color on the mixing plate first. Add the darker color a tiny bit at a time. A little dark paint changes a light color quickly.
+- **Mix on the plate, not on the wheel.** Stir until the color is even, then paint the slice.
+
+Mix orange in front of the class: a brushful of yellow, then a small touch of red. Ask: *What color did I make?* (Orange.) Paint it in the empty slice between Y and R. Ask: *Why does orange belong in this slice?* (It is made from the two colors next to it, yellow and red.)
+
+### Step 4: Paint the primary colors (6 minutes)
+
+Students return to their tables and paint the three lettered slices: yellow in Y, red in R, blue in B. Remind them to wash, wipe and dip between colors. Walk around and check that the three slices between the primary colors are still empty.
+
+### Step 5: Mix and paint the secondary colors (10 minutes)
+
+Students mix one secondary color at a time on the mixing plate and paint it in the slice between the two colors that made it.
+
+| Mix | Start with | Add a little at a time | Paint it in the slice between |
+|---|---|---|---|
+| Orange | yellow | red | yellow and red |
+| Green | yellow | blue | yellow and blue |
+| Purple | red | blue | red and blue |
+
+As you walk around, ask: *Which two colors made this one? What would you add to change it?*
+
+**Fixing a mix**
+
+- Orange looks too red: add more yellow.
+- Green looks too blue: add more yellow.
+- Purple looks brown or gray: the brush or the water was probably dirty, or the red paint leans toward orange. Rinse well, change the water, and try again with less paint. If the school has magenta paint, it mixes a cleaner purple with blue than an orange-red does.
+- Watercolor looks pale: use less water on the brush and pick up more paint.
+
+When the wheel is finished, the six colors go around in this order: yellow, orange, red, purple, blue, green, and back to yellow.
+
+### Step 6: Quick check (5 minutes)
+
+Students put brushes in the water container and leave their paintings flat on the table. Ask the six questions below aloud. For questions 1 to 4, have the whole class answer together or point to the color on their own wheel. For questions 5 and 6, give thinking time and call on two or three students. Expected answers are in the Answer Key at the end of this plan.
+
+1. What are the three primary colors?
+2. Which two primary colors mix to make orange?
+3. Which two primary colors mix to make green?
+4. Which two primary colors mix to make purple?
+5. Why does each secondary color sit between two primary colors on the wheel?
+6. Your green looks too blue. What should you add?
+
+While students answer, look at the wheels. A finished wheel has six different colors, with each mixed color between the two colors that made it.
+
+### Step 7: Clean-up (8 minutes)
+
+Give one job at a time.
+
+1. Carry your painting flat with two hands to the drying place.
+2. Table helpers bring water containers to the sink. An adult empties them.
+3. Brushes are rinsed until the water runs clear, then left to dry flat or with the bristles up.
+4. Paper plates and paper towels go in the trash. Watercolor sets are wiped and closed.
+5. Wipe the table with a damp sponge.
+6. Wash hands with soap and water, then hang up smocks.
+
+## Time Check
+
+| Step | Minutes |
+|---|---|
+| 1. Set-up | 5 |
+| 2. Introduce and draw the wheel | 7 |
+| 3. Demonstrate mixing | 4 |
+| 4. Paint the primary colors | 6 |
+| 5. Mix and paint the secondary colors | 10 |
+| 6. Quick check | 5 |
+| 7. Clean-up | 8 |
+| **Total** | **45** |
+
+## Make It Easier or Harder
+
+- **Easier:** Draw the circle and the six slices on each paper before class so that students only add the letters.
+- **Harder:** Early finishers mix two different oranges on scrap paper, one with more yellow and one with more red, and describe the difference to a partner.
+
+## Answer Key
+
+**Quick check (Step 6)**
+
+1. Red, yellow and blue.
+2. Red and yellow.
+3. Yellow and blue.
+4. Red and blue.
+5. Because it is made by mixing those two primary colors. For example, orange sits between red and yellow because red and yellow make orange.
+6. Add more yellow.', 'published', 'seed', 0, '2026-10-29T14:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b06ca7e9c5a757a6', 'community-building-bell-ringers-first-weeks-grade-9', '20 Community-Building Bell Ringers for the First Weeks of School', 'bell-ringer', '9', 'sel', 'Twenty five-minute warm-ups for the first four weeks of ninth grade that move from low-risk introductions to goal setting and class norms. Each prompt has a quick share format, and the set includes a daily routine and tips for making sharing safe.', '', '## How to Use These Bell Ringers
 
 These prompts are ordered on purpose. Week 1 asks for low-risk, low-effort sharing. Later weeks ask students to work together, name what they value, and set goals. Use them in order, one per day, for the first four weeks.
@@ -1265,7 +1876,99 @@ The goal this week is for students to set a direction for the year and know wher
 
 ## Keeping It Going After Week 4
 
-Repeat students'' favorite formats once a week for the rest of the semester. *One-word check-in* (5), *Two roses and a bud* (8), and *Shout-out* (10) work well as Monday or Friday routines. Revisit the class agreements from prompt 14 at the start of each grading period and ask: *Which agreement are we keeping best? Which one needs work?*', 'published', 'seed', 0, '2026-10-30T11:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+Repeat students'' favorite formats once a week for the rest of the semester. *One-word check-in* (5), *Two roses and a bud* (8), and *Shout-out* (10) work well as Monday or Friday routines. Revisit the class agreements from prompt 14 at the start of each grading period and ask: *Which agreement are we keeping best? Which one needs work?*', 'published', 'seed', 0, '2026-10-29T07:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-ce34e82a2ec4dd6b', 'counting-beats-4-4-time-worksheet-grade-5', 'Counting Beats in 4/4 Time Worksheet', 'worksheet', '5', 'arts', 'A 12-item music worksheet on counting beats in 4/4 time with whole, half, quarter and eighth notes and their rests. Everything is written in words and numbers, so no music notation is needed, and an answer key with the working is included.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** In 4/4 time, every measure holds exactly 4 beats. Use the chart to answer each question. A rest is silence, and it lasts as long as the note with the same name.
+
+| Note or rest | Beats in 4/4 time |
+|---|---|
+| whole note or whole rest | 4 |
+| half note or half rest | 2 |
+| quarter note or quarter rest | 1 |
+| eighth note or eighth rest | 1/2 |
+
+## Part 1: How Many Beats?
+
+Write the number of beats.
+
+1. whole note = ______ beats
+
+2. whole rest = ______ beats
+
+3. quarter rest = ______ beat
+
+4. eighth note + eighth note = ______ beat
+
+## Part 2: Add the Beats
+
+Add the beats for all the notes and rests. Write the total.
+
+5. half note + quarter note + quarter note = ______ beats
+
+6. quarter note + eighth note + eighth note = ______ beats
+
+7. half rest + quarter note + eighth note + eighth note = ______ beats
+
+8. eighth rest + eighth note + quarter note + half note = ______ beats
+
+9. quarter note + quarter rest + half note = ______ beats
+
+## Part 3: Finish the Measure
+
+Each measure needs exactly 4 beats. Write the name of ONE note that finishes the measure.
+
+10. half note + ____________________ = 4 beats
+
+11. quarter note + quarter note + eighth note + eighth note + ____________________ = 4 beats
+
+## Part 4: Check a Measure
+
+12. A student wrote this measure in 4/4 time: half note + quarter note + eighth note.
+
+    a. How many beats did the student write? ______
+
+    b. Is the measure full? Circle one: Yes or No
+
+    c. What ONE note or rest would make the measure full?
+
+______________________________________________________________
+
+## Answer Key
+
+**Part 1: How Many Beats?**
+
+1. 4 beats
+2. 4 beats
+3. 1 beat
+4. 1 beat (1/2 + 1/2 = 1)
+
+**Part 2: Add the Beats**
+
+5. 4 beats (2 + 1 + 1 = 4)
+6. 2 beats (1 + 1/2 + 1/2 = 2)
+7. 4 beats (2 + 1 + 1/2 + 1/2 = 4)
+8. 4 beats (1/2 + 1/2 + 1 + 2 = 4)
+9. 4 beats (1 + 1 + 2 = 4)
+
+**Part 3: Finish the Measure**
+
+10. half note. The measure has 2 beats and needs 2 more (2 + 2 = 4).
+11. quarter note. The measure has 1 + 1 + 1/2 + 1/2 = 3 beats and needs 1 more (3 + 1 = 4).
+
+**Part 4: Check a Measure**
+
+12. a. 3 1/2 beats (2 + 1 + 1/2 = 3 1/2)
+
+    b. No. A measure in 4/4 time needs 4 beats.
+
+    c. An eighth note or an eighth rest. Either one adds the missing 1/2 beat (3 1/2 + 1/2 = 4).
+
+**Teacher notes**
+
+- These beat values are for 4/4 time, where the quarter note gets one beat.
+- In Part 3, a rest of the same length also fills the measure (a half rest for item 10, a quarter rest for item 11). The directions ask for a note, so decide whether you will accept a rest and tell students before they begin.
+- Follow-up: have students clap and count each measure from Part 2 aloud, saying "1 and 2 and 3 and 4 and" and staying silent on the rests.', 'published', 'seed', 0, '2026-10-29T00:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-6b297696e6a745d9', 'counting-comparing-numbers-to-10-worksheet-kindergarten', 'Counting and Comparing Numbers to 10 Worksheet', 'worksheet', 'K', 'math', 'A 15-item kindergarten worksheet where students count dots, write numerals, compare numbers and groups (more, fewer, the same), fill in missing numbers, and draw a set. Includes read-aloud directions and an answer key.', 'CCSS.MATH.CONTENT.K.CC.A.2, CCSS.MATH.CONTENT.K.CC.B.5, CCSS.MATH.CONTENT.K.CC.C.6, CCSS.MATH.CONTENT.K.CC.C.7', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Listen as your teacher reads each part. Touch each dot as you count. Take your time!
@@ -1382,7 +2085,7 @@ Write the missing number on the line.
 - Read every direction aloud, one part at a time. Model the first item of each part on the board with different numbers.
 - Watch for students who skip or double-count dots. Have them touch or cross out each dot as they say its number.
 - Reversed numerals (for example, a backward 3 or 9) are common in kindergarten. Count the answer as correct if the quantity is right, and practice formation separately.
-- Extension: ask early finishers to turn the page over and draw a group that has one more than 8, then write the number (9).', 'published', 'seed', 0, '2026-10-30T04:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- Extension: ask early finishers to turn the page over and draw a group that has one more than 8, then write the number (9).', 'published', 'seed', 0, '2026-10-28T17:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-34734eccf20e3a68', 'daily-life-in-ancient-egypt-reading-passage-grade-6', 'Life Along the Nile: Daily Life in Ancient Egypt', 'reading-passage', '6', 'social-studies', 'An original 400-word informational passage about how ordinary ancient Egyptians farmed, ate, dressed, learned, and played, followed by 7 text-dependent questions (main idea, vocabulary, details, and a short written response) with an answer key.', 'CCSS.ELA-LITERACY.RH.6-8.1, CCSS.ELA-LITERACY.RH.6-8.2, CCSS.ELA-LITERACY.RH.6-8.4', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Read the passage carefully. Then answer the questions. Go back to the passage to find evidence for your answers.
@@ -1473,7 +2176,7 @@ ______________________________________________
 
 7. Answers will vary. A strong response states that the Nile made life in Egypt possible or controlled the pattern of daily life, and supports this with at least two details from the passage. Possible details: the yearly flood left silt that made the soil fertile; farmers planted after the flood and harvested before the next one, so the river set the farming calendar; canals carried river water to the fields; people ate fish from the river; farmers did building work during the flood season; the crops grown in Nile soil supplied bread (wheat and barley) and linen clothing (flax); the river allowed Egyptian civilization to last about 3,000 years.
 
-   Suggested scoring (4 points): 1 point for a clear main statement, 1 point for each of two accurate details from the passage, 1 point for complete sentences that explain how the details connect to daily life.', 'published', 'seed', 0, '2026-10-29T21:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+   Suggested scoring (4 points): 1 point for a clear main statement, 1 point for each of two accurate details from the passage, 1 point for complete sentences that explain how the details connect to daily life.', 'published', 'seed', 0, '2026-10-28T10:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-640ed85d03e83e4e', 'density-column-liquid-layers-lab-grade-7', 'Density Column Lab: Layering Household Liquids', 'lab-activity', '7', 'science', 'Students measure the mass and volume of six household liquids, calculate each density, predict the stacking order, and then build a layered density column to test their prediction. Includes materials, safety notes, step-by-step procedure, data table, analysis questions, and an answer key with sample data.', '', '**Name:** ______________________  **Date:** ____________  **Lab partners:** ______________________
 
 ## Overview
@@ -1673,7 +2376,145 @@ Notes for the teacher: 91% rubbing alcohol is less dense (about 0.80 g/mL) and g
 
 9. Oil is less dense than ocean water, so it floats on top, just like the vegetable oil floated on the water in the column. Because it does not mix with water, it spreads out across the surface. (Salt water is even denser than fresh water, about 1.03 g/mL.)
 
-**Extension:** Results vary with the objects used. Each object sinks until it reaches a liquid that is denser than the object, and rests on top of that layer. A metal paper clip or bolt is denser than every liquid and sinks to the bottom. A grape or raisin usually sinks through the water and rests in or below the dish soap layer, on the corn syrup. Many plastic beads rest near the water or oil layers, depending on the type of plastic.', 'published', 'seed', 0, '2026-10-29T14:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+**Extension:** Results vary with the objects used. Each object sinks until it reaches a liquid that is denser than the object, and rests on top of that layer. A metal paper clip or bolt is denser than every liquid and sinks to the bottom. A grape or raisin usually sinks through the water and rests in or below the dish soap layer, on the corn syrup. Many plastic beads rest near the water or oil layers, depending on the type of plastic.', 'published', 'seed', 0, '2026-10-28T03:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-f3937ac34af44a67', 'derivatives-power-rule-chain-rule-worksheet-grade-12', 'Derivatives Worksheet: The Power Rule and the Chain Rule', 'worksheet', '12', 'math', 'Twelve calculus problems that build from the power rule to the chain rule and finish with a nested chain rule and a tangent line. Includes a short review with worked examples and a fully worked answer key.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Find the derivative of each function. Show your work on a separate sheet of paper and write your final answer on the blank. Simplify your answers and write them without negative exponents.
+
+## Quick Review
+
+### The power rule
+
+If f(x) = x^n, then f''(x) = n x^(n - 1). Multiply by the exponent, then lower the exponent by 1.
+
+- A constant multiple stays in front: the derivative of 3x^4 is 12x^3.
+- The derivative of a constant is 0.
+- Take the derivative of a sum or difference one term at a time.
+
+**Rewrite roots and fractions as powers first.**
+
+| Written as | Rewrite as |
+|---|---|
+| sqrt(x) | x^(1/2) |
+| 1/x | x^(-1) |
+| 1/x^n | x^(-n) |
+
+**Example:** f(x) = 2/x^2
+
+- Rewrite: f(x) = 2x^(-2)
+- Power rule: f''(x) = -4x^(-3)
+- Answer: f''(x) = -4/x^3
+
+### The chain rule
+
+Use the chain rule when one function is inside another. If f(x) = (inside)^n, then f''(x) = n (inside)^(n - 1) times the derivative of the inside.
+
+**Example:** f(x) = (2x - 5)^4
+
+- The inside is 2x - 5, and its derivative is 2.
+- f''(x) = 4(2x - 5)^3 times 2
+- Answer: f''(x) = 8(2x - 5)^3
+
+## Part A: The Power Rule
+
+1. f(x) = x^7
+
+   f''(x) = ______________________
+
+2. f(x) = 4x^5 - 3x^2 + 9
+
+   f''(x) = ______________________
+
+3. f(x) = 6 sqrt(x)
+
+   f''(x) = ______________________
+
+4. f(x) = 5/x^3
+
+   f''(x) = ______________________
+
+5. f(x) = x^3/3 - 2x + 1/x
+
+   f''(x) = ______________________
+
+## Part B: The Chain Rule
+
+6. f(x) = (3x + 1)^5
+
+   f''(x) = ______________________
+
+7. f(x) = (x^2 - 4)^3
+
+   f''(x) = ______________________
+
+8. f(x) = sqrt(5x + 2)
+
+   f''(x) = ______________________
+
+9. f(x) = 1/(2x - 7)^4
+
+   f''(x) = ______________________
+
+10. f(x) = (x^3 + 2x)^6
+
+    f''(x) = ______________________
+
+## Part C: Challenge
+
+11. f(x) = ((2x + 1)^3 + 1)^2
+
+    f''(x) = ______________________
+
+12. Find the equation of the line tangent to the curve y = sqrt(x^2 + 9) at the point where x = 4. Write your answer in the form y = mx + b.
+
+    ______________________
+
+## Answer Key
+
+Equivalent forms are correct. For example, 3/sqrt(x) may also be written 3x^(-1/2) if negative exponents are allowed in your class.
+
+### Part A
+
+1. **f''(x) = 7x^6.** Multiply by the exponent 7 and lower the exponent to 6.
+
+2. **f''(x) = 20x^4 - 6x.** Term by term: the derivative of 4x^5 is 20x^4, the derivative of -3x^2 is -6x, and the derivative of the constant 9 is 0.
+
+3. **f''(x) = 3/sqrt(x).** Rewrite as f(x) = 6x^(1/2). Then f''(x) = 6 times (1/2) x^(-1/2) = 3x^(-1/2) = 3/sqrt(x).
+
+4. **f''(x) = -15/x^4.** Rewrite as f(x) = 5x^(-3). Then f''(x) = 5 times (-3) x^(-4) = -15x^(-4) = -15/x^4.
+
+5. **f''(x) = x^2 - 2 - 1/x^2.** Rewrite as f(x) = (1/3)x^3 - 2x + x^(-1). The derivative of (1/3)x^3 is x^2, the derivative of -2x is -2, and the derivative of x^(-1) is -x^(-2) = -1/x^2.
+
+### Part B
+
+6. **f''(x) = 15(3x + 1)^4.** The inside is 3x + 1, with derivative 3. f''(x) = 5(3x + 1)^4 times 3 = 15(3x + 1)^4.
+
+7. **f''(x) = 6x(x^2 - 4)^2.** The inside is x^2 - 4, with derivative 2x. f''(x) = 3(x^2 - 4)^2 times 2x = 6x(x^2 - 4)^2.
+
+8. **f''(x) = 5/(2 sqrt(5x + 2)).** Rewrite as f(x) = (5x + 2)^(1/2). The inside is 5x + 2, with derivative 5. f''(x) = (1/2)(5x + 2)^(-1/2) times 5 = 5/(2 sqrt(5x + 2)).
+
+9. **f''(x) = -8/(2x - 7)^5.** Rewrite as f(x) = (2x - 7)^(-4). The inside is 2x - 7, with derivative 2. f''(x) = -4(2x - 7)^(-5) times 2 = -8(2x - 7)^(-5) = -8/(2x - 7)^5.
+
+10. **f''(x) = 6(x^3 + 2x)^5 (3x^2 + 2).** The inside is x^3 + 2x, with derivative 3x^2 + 2. f''(x) = 6(x^3 + 2x)^5 times (3x^2 + 2). Also correct: (18x^2 + 12)(x^3 + 2x)^5.
+
+### Part C
+
+11. **f''(x) = 12(2x + 1)^2 ((2x + 1)^3 + 1).** The chain rule is used twice.
+    - Outside: the square. Its derivative is 2((2x + 1)^3 + 1) times the derivative of the inside.
+    - Inside: (2x + 1)^3 + 1. Its derivative is 3(2x + 1)^2 times 2 = 6(2x + 1)^2.
+    - Multiply: 2((2x + 1)^3 + 1) times 6(2x + 1)^2 = 12(2x + 1)^2 ((2x + 1)^3 + 1).
+
+12. **y = (4/5)x + 9/5**
+    - Point: when x = 4, y = sqrt(16 + 9) = sqrt(25) = 5. The point is (4, 5).
+    - Derivative: y = (x^2 + 9)^(1/2), so y'' = (1/2)(x^2 + 9)^(-1/2) times 2x = x/sqrt(x^2 + 9).
+    - Slope: when x = 4, y'' = 4/sqrt(25) = 4/5.
+    - Line: y - 5 = (4/5)(x - 4), so y = (4/5)x - 16/5 + 25/5 = (4/5)x + 9/5.
+
+### Common mistakes to look for
+
+- Forgetting to multiply by the derivative of the inside (for example, answering 5(3x + 1)^4 for problem 6).
+- Raising the exponent instead of lowering it when the exponent is negative. In problem 4, the exponent -3 becomes -4, not -2.
+- In problem 12, giving only the slope 4/5 and not the equation of the line.', 'published', 'seed', 0, '2026-10-27T20:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b6d2cd3fd9cefde7', 'equivalent-fractions-worksheet-grade-4', 'Equivalent Fractions Worksheet', 'worksheet', '4', 'math', 'Fifteen problems on recognizing and generating equivalent fractions: missing numerators and denominators, writing equivalent fractions, deciding whether two fractions are equivalent, a fraction model, and a word problem. Includes a worked example and a full answer key with explanations.', 'CCSS.MATH.CONTENT.4.NF.A.1', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Equivalent fractions name the same amount, even though the numbers are different. To make an equivalent fraction, multiply (or divide) the numerator and the denominator by the **same** number.
@@ -1778,7 +2619,7 @@ Answers will vary. Check that the numerator and denominator were multiplied or d
 
 - The most common error is adding the same number to the top and bottom instead of multiplying (for example, saying 3/5 = 6/8 because 3 + 3 = 6 and 5 + 3 = 8). Problem 12 is built to bring out this mistake.
 - Problem 14 connects to the reasoning in the standard: when each part is cut into smaller equal pieces, the number of pieces and the number of shaded pieces both get multiplied by the same number, but the size of the shaded region does not change.
-- Fraction strips or folded paper help students who need a concrete model for Parts A and C.', 'published', 'seed', 0, '2026-10-29T07:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- Fraction strips or folded paper help students who need a concrete model for Parts A and C.', 'published', 'seed', 0, '2026-10-27T13:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-94f56b55eb3daac0', 'factoring-quadratic-trinomials-worksheet-grade-9', 'Factoring Quadratic Trinomials Worksheet (a = 1 and a > 1)', 'worksheet', '9', 'math', 'Eighteen factoring problems that move from x^2 + bx + c to ax^2 + bx + c and finish with GCF-first challenges. Includes a one-page review with worked examples and a full answer key with checks.', 'CCSS.MATH.CONTENT.HSA.SSE.A.2, CCSS.MATH.CONTENT.HSA.SSE.B.3.A', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Factor each trinomial completely. Show your work on a separate sheet of paper and write your final answer on the blank. Check every answer by multiplying your factors back together.
@@ -1916,7 +2757,7 @@ Answers that are factored but still contain a common factor, such as (3x + 6)(x 
 
 ### Think About It
 
-19. (x - 7)(x - 2) = x^2 - 2x - 7x + 14 = x^2 - 9x + 14, which does not match x^2 - 5x - 14. The classmate used two negative numbers, but two negatives multiply to a positive 14. Because c is negative (-14), the numbers must have opposite signs: -7 and 2 multiply to -14 and add to -5. Correct answer: **(x - 7)(x + 2)**.', 'published', 'seed', 0, '2026-10-29T00:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+19. (x - 7)(x - 2) = x^2 - 2x - 7x + 14 = x^2 - 9x + 14, which does not match x^2 - 5x - 14. The classmate used two negative numbers, but two negatives multiply to a positive 14. Because c is negative (-14), the numbers must have opposite signs: -7 and 2 multiply to -14 and add to -5. Correct answer: **(x - 7)(x + 2)**.', 'published', 'seed', 0, '2026-10-27T06:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-43b616073655f0f0', 'finding-slope-exit-ticket-grade-8', 'Finding Slope Exit Ticket', 'exit-ticket', '8', 'math', 'A 5-item exit ticket on finding slope from two points and from a description of a graph, covering positive, negative, zero, and fractional slopes. Includes a worked answer key and a quick guide to common errors.', 'CCSS.MATH.CONTENT.8.F.B.4, CCSS.MATH.CONTENT.8.EE.B.6', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Find the slope of each line. Show your work. Write each slope as an integer or as a fraction in simplest form.
@@ -1969,7 +2810,324 @@ Slope = change in y / change in x = (y2 - y1) / (x2 - x1), or rise / run.
 | Undefined or no slope for item 3 | Confused horizontal and vertical lines | 0 on top means slope 0 (horizontal); 0 on the bottom means undefined (vertical) |
 | -6/4 for item 5 | Did not simplify | Divide the numerator and denominator by 2 |
 
-**Sorting for tomorrow:** 5 correct = ready for slope-intercept form. 3 or 4 correct = quick review of the error type above. 0 to 2 correct = small-group reteach with a graph and slope triangles.', 'published', 'seed', 0, '2026-10-28T17:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+**Sorting for tomorrow:** 5 correct = ready for slope-intercept form. 3 or 4 correct = quick review of the error type above. 0 to 2 correct = small-group reteach with a graph and slope triangles.', 'published', 'seed', 0, '2026-10-26T23:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-eebbe761445d0067', 'fitness-circuit-lesson-plan-grade-7', 'Six-Station Fitness Circuit Lesson Plan', 'lesson-plan', '7', 'pe-health', 'A 45-minute PE lesson built around a six-station fitness circuit that needs only cones and floor lines. Includes a timed warm-up, station descriptions with easier and harder versions, rotation timing, a cool-down, a student record card, and modifications.', '', '## Overview
+
+**Time:** 45 minutes
+
+**Space:** Gym, multipurpose room, or a flat outdoor area
+
+**Big idea:** A circuit is a set of different exercises done one after another. Each student works at a personal pace and tries to match or beat their own first-round score, not anyone else''s.
+
+## Objectives
+
+By the end of the lesson, students will be able to:
+
+- Perform six bodyweight exercises with the form cues for each one.
+- Choose the version of each exercise (easier, standard, or harder) that fits them today.
+- Record their own results and compare round 1 with round 2.
+- Name one exercise that works the legs, one that works the upper body, and one that works the core.
+
+## Materials
+
+- 12 cones or floor markers (2 per station)
+- Floor lines already in the gym, or floor tape or chalk for one line at Station 3
+- A timer or stopwatch, and a whistle or music you can pause
+- 6 station signs: station number, exercise name, and the form cues from this plan written in large print
+- 1 Student Record Card and 1 pencil per student (the card is near the end of this plan)
+- Exercise mats for Stations 2, 4, and 6 if you have them (optional)
+
+## Before the Lesson
+
+- Set the six stations in a large circle with at least 3 metres (about 10 feet) between them. Number them in order so rotation is always to the next higher number, and Station 6 moves to Station 1.
+- At Station 5, place two cones 10 metres (about 11 yards) apart, away from walls.
+- Put the pencils and record cards in a pile at each station so nothing has to be carried.
+- Read the Safety section and the Modifications section, and plan versions for individual students ahead of time.
+
+## Lesson at a Glance
+
+| Part | Minutes |
+|---|---|
+| 1. Opening | 3 |
+| 2. Warm-up | 6 |
+| 3. Station demonstration | 5 |
+| 4. Circuit, round 1 | 12 |
+| 5. Water break and check-in | 2 |
+| 6. Circuit, round 2 | 12 |
+| 7. Cool-down and reflection | 5 |
+| **Total** | **45** |
+
+## Lesson Steps
+
+### 1. Opening (3 minutes)
+
+1. Students sit in the middle of the space. Take attendance.
+2. Say: ''Today you will work through a six-station circuit, twice. Your goal is steady effort and good form. The only score you are trying to beat is your own.''
+3. Explain the pace rule: ''Work hard enough that you are breathing faster, but you can still say a short sentence. If you cannot, slow down or switch to the easier version.''
+4. Explain the stop rule: ''If something hurts or you feel dizzy or unwell, stop, sit down at the side, and tell me right away.''
+
+### 2. Warm-up (6 minutes)
+
+Students spread out in the open space. Lead these in order.
+
+| Activity | Time |
+|---|---|
+| Easy jog or brisk walk around the edge of the space | 2 minutes |
+| Arm circles: 30 seconds forward, 30 seconds backward | 1 minute |
+| Walking lunges across the space, slow and controlled | 1 minute |
+| Side shuffles across the space, switching the lead foot each crossing | 1 minute |
+| Slow bodyweight squats, about one every 3 seconds | 1 minute |
+
+### 3. Station Demonstration (5 minutes)
+
+1. Walk the class around the circle. At each station, show the standard version, then the easier version, then the harder version. Spend about 40 seconds per station (4 minutes in all).
+2. At each station, read the form cues on the sign aloud.
+3. Tell students: ''Pick the version that lets you keep good form for the whole time. You can change versions in the middle of a station.''
+4. In the last minute, split the class into 6 groups of about equal size and send one group to each station. Explain the signals: one whistle means start, two whistles mean stop and rest, a long whistle means rotate.
+
+### 4. Circuit, Round 1 (12 minutes)
+
+Each station takes exactly 2 minutes. Six stations take 12 minutes.
+
+| Clock at each station | What students do |
+|---|---|
+| 0:00 to 0:40 | Work (40 seconds) |
+| 0:40 to 0:50 | Rest in place (10 seconds) |
+| 0:50 to 1:30 | Work (40 seconds) |
+| 1:30 to 2:00 | Write the score on the record card, then walk to the next station (30 seconds) |
+
+The score for each station is the total for both work periods added together. During the round, move around the circle, give one form cue at a time, and suggest the easier version to any student whose form is slipping.
+
+### 5. Water Break and Check-In (2 minutes)
+
+1. Students get a drink and return to the station where they started.
+2. Ask: ''Which station was hardest for you? Show me the number on your fingers.'' Then say: ''In round 2, choose the version at that station that lets you keep your form.''
+
+### 6. Circuit, Round 2 (12 minutes)
+
+Repeat the circuit with the same timing. Students write their round 2 scores beside their round 1 scores. Remind them that changing to an easier or harder version is a good decision when it keeps their form strong, and that they should note the version they used.
+
+### 7. Cool-Down and Reflection (5 minutes)
+
+| Activity | Time |
+|---|---|
+| Slow walk around the space, breathing in through the nose and out through the mouth | 2 minutes |
+| Shoulder stretch: pull one arm across the chest, 15 seconds each arm | 30 seconds |
+| Calf stretch: one foot back with the heel pressed down, 15 seconds each leg | 30 seconds |
+| Seated hamstring reach: sit with legs straight and reach toward the toes without bouncing | 30 seconds |
+| Kneeling reach: kneel, sit back toward the heels, and stretch both arms forward on the floor | 30 seconds |
+| Reflection | 1 minute |
+
+For the reflection, students stay seated and answer on the bottom of the record card or aloud to a partner: ''Which station worked your legs, which worked your upper body, and which worked your core? What is one thing you would do differently next time?'' Collect the cards.
+
+## The Six Stations
+
+### Station 1: Squats (legs)
+
+- **What to do:** Stand with feet shoulder-width apart. Bend the knees and push the hips back as if sitting down on a chair, then stand up tall.
+- **Form cues:** Heels stay on the floor. Chest up. Knees point the same way as the toes.
+- **Easier:** Bend only part of the way down, or sit down on a bench and stand up again.
+- **Harder:** Pause for 2 seconds at the bottom of every squat.
+- **Score:** Number of squats.
+
+### Station 2: Push-Ups (upper body)
+
+- **What to do:** Place the hands on the floor a little wider than the shoulders, with the body in a straight line from head to heels. Bend the elbows to lower the chest toward the floor, then push back up.
+- **Form cues:** Straight line from head to heels. Eyes on the floor just ahead of the hands. Lower with control.
+- **Easier:** Keep the knees on the floor, or do the push-ups standing with the hands on a wall.
+- **Harder:** Lower for a slow count of 3 on every push-up.
+- **Score:** Number of push-ups.
+
+### Station 3: Line Hops (heart and lungs)
+
+- **What to do:** Stand beside a line on the floor with feet together. Hop sideways over the line and back again on two feet.
+- **Form cues:** Land softly on the balls of the feet. Knees slightly bent. Small, quick hops.
+- **Easier:** Step over the line and back, one foot at a time.
+- **Harder:** Hop on one foot for the first work period and the other foot for the second.
+- **Score:** Number of times you cross the line.
+
+### Station 4: Plank Hold (core)
+
+- **What to do:** Rest on the forearms and toes with the elbows under the shoulders. Hold the body in a straight line.
+- **Form cues:** Straight line from head to heels. Hips level, not lifted and not sagging. Keep breathing.
+- **Easier:** Keep the knees on the floor, or hold a leaning plank with the forearms on a wall.
+- **Harder:** Lift one foot a few centimetres off the floor and switch feet every 5 seconds.
+- **Score:** Number of seconds held. A partner counts aloud. If you drop to the floor, rest for a breath, start again, and keep adding.
+
+### Station 5: Shuttle (heart and lungs)
+
+- **What to do:** Jog from one cone to the other, touch the floor beside the cone, turn, and jog back. Keep going.
+- **Form cues:** Stay in your own lane. Bend the knees to touch the floor. Look up before you turn.
+- **Easier:** Walk briskly and touch your knee in place of the floor.
+- **Harder:** Side shuffle on the way out and jog on the way back.
+- **Score:** Number of lengths (one length is cone to cone).
+
+### Station 6: Bird Dog (core and balance)
+
+- **What to do:** Start on hands and knees. Reach one arm forward and the opposite leg straight back. Hold for 2 seconds, lower, and switch sides.
+- **Form cues:** Back flat like a table. Move slowly. Hips stay level.
+- **Easier:** Reach only the arm, or only the leg.
+- **Harder:** Before lowering, bring the elbow and the opposite knee together under the body, then reach out again.
+- **Score:** Number of reaches.
+
+## Modifications
+
+- **Every student:** All three versions of each exercise are open to everyone, every round. Present the easier version as a smart choice, not a lesser one.
+- **Students who use a wheelchair or have limited leg movement:** Plan a version for each station ahead of time with the student, the family, and any support staff. Possible swaps: seated arm punches at Station 1, seated wall or desk push-aways at Station 2, fast arm circles at Station 3, a tall seated posture hold with arms out in front at Station 4, wheeling the shuttle course at Station 5, and seated opposite arm and leg reaches at Station 6.
+- **Students returning from an injury or with a medical note:** Follow the note. Offer a timekeeper or score-recorder role at any station the student cannot do, and a walking lap during that station.
+- **Students who tire quickly:** Work for the first 40 seconds only and use the second work period as extra rest, or do round 2 as a walking lap with stretches.
+- **Students who are sensitive to noise:** Use a visual signal such as a raised cone or a large timer display in place of the whistle.
+- **English learners:** Keep the station signs short and demonstrate every version. Pair the student with a partner who models each station first.
+- **Students who are ready for more:** Use the harder version at every station and aim to match the round 1 score in round 2 with the same form.
+
+## Safety
+
+Check every step against your school''s safety rules and the manufacturer''s instructions before use.
+
+- Before class, check that the floor is dry and clear of bags, bottles, and loose equipment.
+- Students wear closed athletic shoes with laces tied.
+- Keep at least 3 metres (about 10 feet) between stations, and keep the shuttle lane away from walls and other groups.
+- If you use mats, check that they lie flat and do not slide.
+- Follow each student''s health plan and any medical notes on file.
+- Any student who reports pain, dizziness, or trouble breathing stops at once. Follow your school''s procedure.
+- Keep water available, and adjust or shorten the lesson in hot conditions according to your school''s rules.
+
+## Assessment
+
+- **During the circuit:** Watch for the form cues on each sign. Note students who need a different version next time.
+- **Record card:** Check that both rounds are filled in and that the reflection names a legs, an upper body, and a core station. Do not grade the scores themselves. Grade completion, form, and effort.
+- **Expected reflection answers:** Legs: Station 1 (squats). Also accept Station 3 or Station 5. Upper body: Station 2 (push-ups). Core: Station 4 (plank) or Station 6 (bird dog).
+
+## Student Record Card
+
+**Name:** ______________________  **Date:** ____________
+
+| Station | Version I used (easier, standard, harder) | Round 1 score | Round 2 score |
+|---|---|---|---|
+| 1. Squats (count) | | | |
+| 2. Push-ups (count) | | | |
+| 3. Line hops (crossings) | | | |
+| 4. Plank hold (seconds) | | | |
+| 5. Shuttle (lengths) | | | |
+| 6. Bird dog (reaches) | | | |
+
+**Reflection:** Which station worked your legs, which worked your upper body, and which worked your core? What is one thing you would do differently next time?
+
+________________________________________________________________
+
+________________________________________________________________', 'published', 'seed', 0, '2026-10-26T16:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-ea2db29ab4bf7d58', 'french-greetings-and-introductions-quiz-grade-7', 'French 1 Quiz: Greetings and Introductions', 'quiz', '7', 'world-languages', 'A ten-question French 1 quiz on saying hello and goodbye, asking and giving a name, asking how someone is, and choosing between formal and informal speech. Six multiple-choice questions and a four-blank conversation, with answer key.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Answer all ten questions. Each question is worth 1 point.
+
+## Part A: Multiple Choice
+
+Circle the letter of the best answer.
+
+1. It is 9:00 in the morning. How do you greet your teacher?
+
+    a. Bonsoir, madame.
+
+    b. Bonjour, madame.
+
+    c. Bonne nuit, madame.
+
+    d. Au revoir, madame.
+
+2. What does "Comment t''appelles-tu ?" mean?
+
+    a. How are you?
+
+    b. How old are you?
+
+    c. What is your name?
+
+    d. Where do you live?
+
+3. A friend asks you, "Comment ça va ?" Which is the best answer?
+
+    a. Je m''appelle Léa.
+
+    b. Ça va bien, merci.
+
+    c. J''ai douze ans.
+
+    d. À demain.
+
+4. School is over. You will see your friend again tomorrow. What do you say?
+
+    a. À demain !
+
+    b. Enchanté !
+
+    c. Bonjour !
+
+    d. S''il vous plaît !
+
+5. You meet an adult you do not know. Which question is the polite way to ask how the person is?
+
+    a. Comment vas-tu ?
+
+    b. Ça va ?
+
+    c. Comment allez-vous ?
+
+    d. Salut, ça va ?
+
+6. When do French speakers use the word "Salut"?
+
+    a. Only to say hello to a teacher
+
+    b. Only late at night
+
+    c. With friends, to say hello or goodbye
+
+    d. Only to say thank you
+
+## Part B: Complete the Conversation
+
+Hugo and Chloé meet on the first day of school. Choose a word or phrase from the box for each numbered blank. Use each one time.
+
+**Word box:** ans, appelle, Au revoir, Enchantée
+
+**Hugo:** Bonjour ! Je m'' (7) ______________ Hugo. Et toi ?
+
+**Chloé:** Je m''appelle Chloé. (8) ______________, Hugo.
+
+**Hugo:** Enchanté. Tu as quel âge ?
+
+**Chloé:** J''ai douze (9) ______________.
+
+**Hugo:** Moi aussi ! Bon, j''ai un cours de maths. (10) ______________, Chloé !
+
+**Chloé:** À bientôt, Hugo !
+
+Write your answers here.
+
+7. ______________________
+8. ______________________
+9. ______________________
+10. ______________________
+
+## Answer Key
+
+**Part A**
+
+1. b. "Bonjour" is the greeting for the morning and the daytime. "Bonsoir" is for the evening, "Bonne nuit" is said at bedtime, and "Au revoir" means goodbye.
+2. c. "Comment t''appelles-tu ?" means "What is your name?"
+3. b. "Ça va bien, merci" means "I am doing well, thank you." The other choices give a name, give an age, or say "see you tomorrow."
+4. a. "À demain" means "See you tomorrow."
+5. c. "Comment allez-vous ?" uses "vous", the polite form for an adult you do not know. The other choices are informal.
+6. c. "Salut" is informal. Friends use it for both "hi" and "bye."
+
+**Part B**
+
+7. appelle. "Je m''appelle Hugo" means "My name is Hugo."
+8. Enchantée. It means "Pleased to meet you." Chloé is a girl, so the word is written with an extra -e. Hugo writes "Enchanté."
+9. ans. "J''ai douze ans" means "I am twelve years old."
+10. Au revoir. It means "Goodbye."
+
+**Total: 10 points**', 'published', 'seed', 0, '2026-10-26T09:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-07b53540972daafb', 'how-honeybees-make-honey-reading-passage-grade-3', 'How Honeybees Make Honey: Reading Passage and Questions', 'reading-passage', '3', 'ela', 'An original 300-word nonfiction passage that explains, step by step, how honeybees turn flower nectar into honey. Six comprehension questions cover literal recall, sequence, vocabulary in context, and inference, with a full answer key.', 'CCSS.ELA-LITERACY.RI.3.1, CCSS.ELA-LITERACY.RI.3.3, CCSS.ELA-LITERACY.RI.3.4', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Read the passage. Then answer the questions. Go back to the passage to find evidence for your answers.
@@ -2060,7 +3218,7 @@ ________________________________________________________________
 - Passage length: about 300 words. Paragraphs are numbered so students can cite where they found evidence.
 - Words to preview if needed: nectar, hive, honeycomb, wax, evaporate, seal.
 - Suggested scoring: 1 point each for questions 1 to 3, and 2 points each for questions 4 to 6 (1 point for a correct idea, 2 points for a correct idea supported by the passage). Total: 9 points.
-- Science background: the ''special juices'' are enzymes that break down the sugars in nectar. Nectar is mostly water. Bees dry it until it is less than about one-fifth water, which is why honey is thick and keeps for a long time.', 'published', 'seed', 0, '2026-10-28T10:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- Science background: the ''special juices'' are enzymes that break down the sugars in nectar. Nectar is mostly water. Bees dry it until it is less than about one-fifth water, which is why honey is thick and keeps for a long time.', 'published', 'seed', 0, '2026-10-26T02:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-2172c879903c4626', 'literary-analysis-essay-rubric-grade-12', 'Literary Analysis Essay Rubric', 'rubric', '12', 'ela', 'A 20-point analytic rubric for literary analysis essays with four performance levels across five criteria: thesis, textual evidence, analysis, organization, and style and conventions. Includes scoring bands, a student self-assessment, and a teacher feedback section.', 'CCSS.ELA-LITERACY.W.11-12.1, CCSS.ELA-LITERACY.W.11-12.4, CCSS.ELA-LITERACY.W.11-12.9, CCSS.ELA-LITERACY.RL.11-12.1', '**Student:** ______________________  **Date:** ____________
 
 **Essay title or text analyzed:** ______________________________________________
@@ -2146,7 +3304,7 @@ Complete this before you turn in your essay. Be honest. The goal is to find what
 | Summary (tells what happens) | Analysis (explains how and why it matters) |
 |---|---|
 | The narrator describes the house as dark and silent | By describing the house only through what is absent (light, sound, movement), the narrator makes the setting reflect the family''s unspoken grief |
-| The main character lies to her sister | The lie, told in the same calm tone the character uses everywhere else, suggests that deception has become ordinary to her |', 'published', 'seed', 0, '2026-10-28T03:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+| The main character lies to her sister | The lie, told in the same calm tone the character uses everywhere else, suggests that deception has become ordinary to her |', 'published', 'seed', 0, '2026-10-25T19:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-b802e1918a90fd0a', 'multiplication-division-facts-quiz-grade-3', 'Multiplication and Division Facts Within 100 Quiz', 'quiz', '3', 'math', 'A 15-question quiz on multiplication and division facts within 100: basic facts, missing-number equations, a fact family, and two word problems. Includes an answer key and scoring guide.', 'CCSS.MATH.CONTENT.3.OA.A.3, CCSS.MATH.CONTENT.3.OA.A.4, CCSS.MATH.CONTENT.3.OA.B.6, CCSS.MATH.CONTENT.3.OA.C.7', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Solve each problem. Write your answer on the line. For the word problems, show your work and label your answer.
@@ -2235,7 +3393,252 @@ Each question is worth 1 point. For questions 14 and 15, give the point for a co
 
 - Facts with 6, 7, 8, and 9 are the hardest for most third graders, so they make up most of this quiz. Look for patterns in errors. A student who misses 7 x 8, 56 ÷ 7, and 63 ÷ 9 needs work on the 7s facts.
 - In question 12, a common wrong answer is 3 (from 8 - 5) or 13 (from 8 + 5). These students are not yet connecting division to multiplication. Teach them to ask, ''What number is 5 groups of 8?''
-- Suggested time: 10 to 15 minutes. This quiz checks accuracy, not speed.', 'published', 'seed', 0, '2026-10-27T20:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- Suggested time: 10 to 15 minutes. This quiz checks accuracy, not speed.', 'published', 'seed', 0, '2026-10-25T12:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-230d6a8ef7a7e536', 'my-daily-routine-sentence-frames-worksheet-grade-4', 'My Daily Routine: Sentence Frames Worksheet', 'worksheet', '4', 'esl', 'English learners practice the simple present tense and time words (first, then, after that, at 7:00) by choosing verbs, answering questions about a short text, and writing about their own day with sentence frames. Twelve items with an answer key and model answers.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** A routine is what you do every day. Read the helper boxes. Then do Parts A, B and C.
+
+**Remember:**
+
+- Use the **simple present** for things you do every day: I **eat** breakfast. We **walk** to school.
+- With **he**, **she** or one person''s name, add **-s** or **-es** to the verb: She **eats** breakfast. He **brushes** his teeth. Lina **goes** to school.
+
+**Time words:**
+
+| To show order | To show when |
+|---|---|
+| First, | at 7:00 |
+| Then | in the morning |
+| Next, | in the afternoon |
+| After that, | in the evening |
+| Finally, | at night |
+
+## Part A: Circle the Correct Verb
+
+1. I ( wake / wakes ) up at 7:00 every morning.
+2. My sister ( brush / brushes ) her teeth after breakfast.
+3. We ( eat / eats ) lunch at school.
+4. My dad ( go / goes ) to work at 8:00.
+
+## Part B: Lina''s Morning
+
+Read about Lina. Then finish each answer.
+
+Lina wakes up at 6:30. First, she washes her face. Then she gets dressed. Next, she eats breakfast with her brother. After that, she brushes her teeth. Finally, she walks to school at 7:45.
+
+5. What time does Lina wake up?
+
+She wakes up at ______________.
+
+6. What does Lina do first?
+
+First, she ____________________________________.
+
+7. What does Lina do after she eats breakfast?
+
+After that, she ____________________________________.
+
+8. How does Lina get to school?
+
+Finally, she ______________ to school.
+
+## Part C: My Day
+
+Finish each sentence about your own day.
+
+9. I wake up at ______________.
+
+10. First, I ______________________________. Then I ______________________________.
+
+11. After school, I usually ____________________________________.
+
+12. At night, I go to bed at ______________.
+
+**Challenge:** Write two sentences about the routine of a person in your family. Start with **He** or **She**. Remember the **-s** on the verb.
+
+______________________________________________
+
+______________________________________________
+
+## Answer Key
+
+**Part A**
+
+1. wake. The subject is "I", so the verb has no -s.
+2. brushes. "My sister" is one person (she), so the verb takes -es.
+3. eat. The subject is "We", so the verb has no -s.
+4. goes. "My dad" is one person (he), so the verb takes -es.
+
+**Part B**
+
+5. She wakes up at 6:30.
+6. First, she washes her face.
+7. After that, she brushes her teeth.
+8. Finally, she walks to school.
+
+**Part C**
+
+Answers vary. Check that each verb after "I" has no -s and that the time words make sense. Model answers:
+
+9. I wake up at 7:00.
+10. First, I get dressed. Then I eat breakfast.
+11. After school, I usually play soccer with my friends.
+12. At night, I go to bed at 9:00.
+
+**Challenge:** Answers vary. Check for -s or -es on each verb. Model answer: She gets up at 6:00. She makes coffee in the morning.', 'published', 'seed', 0, '2026-10-25T05:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-3ba58d51528c2b22', 'naming-feelings-calming-strategies-lesson-plan-grade-2', 'Naming Feelings and Choosing a Calming Strategy Lesson Plan', 'lesson-plan', '2', 'sel', 'A 30-minute lesson in which students learn five feeling words, hear a short original story about a knocked-over block tower, and practice four calm-down choices. Includes the words the teacher says, timed steps, partner practice, and a quick check.', '', '## Overview
+
+**Time:** 30 minutes
+
+**Setting:** Whole class on the carpet or at desks, with room to turn to a partner
+
+**Big idea:** Everyone has feelings, and all feelings are okay. When a feeling gets big, we can name it and then choose something to do that helps our body slow down.
+
+This is an everyday classroom routine, not counseling. If a student''s feelings seem bigger than a class lesson can help with, follow your school''s process for involving the counselor and the family.
+
+## Objectives
+
+By the end of the lesson, students will be able to:
+
+- Name five feelings: happy, sad, mad, worried, and calm.
+- Tell one clue from their face or body that goes with a feeling.
+- Show four calm-down choices and pick one to try.
+- Use the sentence ''I feel ______.''
+
+## Materials
+
+- Chart paper or board and a marker
+- The Feeling Words chart from this plan, copied onto chart paper before the lesson
+- A blank sheet of chart paper titled ''Calm-Down Choices''
+
+## Lesson at a Glance
+
+| Part | Minutes |
+|---|---|
+| 1. Welcome and feelings check | 3 |
+| 2. Feeling words | 6 |
+| 3. Story: The Block Tower | 5 |
+| 4. Four calm-down choices | 7 |
+| 5. Partner practice | 5 |
+| 6. Quick check and close | 4 |
+| **Total** | **30** |
+
+## Feeling Words Chart
+
+| Feeling word | What you might notice |
+|---|---|
+| happy | A smile, a light body, wanting to share |
+| sad | A heavy body, a quiet voice, tears |
+| mad | A hot face, tight hands, a loud voice |
+| worried | A twisty tummy, lots of ''what if'' thoughts |
+| calm | Slow breathing, loose hands, ready to learn |
+
+## Lesson Steps
+
+### 1. Welcome and Feelings Check (3 minutes)
+
+1. Say: ''Today we are going to talk about feelings. Everybody has feelings, every day. There are no bad feelings. Some feelings are small and some are very big.''
+2. Say: ''Think about how you feel right now. You do not have to tell anyone. Just notice it.'' Wait about 10 seconds.
+3. Say: ''Give me a thumbs up if you can think of a time today when you felt happy. Now a thumbs up if there was a time this week when you felt mad or sad. Me too. That happens to everyone.'' Put your own thumb up.
+
+### 2. Feeling Words (6 minutes)
+
+1. Show the Feeling Words chart. Say: ''Here are five feeling words. When we can name a feeling, it is easier to know what to do next.''
+2. Read each word. For each one, say: ''Show me what ______ looks like on your face,'' then read the clues in the second column. Have students say the word back to you.
+3. After ''mad,'' say: ''Feeling mad is okay. Hitting, yelling at someone, or breaking things is not okay. Today we will learn what we can do when we feel mad.''
+4. After ''worried,'' say: ''Worried is the feeling when you keep thinking that something might go wrong.''
+5. Teach the sentence. Say: ''We can tell someone our feeling with three words: I feel, and then the feeling word. Say it with me: I feel calm.'' Have partners turn and tell each other, ''I feel ______,'' using any word from the chart.
+
+### 3. Story: The Block Tower (5 minutes)
+
+Say: ''Listen to this story about two children named Mina and Leo. Listen for how they feel.'' Read the story aloud and stop at each pause to ask the question.
+
+> Mina spent all of choice time building a block tower. It was as tall as her chin. She picked up the last block and reached for the top.
+>
+> Just then, Leo hurried past to get his jacket. His elbow bumped the table. The tower wobbled. Then it crashed. Blocks rolled everywhere.
+>
+> Mina''s face got hot. Her hands squeezed into fists. She wanted to yell.
+
+**Pause 1.** Ask: ''How do you think Mina feels? What clues tell you?''
+
+> Leo stopped. His tummy felt twisty. He had not meant to knock it down. What if Mina never wanted to play with him again?
+
+**Pause 2.** Ask: ''How do you think Leo feels? What clue tells you?''
+
+> Mina put her hands on her belly. She took a slow breath in and a slow breath out. She did it three times. Her hands opened up.
+>
+> ''I feel mad,'' Mina said. ''I worked hard on that tower.''
+>
+> ''I am sorry,'' said Leo. ''I was going too fast. Can I help you build it again?''
+>
+> Mina nodded. They built the tower together, and this time they built it in the middle of the table.
+
+**Pause 3.** Ask: ''What did Mina do before she talked to Leo? What words did she use to tell him how she felt?''
+
+### 4. Four Calm-Down Choices (7 minutes)
+
+1. Say: ''Mina did something to help her body slow down before she used her words. We are going to learn four calm-down choices. You get to pick the one that works for you.'' (1 minute)
+2. Write each choice on the ''Calm-Down Choices'' chart with its number as you teach it. Model it, then have the class do it with you. Spend about a minute and a half on each choice. (6 minutes)
+
+| Number | Choice | How to do it | What the teacher says |
+|---|---|---|---|
+| 1 | Balloon breaths | Hands on belly. Breathe in slowly through the nose for a count of 4. Breathe out slowly through the mouth for a count of 4. Do it 3 times. | ''Fill your belly like a balloon. Now let the air out slowly.'' |
+| 2 | Count to ten | Count slowly from 1 to 10 in a whisper or inside your head. | ''Slow numbers, not fast numbers. One... two...'' |
+| 3 | Squeeze and let go | Squeeze both hands into fists for a count of 5. Let go and wiggle the fingers. Do it 3 times. | ''Squeeze, squeeze, squeeze. Now let it all go.'' |
+| 4 | Ask for help | Tell a grown-up or a friend: ''I feel ______. I need ______.'' | ''You do not have to handle a big feeling alone.'' |
+
+After the fourth choice, say: ''Different choices work for different people. If one does not help, try another one.''
+
+### 5. Partner Practice (5 minutes)
+
+1. Say: ''I will tell you about something that could happen at school. With your partner, name the feeling. Then pick a calm-down choice and do it together.''
+2. Read each situation. Give partners about one minute for each, then ask one or two pairs to share the feeling word and the choice they picked.
+   - Situation A: ''It is time to write, and you cannot find your favorite pencil anywhere.''
+   - Situation B: ''Tomorrow you will sing on the stage in front of the whole school.''
+   - Situation C: ''At recess, your friend is playing with someone else and you have no one to play with.''
+3. Accept more than one feeling word for each situation. Say: ''Two people can have different feelings about the same thing, and both are okay.''
+4. In the last minute, ask: ''Did anyone and their partner pick different calm-down choices? That is fine. You know what works for you.''
+
+### 6. Quick Check and Close (4 minutes)
+
+Say: ''Here is one more. Listen, and answer without talking.'' Read: ''You are tying your shoe. The lace comes undone again. This is the third time.''
+
+1. Say: ''Point to the feeling word on the chart that fits how you might feel.''
+2. Say: ''Hold up 1, 2, 3, or 4 fingers to show the calm-down choice you would try.''
+3. Say: ''Whisper to your partner: I feel ______.''
+
+Scan the room on each question and note any student who does not point, hold up fingers, or whisper a sentence. Check in with those students later in the day.
+
+Close by saying: ''Today you learned five feeling words and four calm-down choices. The chart will stay on our wall. Any time you have a big feeling, you can name it and pick a choice.'' Hang the ''Calm-Down Choices'' chart where students can see it from their seats.
+
+## Support and Extension
+
+- **Students who need more support:** Offer just two choices to pick from (balloon breaths or squeeze and let go). Let students point to the chart in place of speaking.
+- **English learners:** Act out each feeling word with your face and body as you say it. Accept the sentence ''I feel ______'' with the feeling word in any language, then say the English word together.
+- **Students who do not want to share:** Never require a student to tell the class about a personal feeling. The story and the made-up situations give everyone something to talk about that is not about them.
+- **Students who are ready for more:** Add the words ''frustrated,'' ''excited,'' and ''nervous'' to the chart and ask how each one is different from mad, happy, and worried.
+- **Follow-up:** During the week, name the choices when you see students use them: ''I saw you take balloon breaths. You picked a calm-down choice.''
+
+## Answer Key
+
+**Story pauses**
+
+- Pause 1: Mina feels mad. Also accept angry, upset, or sad. Clues: her face got hot, her hands squeezed into fists, and she wanted to yell.
+- Pause 2: Leo feels worried. Also accept sorry, scared, or sad. Clue: his tummy felt twisty, and he was thinking ''what if.''
+- Pause 3: Mina took three slow breaths with her hands on her belly (balloon breaths). She said, ''I feel mad. I worked hard on that tower.''
+
+**Partner practice (sample answers; accept any feeling the student can explain)**
+
+- Situation A: mad or worried
+- Situation B: worried. Some students will say happy.
+- Situation C: sad or mad
+- Any of the four calm-down choices is correct for every situation.
+
+**Quick check**
+
+1. Mad. Also accept sad or worried.
+2. Any number from 1 to 4. The student should be able to show the choice that matches the number: 1 balloon breaths, 2 count to ten, 3 squeeze and let go, 4 ask for help.
+3. A complete sentence in the form ''I feel ______'' with a feeling word.', 'published', 'seed', 0, '2026-10-24T22:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-26bd43ca9c85f4fe', 'newtons-three-laws-of-motion-lesson-plan-grade-8', 'Newton''s Three Laws of Motion: Stations Lesson Plan', 'lesson-plan', '8', 'science', 'A complete 50-minute lesson introducing Newton''s three laws with a quick demo, a short mini-lesson, and four hands-on stations using cheap classroom materials. Includes timed steps, a student record sheet, differentiation, an exit ticket, and an answer key.', 'NGSS MS-PS2-1, NGSS MS-PS2-2', '## Lesson Overview
 
 **Grade:** 8  **Subject:** Physical science  **Time:** 50 minutes  **Grouping:** 8 groups of 3 or 4 students
@@ -2499,7 +3902,7 @@ ______________________________________________
 
 1. First Law. An object in motion stays in motion unless an unbalanced force acts on it. Ice has very little friction, so there is almost no force to slow the puck down.
 2. The 1 kg cart has the greater acceleration. It accelerates 4 times as much, because with the same force, an object with one-fourth the mass has four times the acceleration (a = F / m).
-3. The wall pushes back on you with a force of 20 N in the opposite direction (Third Law).', 'published', 'seed', 0, '2026-10-27T13:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+3. The wall pushes back on you with a force of 20 N in the opposite direction (Third Law).', 'published', 'seed', 0, '2026-10-24T15:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-877deb66876239f0', 'no-tech-emergency-sub-plan-full-day-grade-6', 'Emergency Sub Plan: Full Day, No Technology', 'sub-plan', '6', 'ela', 'A complete print-and-go day for a substitute: an original short story with comprehension questions, a structured writing activity, ten math puzzles with answers, early-finisher options, and step-by-step notes for the sub. Written for grade 6 but works for grades 5 to 8 with no devices and no prior preparation.', '', '## Notes for the Substitute
 
 Thank you for being here today. Everything you need is in this packet. No computers, projectors, or logins are required.
@@ -2883,7 +4286,712 @@ There is no single correct response. Please do not grade the writing. Collect it
 
 9. **15 handshakes.** The first person shakes 5 hands, the next person shakes 4 new hands, then 3, 2, and 1: 5 + 4 + 3 + 2 + 1 = 15. Another way: 6 x 5 / 2 = 15.
 
-10. **Day 8.** The snail gains 1 foot for each full day and night, so at the start of day 8 it is 7 feet up. On day 8 it climbs 3 feet and reaches 10 feet before it can slide back. A common wrong answer is day 10, which forgets that the snail reaches the top during a daytime climb.', 'published', 'seed', 0, '2026-10-27T06:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+10. **Day 8.** The snail gains 1 foot for each full day and night, so at the start of day 8 it is 7 feet up. On day 8 it climbs 3 feet and reaches 10 feet before it can slide back. A common wrong answer is day 10, which forgets that the snail reaches the top during a daytime climb.', 'published', 'seed', 0, '2026-10-24T08:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-3ee30f408357f0c6', 'no-tech-emergency-sub-plan-full-day-kindergarten', 'Kindergarten Emergency Sub Plan: Full Day, No Technology', 'sub-plan', 'K', 'ela', 'A full-day kindergarten plan any adult can run with paper, crayons and a picture book from the classroom shelf. Includes word-for-word read-aloud directions, counting and pattern pages made of shapes for children who cannot read yet, movement breaks, circle games and a report form for the teacher.', '', '## Notes for the Substitute
+
+Thank you for being here today. You do not need to be a kindergarten teacher to run this plan. You need paper, crayons and one or two picture books from the classroom shelf. No computers, screens or logins are used.
+
+The table below was filled in by the regular teacher. Read it first. It has the clock times and the routines that only the teacher knows.
+
+## Fill in before you leave this plan
+
+**Regular teacher:** complete this table and leave the plan in your sub folder.
+
+| Information | Details |
+|---|---|
+| School start time and morning arrival routine | |
+| Attendance and lunch count: how and where to send them | |
+| Snack time and routine | |
+| Lunch time, where children eat, who walks them there | |
+| Recess time, place and who supervises | |
+| Specials today (art, music, PE, library): time and place | |
+| Rest or quiet time: time and routine | |
+| Restroom routine | |
+| Attention signal the class knows | |
+| Two or three helper children | |
+| Other adults who come to the room, and when | |
+| Nearby teacher who can help, and room number | |
+| Office phone or extension | |
+| Children with allergies, medical needs or support plans (where the confidential note is) | |
+| Where the emergency drill directions are | |
+| Where the paper, crayons and picture books are | |
+| Dismissal time | |
+| How each child goes home, or where that list is | |
+
+## What to Copy
+
+Make one copy for each child, on one side of the paper:
+
+- Student Page 1: Count the Shapes
+- Student Page 2: What Comes Next?
+
+Keep the Answer Key at the end of this plan for yourself.
+
+If you cannot make copies, skip the two student pages. Use the "No copier" directions inside Block 3 and Block 6 instead.
+
+## What You Need
+
+- Plain paper: about 4 sheets for each child
+- Crayons: at least 10 for each child, or a shared tub for each table
+- 1 or 2 picture books from the classroom shelf. Pick books with a clear story and large pictures that take about 5 to 10 minutes to read. Look through them before the children arrive.
+
+## Tips for a Kindergarten Day
+
+- Stay with the children all day. Five-year-olds need an adult watching and close by at all times, including in the hallway, at the restroom and at dismissal. If you must step away, call the office or the nearby teacher first.
+- Give one direction at a time. Show it with your own hands, then let the children do it.
+- Most children in this class cannot read yet. Read every direction aloud. Never ask a child to read directions alone.
+- Use the attention signal in the table. If none is listed, raise one hand, say *Hands up, eyes on me* in a quiet voice, and wait.
+- Keep sitting times short. If the children get wiggly, stop and do a Move and Wiggle Break, then go back.
+- Say what you want to see: *Walking feet. Quiet voices. Hands to yourself.* Praise children who are doing it.
+- Tears and small accidents are normal at this age. Stay calm, comfort the child and call the office if you need help.
+- Send a child home only in the way listed in the table. If you are not sure who may pick up a child, keep the child with you and call the office.
+
+## Schedule
+
+Use the clock times in the table at the top. Fit the blocks below around snack, lunch, recess, specials and rest. The blocks add up to 250 minutes, a little over 4 hours of class time. You do not have to finish everything.
+
+| Block | Minutes | Activity |
+|---|---|---|
+| Arrival | 20 | Attendance and Morning Circle |
+| Block 1 | 20 | Read-Aloud |
+| Block 2 | 25 | Draw the Story |
+| Break | 10 | Move and Wiggle Break |
+| Block 3 | 25 | Count the Shapes (Student Page 1) |
+| Block 4 | 20 | Crayon Counting Game |
+| Lunch and recess | See the table | |
+| Quiet time | 20 | Rest and look at books |
+| Block 5 | 15 | Read It Again |
+| Block 6 | 25 | What Comes Next? (Student Page 2) |
+| Break | 10 | Move and Wiggle Break |
+| Block 7 | 25 | My Favorite Thing: draw and share |
+| Block 8 | 20 | Circle Games |
+| Wrap-up | 15 | Clean up and dismissal |
+
+## Arrival and Morning Circle (20 minutes)
+
+Greet each child at the door. Follow the arrival routine in the table. Take attendance and lunch count.
+
+Bring the children to the carpet in a circle.
+
+Say: *Good morning. Your teacher is away today, and I am here to take care of you. We are going to read, draw, count and play some games. I need your help to have a good day.*
+
+Say: *We have three rules today. One: listening ears. Two: hands to yourself. Three: stay with the group. Show me your listening ears.* Cup your hands behind your ears and wait for the children to copy you.
+
+Say: *Let us go around the circle. When it is your turn, say your name and one thing you like to eat.* Start with yourself. A child may say only a name, or pass.
+
+Say: *If you need the restroom or you feel sick, come and tell me.* Explain the restroom routine from the table.
+
+## Block 1: Read-Aloud (20 minutes)
+
+Use one picture book from the classroom shelf. Sit on a low chair. The children sit on the carpet facing you. Hold the book open beside you so that the pictures face the children.
+
+**Before reading**
+
+1. Say: *Sit on your bottom. Put your hands in your lap. Eyes on me.*
+2. Hold up the book. Say: *This is the book we will read today. Look at the front cover. What do you see?* Take three answers.
+3. Say: *What do you think this book will be about?* Take two answers. Say: *Let us read and find out.*
+4. Say: *While I read, your job is to listen with your ears and look at the pictures with your eyes.*
+
+**During reading**
+
+Read slowly. After each page, hold the book still for a moment so that everyone can see the picture. Stop two times:
+
+- About halfway through, say: *What is happening on this page?* Take two answers.
+- Just before the ending, say: *What do you think will happen next? Whisper it to the person next to you.* Wait about ten seconds, then keep reading.
+
+**After reading**
+
+1. Say: *Who was in this book?* Take answers.
+2. Say: *What happened at the beginning?* Turn back to the first pages if the children need help.
+3. Say: *What happened at the end?*
+4. Say: *Think about the part you liked best. Turn to the person next to you and tell them your favorite part.* Give about one minute.
+
+Any answer that matches the book is fine. You are not testing the children.
+
+## Block 2: Draw the Story (25 minutes)
+
+Each child needs one sheet of plain paper and crayons.
+
+1. Say: *Now you will draw your favorite part of the book. First, write your name on your paper.* Help children who cannot write their name yet, or write it for them.
+2. Say: *Draw who was in your favorite part. Then draw where they were. Use lots of colors and fill your paper.*
+3. Walk around while the children draw. Ask each child: *Tell me about your picture.* Write the child''s words at the bottom of the paper, exactly as the child says them.
+4. With five minutes left, say: *Hold up your picture and show it to the friends at your table.*
+5. Collect the drawings for the teacher.
+
+Children who finish early may turn the paper over and draw a new ending for the story.
+
+## Move and Wiggle Break (10 minutes)
+
+Use this break at the two times in the schedule, and at any other time the class needs to move. The children stand in their own space, an arm''s length from anyone else. Do each movement with them.
+
+Say each line and do the movement:
+
+1. *Reach up high and touch the sky. Count to five with me.*
+2. *Touch your toes. Count to five.*
+3. *March in place. Count ten steps.*
+4. *Hop on two feet five times.*
+5. *Make big slow arm circles. Count to ten.*
+6. *Stand as still as a statue while I count to ten.*
+7. *Take a big breath in through your nose. Blow it out slowly. Do it again.*
+8. *Sit down as quietly as you can.*
+
+If there is time left, play **Freeze**: the children walk slowly around the room. When you say *Freeze*, everyone stops like a statue. When you say *Go*, they walk again.
+
+## Block 3: Count the Shapes (25 minutes)
+
+Each child needs Student Page 1 and one crayon.
+
+1. Say: *Write your name at the top.* Help where needed.
+2. Draw four circles in a row on the board. Say: *Watch me. I touch each circle and count: one, two, three, four. There are four. I write the number 4.* Write a 4.
+3. Say: *Put your finger on number 1. Touch each shape and count. Write how many on the line.*
+4. Do numbers 1 and 2 together as a class. Then let the children work through number 8 while you walk around. Read the number of each row aloud for children who lose their place.
+5. For numbers 9 and 10, say: *Now there are two rows of shapes. Count the top row. Count the bottom row. Draw a circle around the row that has more.*
+6. Check each page against the Answer Key as you walk around. Collect the pages.
+
+A child who cannot write numbers yet may draw that many dots or lines instead. A number written backward is normal at this age and counts as correct.
+
+**No copier:** Draw each row of shapes from Student Page 1 on the board, one row at a time. The children count aloud with you and hold up that many fingers.
+
+## Block 4: Crayon Counting Game (20 minutes)
+
+Each child sits at a table with 10 crayons.
+
+1. Say: *Count your crayons with me. Touch each one.* Count to 10 together.
+2. Say: *I will say a number. You make a line of that many crayons in front of you. Push the other crayons away.*
+3. Say these numbers one at a time: 3, 5, 2, 7, 4, 10, 6, 1, 9, 8. After each number, say: *Touch and count to check.* Count aloud together.
+4. If there is time, say: *Make a line of 4 crayons. Now add one more. How many now?* (5) Then: *Make a line of 6 crayons. Take one away. How many now?* (5)
+5. Say: *Put all your crayons back in the tub.*
+
+## Quiet Time (20 minutes)
+
+Follow the rest routine in the table. If none is listed, each child takes one book from the shelf and looks at it quietly at a table or on the carpet. Dim the lights if you can. Stay in the room, keep every child in view, and walk around quietly.
+
+## Block 5: Read It Again (15 minutes)
+
+Read the same book again, or choose a second picture book from the shelf. Children this age enjoy hearing a book twice and notice more the second time.
+
+1. Say: *Sit on your bottom. Hands in your lap. Eyes on me.*
+2. If it is the same book, say: *We know this book. Listen for something you did not hear the first time.* If it is a new book, say: *Look at the front cover. What do you think this book will be about?* Take two answers.
+3. Read the book. Do not stop this time.
+4. Hold up three fingers. Say: *Let us tell the story back. Touch one finger: what happened first?* Take an answer. *Touch the next finger: what happened next?* Take an answer. *Touch the last finger: what happened last?* Take an answer.
+
+## Block 6: What Comes Next? (25 minutes)
+
+Each child needs Student Page 2 and one crayon.
+
+1. Say: *A pattern is something that repeats again and again. Watch and listen.* Clap, then pat your knees, then clap, then pat your knees. Say: *Clap, pat, clap, pat. What comes next?* (Clap.) Do it together a few times.
+2. Draw on the board: circle, square, circle, square, circle. Say: *Circle, square, circle, square, circle. What comes next?* (Square.) Draw the square.
+3. Say: *Write your name at the top. Put your finger on number 1. Say the shapes with me.* Say the shape names in row 1 aloud together. Say: *What comes next? Draw it on the line.*
+4. Do number 2 together. Then let the children work through number 6 while you walk around. Help children say each row aloud while touching each shape.
+5. For number 7, say: *Now make your own pattern. Draw shapes in the big empty space.*
+6. Check each page against the Answer Key. Collect the pages.
+
+**No copier:** Draw each pattern from Student Page 2 on the board, one at a time. The class says the shapes aloud and tells you what comes next. Then each child draws a pattern on plain paper.
+
+## Block 7: My Favorite Thing (25 minutes)
+
+Each child needs one sheet of plain paper and crayons.
+
+1. Say: *Think of your favorite thing to do. It could be something you do at home, at school or outside. Tell the person next to you.*
+2. Say: *Write your name on your paper. Now draw yourself doing your favorite thing.*
+3. Walk around. Ask each child: *Tell me about your picture.* Write the child''s words at the bottom.
+4. With ten minutes left, bring the children back to the carpet with their drawings. Each child who wants to may stand up, show the picture and say one sentence about it. Teach the class to say: *Thank you for sharing.*
+5. Collect the drawings for the teacher.
+
+## Block 8: Circle Games (20 minutes)
+
+The children sit or stand in a circle on the carpet. Choose two or three games.
+
+- **Copy Me.** Do a movement, such as patting your head. The children copy you. Change the movement every few seconds. Then let a helper child be the leader.
+- **I See a Color.** Say: *I see something in our room that is red.* The children take turns guessing what it is. The child who guesses correctly picks the next color, with your help.
+- **Count Around the Circle.** The first child says 1, the next child says 2, and so on around the circle up to 10. The next child starts again at 1. Help any child who gets stuck.
+- **Find a Shape.** Say: *Look around the room without getting up. Can you see something shaped like a circle?* Take answers. Repeat with a square, a triangle and a rectangle.
+- **Listen and Do.** Give two directions at once, such as: *Touch your nose, then clap two times.* The children wait until you finish speaking, then do both.
+
+## Wrap-Up and Dismissal (15 minutes)
+
+1. Say: *It is time to clean up. Crayons go in the tubs. Paper scraps go in the trash. Push in your chair.*
+2. Bring the children to the carpet. Say: *What was your favorite part of today?* Take a few answers.
+3. Say: *Thank you for a good day. I will tell your teacher how hard you worked.*
+4. Help the children collect coats, bags and lunch boxes.
+5. Follow the dismissal directions in the table at the top. Stay with the children until every child has left in the way listed. If a child has not been picked up, take the child to the office yourself.
+6. Fill in the Report for the Teacher and leave it on the desk with the children''s work.
+
+## Report for the Teacher
+
+**Substitute name:** ______________________  **Date:** ____________
+
+| Question | Notes |
+|---|---|
+| Children absent | |
+| Blocks we finished | |
+| Blocks we did not get to | |
+| Picture book or books we read | |
+| Children who were especially helpful | |
+| Children who had a hard day, and what helped | |
+| Injuries, illness, accidents or visits to the office | |
+| Changes to how any child went home | |
+| Messages from families or staff | |
+| Anything else the teacher should know | |
+
+## Student Page 1: Count the Shapes
+
+**Name:** ______________________  **Date:** ____________
+
+**Directions (an adult reads these aloud):** Touch each shape and count. Write how many on the line.
+
+1. ● ● ● ●
+
+   ______
+
+2. ■ ■
+
+   ______
+
+3. ▲ ▲ ▲ ▲ ▲
+
+   ______
+
+4. ● ● ● ● ●   ● ●
+
+   ______
+
+5. ■ ■ ■
+
+   ______
+
+6. ▲ ▲ ▲ ▲ ▲   ▲
+
+   ______
+
+7. ● ● ● ● ●   ● ● ● ●
+
+   ______
+
+8. ■ ■ ■ ■ ■   ■ ■ ■
+
+   ______
+
+**Directions (an adult reads these aloud):** Count the top row. Count the bottom row. Draw a circle around the row that has more.
+
+9. ▲ ▲ ▲ ▲ ▲   ▲
+
+   ■ ■ ■ ■
+
+10. ● ●
+
+    ▲ ▲ ▲ ▲ ▲
+
+## Student Page 2: What Comes Next?
+
+**Name:** ______________________  **Date:** ____________
+
+**Directions (an adult reads these aloud):** Touch each shape and say its name. What comes next? Draw it on the line.
+
+1. ● ■ ● ■ ● ______
+
+2. ▲ ● ▲ ● ▲ ● ______
+
+3. ■ ■ ● ■ ■ ● ■ ■ ______
+
+4. ● ▲ ▲ ● ▲ ▲ ● ______
+
+5. ■ ● ▲ ■ ● ▲ ■ ______
+
+6. ▲ ▲ ■ ■ ▲ ▲ ■ ■ ▲ ______
+
+**Directions (an adult reads these aloud):** Make your own pattern. Draw it in the empty space.
+
+7. My pattern:
+
+## Answer Key
+
+### Student Page 1: Count the Shapes
+
+1. 4
+2. 2
+3. 5
+4. 7
+5. 3
+6. 6
+7. 9
+8. 8
+9. The top row has more. The top row has 6 triangles and the bottom row has 4 squares.
+10. The bottom row has more. The top row has 2 circles and the bottom row has 5 triangles.
+
+Accept dots or lines in place of a written number if the count is right. Accept numbers written backward.
+
+### Student Page 2: What Comes Next?
+
+1. ■ (square). The pattern is circle, square.
+2. ▲ (triangle). The pattern is triangle, circle.
+3. ● (circle). The pattern is square, square, circle.
+4. ▲ (triangle). The pattern is circle, triangle, triangle.
+5. ● (circle). The pattern is square, circle, triangle.
+6. ▲ (triangle). The pattern is triangle, triangle, square, square.
+7. Answers will vary. Any drawing in which shapes repeat in the same order at least two times is correct. Ask the child to say the pattern aloud while touching each shape.', 'published', 'seed', 0, '2026-10-24T01:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-d4456a9e3e9f7099', 'no-tech-emergency-sub-plan-one-period-grade-10', 'Emergency Sub Plan for High School: One Period, No Technology', 'sub-plan', '10', 'ela', 'A print-and-go plan for one 50-minute high school period that any adult can run and repeat for every class of the day, with notes for a 90-minute block. Students read an original nonfiction passage about how time zones began, answer eight questions and write a short argument. Answer key and a report form for the teacher are included.', '', '## Notes for the Substitute
+
+Thank you for covering today. You do not need to know the subject, and you do not need a computer, a projector or a login. Every class does the same thing: students read a one-page passage, answer eight questions and write one paragraph. The plan below is written for one 50-minute period. Run it again for each class that comes in.
+
+The work is a reading and writing task, so it fits an English class best, but it can be used in any high school class in grades 9 to 12.
+
+**What students need:** a pen or pencil. Nothing else.
+
+## Fill in before you leave this plan
+
+Regular teacher: this table is the only part of the plan you need to complete.
+
+| Information | Details |
+|---|---|
+| Teacher name and room number | |
+| Bell schedule (start and end time of each period) | |
+| Periods with no class (planning, lunch, duty) | |
+| Number of students in each period | |
+| How to take and send attendance | |
+| A dependable student in each period | |
+| Nearby teacher who can help | |
+| Office phone extension | |
+| Hall pass and restroom rule | |
+| Phone rule for this room | |
+| Where emergency drill instructions are kept | |
+| Students with medical or support needs (see confidential note in folder) | |
+| Where to leave collected work | |
+
+## What to Copy
+
+- **Student Page (passage, questions and written response):** one per student for every period of the day. It is the section of this packet that starts at *Student Page* and stops before the *Answer Key*. Add up the class sizes in the table above and make a few extra.
+- **Answer Key:** one copy, for you only. Do not hand it out.
+- **Report for the Teacher:** one copy, for you.
+
+If the copier is down, read the passage aloud twice, write the questions on the board and have students answer on their own paper.
+
+## The Plan for One 50-Minute Period
+
+| Minutes | What happens | What you do |
+|---|---|---|
+| 0 to 5 | Students come in and sit down | Stand at the door. Take attendance. Hand each student a Student Page as you check names. |
+| 5 to 8 | Introduction | Say the introduction below. |
+| 8 to 18 | Silent reading | Students read the passage once all the way through, then a second time while underlining three facts that surprise them. |
+| 18 to 33 | Questions 1 to 8 | Students work alone and quietly. Walk around the room. |
+| 33 to 45 | Written response | Students write the paragraph at the bottom of the page. |
+| 45 to 50 | Collect and close | Collect every page. Ask the closing question. Students stay seated until the bell. |
+
+**Introduction (say this, in your own words if you like):**
+
+*Your teacher is out today and has left work that will be collected and checked. You will read one page about how time zones began, answer eight questions and write one paragraph. Everything you need is on the page. You will work on your own, and I will collect your paper five minutes before the bell.*
+
+**Closing question (if there is time):** *Before today, who thought time zones were created by the government?* Take two or three comments.
+
+**While students work**
+
+- If a student asks what a word means, tell them to read the sentences around it and make their best guess. That is part of the task.
+- If a student asks whether an answer is right, say that the teacher will check it. Do not give out answers from the key in a 50-minute period.
+- If a student finishes early, point to *If You Finish Early* at the bottom of the Student Page.
+- If a student refuses to work, do not argue. Write the name on the report and move on.
+- If a student says they have already done this page in an earlier class today, have them do the *If You Finish Early* tasks on a new sheet.
+
+## Repeating the Plan for Each Period
+
+- Use the same plan, start to finish, for every class that comes in. Nothing needs to change.
+- Before each class arrives, count out the number of Student Pages for that period.
+- At the end of each period, put that class''s papers in one stack and write the period number on a sticky note or on the top page. Keep the stacks separate.
+- Fill in one row of the Report for the Teacher at the end of each period, while you still remember it.
+- During periods with no class, stay in the room unless the office gives you another job.
+- Students in a later period may have heard about the work from friends. That is fine. They still do their own paper.
+
+## If the Period Is a 90-Minute Block
+
+Keep the same order and add four steps. The total is 90 minutes.
+
+| Minutes | What happens |
+|---|---|
+| 0 to 5 | Students come in. Attendance. Hand out pages. |
+| 5 to 8 | Introduction |
+| 8 to 18 | Silent reading, twice, underlining three surprising facts |
+| 18 to 28 | **Added:** read the passage aloud. Ask for a volunteer for each paragraph, or read it yourself. Do not require anyone to read aloud. |
+| 28 to 43 | Questions 1 to 8, working alone |
+| 43 to 53 | **Added:** students compare answers with one partner and improve their own answers. They may not copy. |
+| 53 to 63 | **Added:** go over questions 1 to 7 with the class using the Answer Key. Ask a student to answer first, then confirm. |
+| 63 to 75 | Written response, first paragraph |
+| 75 to 85 | **Added:** students write a second paragraph that answers the strongest argument against their own claim. They may use the back of the page. |
+| 85 to 90 | Collect and close |
+
+## If the Period Is Shorter Than 50 Minutes
+
+Cut the second silent reading and tell students to answer questions 1 to 6 only. Keep the written response.
+
+## Report for the Teacher
+
+**Substitute name:** ______________________  **Date:** ____________
+
+| Period | Students absent | Did most students finish the questions? | Did most students finish the paragraph? | Names and notes (helpful students, problems, anyone who did not work) |
+|---|---|---|---|---|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| 7 | | | | |
+| 8 | | | | |
+
+**Anything else the teacher should know:**
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+## Student Page
+
+**Name:** ______________________  **Date:** ____________  **Period:** ______
+
+**Directions:** Read the passage twice. On your second reading, underline three facts that surprise you. Then answer the questions and write the paragraph. Work on your own. This page will be collected.
+
+### The Day of Two Noons
+
+**(1)** For most of the 1800s, there were no time zones in the United States. Each town set its clocks by the sun. When the sun stood at its highest point in the sky, it was noon, and the town clock was set to match. Because that moment comes slightly earlier or later from place to place, each town had its own noon. Moving one degree of longitude east or west changes sun time by four minutes. When clocks in Washington, D.C., read noon, clocks in New York City read about 12:12.
+
+**(2)** For people who traveled on foot or by horse, these small differences did not matter. Nobody moved fast enough to notice them. Railroads changed that. A train could pass through many towns, each with its own local time, in a single afternoon, and each railroad company ran its trains by the time of its own home city. By the early 1880s, American railroads were using dozens of different times. Passengers missed connections. Worse, a timekeeping mistake on a shared track could put two trains in the same place at the same moment.
+
+**(3)** The fix did not come from the government. It came from the railroads themselves. A railroad engineer and editor named William F. Allen drew up a plan that divided the country into four zones: Eastern, Central, Mountain and Pacific. Inside each zone, every railroad clock would show the same time, and neighboring zones would differ by exactly one hour. The railroad companies agreed to switch on Sunday, November 18, 1883.
+
+**(4)** On that day, telegraph signals carried the new time to stations across the country, and clocks were reset. In towns where the clocks had to be turned back, noon came twice: once by the sun and again, minutes later, by the new standard. The date became known as the day of two noons.
+
+**(5)** Not everyone was pleased. Some towns kept their old sun time for years, and some people complained that railroad companies had no right to decide what time it was. They had a point. Railroad time was an agreement between companies, not a law. Still, it was so convenient that most cities soon adopted it. Congress did not make the time zones official until the Standard Time Act of 1918, thirty-five years after the trains had started running on them.
+
+### Questions
+
+Answer in complete sentences unless the question says otherwise.
+
+1. Before 1883, how did a town decide when it was noon?
+
+______________________________________________________________
+
+______________________________________________________________
+
+2. Use two facts from paragraph 1 to work out about how many degrees of longitude separate Washington, D.C., and New York City. Show your calculation.
+
+______________________________________________________________
+
+______________________________________________________________
+
+3. Why did the differences between local times cause no trouble before the railroads?
+
+______________________________________________________________
+
+______________________________________________________________
+
+4. Name two problems that the many local times caused for railroads and their passengers.
+
+______________________________________________________________
+
+______________________________________________________________
+
+5. In paragraph 4, the word *standard* most nearly means (circle one):
+
+   - A. a flag carried by an army
+   - B. an agreed measure that everyone uses
+   - C. something ordinary and unremarkable
+   - D. a level of quality that is hard to reach
+
+6. Why was November 18, 1883, called the day of two noons? Explain what happened to the clocks.
+
+______________________________________________________________
+
+______________________________________________________________
+
+7. In paragraph 5, the author writes, *They had a point.* What was the point, and what evidence does the author give that it was a fair one?
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+8. Write the central idea of the whole passage in one sentence of your own.
+
+______________________________________________________________
+
+______________________________________________________________
+
+### Written Response
+
+The railroads changed the time for almost everyone in the country without a vote and without a law. Was it right for private companies to make that decision?
+
+Write one paragraph of six to eight sentences. State your claim in the first sentence. Support it with at least two pieces of evidence from the passage. End with a sentence that sums up your position.
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+### If You Finish Early
+
+Choose one and write on the back of this page.
+
+- List three other things that most people follow even though no law requires them, and explain why people follow each one.
+- The Earth turns 360 degrees in 24 hours. Work out how many degrees it turns in one hour, and explain how that connects to time zones that are one hour apart.
+- Write a short diary entry from the point of view of a station worker on November 18, 1883.
+
+## Answer Key
+
+Accept answers in students'' own words that match the ideas below.
+
+1. Each town set its clocks by the sun. Noon was the moment the sun was at its highest point in the sky, and the town clock was set to match.
+
+2. About 3 degrees. The clocks in the two cities were about 12 minutes apart, and each degree of longitude changes sun time by 4 minutes, so 12 / 4 = 3.
+
+3. People traveled on foot or by horse, which was too slow for anyone to notice a difference of a few minutes between one town and the next.
+
+4. Any two of these: each railroad ran on the time of its own home city, so there were dozens of different times in use; passengers missed connections; a timekeeping mistake on a shared track could put two trains in the same place at the same moment.
+
+5. **B.** In this sentence the new standard is the agreed time that every railroad clock in a zone would show.
+
+6. The railroads switched to the new zone times on that day. In towns where clocks had to be turned back, noon arrived by the sun, the clocks were set back a few minutes, and noon then arrived a second time by the new time.
+
+7. The point was that railroad companies had no right, or no authority, to decide what time it was for everyone. The author''s evidence is that railroad time was only an agreement between companies and not a law, and that Congress did not make the zones official until the Standard Time Act of 1918.
+
+8. Answers will vary. A strong answer includes both the problem and the solution, for example: Time zones in the United States were created by railroad companies in 1883 to replace the confusion of every town keeping its own sun time, and they became law only in 1918.
+
+### Written Response
+
+There is no single correct answer, and the substitute does not need to grade the paragraph. A complete response states a clear claim in the first sentence, uses at least two pieces of evidence from the passage, and ends with a summing-up sentence.
+
+- Evidence a student might use to argue it was right: the many local times made passengers miss connections and created a danger of collisions; the government had not acted; the plan was simple and convenient; most cities soon chose to adopt it; Congress later made it law.
+- Evidence a student might use to argue it was not right: the railroads were private companies and nobody voted; railroad time was not a law; some people objected and some towns kept sun time for years; the change affected everyone, not only people who rode trains.
+
+### If You Finish Early
+
+- Second option: 360 / 24 = 15, so the Earth turns 15 degrees in one hour. Places 15 degrees of longitude apart have sun times one hour apart, which is why time zones that differ by one hour are each about 15 degrees wide.', 'published', 'seed', 0, '2026-10-23T18:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-960481d011582d46', 'nutrition-facts-label-worksheet-grade-6', 'Reading a Nutrition Facts Label Worksheet', 'worksheet', '6', 'pe-health', 'Students read a made-up nutrition facts label for a box of crackers and answer 10 questions, from finding the serving size to calculating calories and sodium for more than one serving. Includes an answer key with the work shown.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Use the label below to answer every question. Show your work for the calculation questions and write the unit (calories, g, mg, or %) with each answer.
+
+**Remember:**
+
+- Every amount on a label is for **one serving**, not for the whole package.
+- **Servings per container** tells how many servings are in the whole package.
+- **g** means grams and **mg** means milligrams.
+- **% Daily Value** shows how much of a full day''s reference amount of a nutrient is in one serving. The reference amounts are the same on every label. They are not a personal goal.
+
+The product and the label are made up for this worksheet.
+
+## The Label
+
+| Sunny Oat Crackers: Nutrition Facts | Amount per serving | % Daily Value |
+|---|---|---|
+| Serving size | 6 crackers (30 g) | |
+| Servings per container | 8 | |
+| Calories | 140 | |
+| Total fat | 5 g | 6% |
+| Saturated fat | 1 g | 5% |
+| Trans fat | 0 g | |
+| Cholesterol | 0 mg | 0% |
+| Sodium | 230 mg | 10% |
+| Total carbohydrate | 21 g | 8% |
+| Dietary fiber | 3 g | 11% |
+| Total sugars | 4 g | |
+| Includes added sugars | 3 g | 6% |
+| Protein | 3 g | |
+
+## Part A: Find It on the Label
+
+1. What is the serving size?
+
+______________________________________________
+
+2. How many servings are in the whole container?
+
+______________________________________________
+
+3. Which two lines on the label show an amount of zero?
+
+______________________________________________
+
+## Part B: Calculate
+
+4. How many calories are in the whole container?
+
+______________________________________________
+
+5. How many crackers are in the whole container?
+
+______________________________________________
+
+6. Devon eats 12 crackers.
+
+    a. How many servings is that? ______________
+
+    b. How many calories is that? ______________
+
+    c. How many milligrams of sodium is that? ______________
+
+7. One serving has 4 g of total sugars. Some of that is added sugars. How many grams of sugar in one serving are NOT added sugars?
+
+______________________________________________
+
+8. Use the label to find each amount.
+
+    a. Grams of protein in 3 servings: ______________
+
+    b. Grams of dietary fiber in the whole container: ______________
+
+9. One serving has 10% of the Daily Value for sodium.
+
+    a. What percent of the Daily Value for sodium is in 2 servings? ______________
+
+    b. What percent is in the whole container? ______________
+
+## Part C: Explain
+
+10. **Find the mistake.** Riley looks at the label and says, ''This whole box has 140 calories.'' Explain what Riley got wrong and give the correct number of calories for the whole box.
+
+______________________________________________
+
+______________________________________________
+
+______________________________________________
+
+## Answer Key
+
+**Teacher note:** This worksheet practices reading information and doing calculations. It is not advice about what or how much anyone should eat. Keep the discussion on the label and the math, and avoid comments on students'' own food.
+
+**Part A**
+
+1. 6 crackers (30 g). Accept either 6 crackers or 30 g.
+2. 8 servings.
+3. Trans fat (0 g) and cholesterol (0 mg).
+
+**Part B**
+
+4. 1,120 calories. 140 x 8 = 1,120.
+5. 48 crackers. 6 x 8 = 48.
+6. a. 2 servings (12 / 6 = 2). b. 280 calories (140 x 2 = 280). c. 460 mg of sodium (230 x 2 = 460).
+7. 1 g. 4 - 3 = 1.
+8. a. 9 g of protein (3 x 3 = 9). b. 24 g of dietary fiber (3 x 8 = 24).
+9. a. 20% (10 x 2 = 20). b. 80% (10 x 8 = 80).
+
+**Part C**
+
+10. Riley read the calories for one serving and treated it as the amount for the whole box. The label says 140 calories per serving, and the box holds 8 servings. The whole box has 140 x 8 = 1,120 calories. Give full credit for an answer that says 140 is for one serving only and gives 1,120 calories.', 'published', 'seed', 0, '2026-10-23T11:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-574017630f5813d6', 'opinion-essay-rubric-grade-5', 'Opinion Essay Rubric', 'rubric', '5', 'ela', 'A 4-level, 5-criteria rubric for scoring fifth grade opinion essays: opinion and introduction, reasons and evidence, organization and transitions, conclusion, and conventions. Includes a score sheet, a score conversion guide, and a student self-check list.', 'CCSS.ELA-LITERACY.W.5.1, CCSS.ELA-LITERACY.W.5.1.A, CCSS.ELA-LITERACY.W.5.1.B, CCSS.ELA-LITERACY.W.5.1.C, CCSS.ELA-LITERACY.W.5.1.D, CCSS.ELA-LITERACY.L.5.2', '**Student:** ______________________  **Date:** ____________
 
 **Essay title or topic:** ______________________________________________
@@ -2953,7 +5061,7 @@ Students can use this list before turning in a final draft.
 - The Level 3 column describes what the grade 5 opinion writing standard asks for. Level 4 describes work that goes beyond it.
 - For a quick conference, pick one criterion to celebrate and one to work on. Students revise more successfully with one clear goal than with five.
 - To use the rubric for peer review, have partners highlight the opinion statement in one color and each reason in another color. Missing colors show the writer what to add.
-- If students wrote from sources, add an expectation under Reasons and Evidence that facts come from the provided texts and are stated accurately.', 'published', 'seed', 0, '2026-10-26T23:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- If students wrote from sources, add an expectation under Reasons and Evidence that facts come from the provided texts and are stated accurately.', 'published', 'seed', 0, '2026-10-23T04:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-d8ce45f02d3b4fe5', 'ratios-and-unit-rates-worksheet-grade-6', 'Ratios and Unit Rates Worksheet', 'worksheet', '6', 'math', 'Fifteen problems that move from writing ratios to finding unit rates, completing a ratio table, comparing prices, and solving real-world rate problems. Includes an error-analysis item and a full answer key with work shown.', 'CCSS.MATH.CONTENT.6.RP.A.2, CCSS.MATH.CONTENT.6.RP.A.3', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Show your work for every problem. Label your answers with units (for example, miles per hour or dollars per pound). Write ratios in simplest form.
@@ -3077,7 +5185,86 @@ Each column is the first column multiplied by the same number (x2, x3, x5).
 12. a. 28 miles per gallon (140 / 5 = 28). b. 224 miles (28 x 8 = 224).
 13. a. 6 cups of blue. 15 / 5 = 3, so multiply both parts by 3: 2 x 3 = 6. b. 21 cups of green paint (6 + 15 = 21).
 14. a. 12 pages per minute (96 / 8 = 12). b. 12.5 minutes, or 12 1/2 minutes (150 / 12 = 12.5).
-15. Jordan divided in the wrong order. Dividing 4 pounds by 8 dollars gives 0.5 pound per dollar, not dollars per pound. To find the price per pound, divide the cost by the number of pounds: 8 / 4 = $2.00 per pound.', 'published', 'seed', 0, '2026-10-26T16:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+15. Jordan divided in the wrong order. Dividing 4 pounds by 8 dollars gives 0.5 pound per dollar, not dollars per pound. To find the price per pound, divide the cost by the number of pounds: 8 / 4 = $2.00 per pound.', 'published', 'seed', 0, '2026-10-22T21:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-2aca239ff75899ef', 'ser-vs-estar-worksheet-spanish-1-grade-9', 'Ser vs. Estar Worksheet (Spanish 1)', 'worksheet', '9', 'world-languages', 'Twelve present-tense sentences for Spanish 1 students to complete with the correct form of ser or estar, with a reference box of forms and uses. The answer key gives the reason for every answer.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Spanish has two verbs that mean "to be": **ser** and **estar**. Use the boxes below to decide which verb each sentence needs, then write the form that matches the subject.
+
+**Forms (present tense):**
+
+| Subject | ser | estar |
+|---|---|---|
+| yo | soy | estoy |
+| tú | eres | estás |
+| él, ella, usted | es | está |
+| nosotros, nosotras | somos | estamos |
+| vosotros, vosotras | sois | estáis |
+| ellos, ellas, ustedes | son | están |
+
+**When to use each verb:**
+
+| Use ser for | Use estar for |
+|---|---|
+| who or what someone is (identity, job) | where a person, place or thing is (location) |
+| where someone is from (origin) | how someone feels right now (feelings, health) |
+| the time, the day and the date | an action happening right now (estar + a verb ending in -ando or -iendo) |
+| what something is made of (material) | |
+| who owns something (possession) | |
+
+## Part A: Fill in the Blank
+
+Write the correct form of **ser** or **estar**.
+
+1. Yo ______________ de México.
+2. Mi hermana ______________ en la biblioteca ahora.
+3. Nosotros ______________ estudiantes.
+4. Hoy ______________ martes.
+5. Los libros ______________ en la mochila.
+6. ______________ las tres de la tarde.
+7. Yo ______________ muy cansada hoy.
+8. La mesa ______________ de madera.
+
+## Part B: Circle and Explain
+
+Circle the correct verb. Then write the reason on the line (for example: origin, location, feeling).
+
+9. Mi mamá ( es / está ) doctora.
+
+Reason: ______________________________
+
+10. Ustedes ( son / están ) enfermos hoy.
+
+Reason: ______________________________
+
+11. El lápiz ( es / está ) de Ana.
+
+Reason: ______________________________
+
+12. Los niños ( son / están ) jugando en el parque.
+
+Reason: ______________________________
+
+## Answer Key
+
+**Part A**
+
+1. soy. Origin: where someone is from takes ser. (I am from Mexico.)
+2. está. Location of a person takes estar. (My sister is in the library now.)
+3. somos. Identity: who someone is takes ser. (We are students.)
+4. es. The day of the week takes ser. (Today is Tuesday.)
+5. están. Location of things takes estar. (The books are in the backpack.)
+6. Son. Telling time takes ser, and the verb is plural for any hour except one o''clock. (It is three in the afternoon.)
+7. estoy. A feeling or condition right now takes estar. (I am very tired today.)
+8. es. Material: what something is made of takes ser. (The table is made of wood.)
+
+**Part B**
+
+9. es. Job or profession takes ser. (My mom is a doctor.)
+10. están. Health or condition right now takes estar. (You all are sick today.)
+11. es. Possession takes ser. (The pencil is Ana''s.)
+12. están. An action happening right now takes estar + a verb ending in -ando or -iendo. (The children are playing in the park.)
+
+**Note for the teacher:** Every location item here is about a person or a thing, which takes estar. The location of an event (a party, a class, a concert) takes ser. That rule is left out of this sheet on purpose so it can be taught on its own.', 'published', 'seed', 0, '2026-10-22T14:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-e13e32d536f5b56c', 'short-vowel-cvc-words-lesson-plan-grade-1', 'Short Vowel CVC Words Lesson Plan', 'lesson-plan', '1', 'ela', 'A complete 30-minute phonics lesson on blending, reading, and spelling short vowel consonant-vowel-consonant (CVC) words. Includes a scripted mini-lesson, word chains for guided practice, a printable practice page, a 5-word quick check, and differentiation.', 'CCSS.ELA-LITERACY.RF.1.2.B, CCSS.ELA-LITERACY.RF.1.2.C, CCSS.ELA-LITERACY.RF.1.2.D, CCSS.ELA-LITERACY.RF.1.3.B', '## Overview
 
 **Time:** 30 minutes
@@ -3257,7 +5444,158 @@ Note which vowels each student misses. A student who writes *rid* for *red* or *
 **Word chains (which sound changed)**
 
 - Chain 1: cat to cot (middle), cot to cut (middle), cut to cup (last), cup to cap (middle), cap to map (first), map to mop (middle)
-- Chain 2: pin to pen (middle), pen to ten (first), ten to tin (middle), tin to tip (last), tip to top (middle)', 'published', 'seed', 0, '2026-10-26T09:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- Chain 2: pin to pen (middle), pen to ten (first), ten to tin (middle), tin to tip (last), tip to top (middle)', 'published', 'seed', 0, '2026-10-22T07:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-338fb67e7ad00469', 'tape-measure-adding-subtracting-lengths-worksheet-grade-9', 'Workplace Math: Reading a Tape Measure and Adding and Subtracting Lengths', 'worksheet', '9', 'cte', 'Twelve shop math problems on reading a tape measure to the nearest 1/16 inch and adding and subtracting lengths in feet, inches and fractions. Written in words and numbers only, with a short review and a worked answer key.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** Solve each problem. Show your work. Write every fraction in lowest terms, and include the unit (in or ft) in every answer. When an answer has 12 inches or more, change it to feet and inches unless the problem says otherwise.
+
+## Quick Review
+
+### How a tape measure is marked
+
+On a standard tape measure, each inch is divided into 16 equal spaces. Each small space is 1/16 of an inch. The marks have different lengths so you can read them quickly.
+
+| Mark | How many in one inch | What it shows |
+|---|---|---|
+| Longest mark, with a number | 1 | whole inches |
+| Next longest | 1 | the 1/2 inch |
+| Medium | 2 | 1/4 and 3/4 |
+| Short | 4 | 1/8, 3/8, 5/8, 7/8 |
+| Shortest | 8 | 1/16, 3/16, 5/16, 7/16, 9/16, 11/16, 13/16, 15/16 |
+
+**To read a measurement:** find the last whole inch before the mark, count the sixteenths past it, and reduce the fraction.
+
+| Sixteenths past the inch | 2 | 4 | 6 | 8 | 10 | 12 | 14 |
+|---|---|---|---|---|---|---|---|
+| Lowest terms | 1/8 | 1/4 | 3/8 | 1/2 | 5/8 | 3/4 | 7/8 |
+
+An odd number of sixteenths, such as 5/16 or 11/16, is already in lowest terms.
+
+### Adding and subtracting lengths
+
+1. Change the fractions to the same denominator (16 always works).
+2. Add or subtract the fractions, then the inches, then the feet.
+3. Regroup: 16/16 = 1 in, and 12 in = 1 ft.
+4. Reduce the fraction.
+
+**Example (adding):** 1 ft 9 3/4 in + 2 ft 5 1/2 in
+
+- Fractions: 3/4 + 2/4 = 5/4 = 1 1/4
+- Inches: 9 + 5 + 1 1/4 = 15 1/4 in, which is 1 ft 3 1/4 in
+- Feet: 1 + 2 + 1 = 4 ft
+- Answer: 4 ft 3 1/4 in
+
+**Example (subtracting with borrowing):** 6 1/8 in - 2 3/4 in
+
+- Same denominator: 6 1/8 - 2 6/8
+- 1/8 is smaller than 6/8, so borrow 1 inch: 6 1/8 = 5 9/8
+- 5 9/8 - 2 6/8 = 3 3/8 in
+
+## Part A: Reading the Tape
+
+1. The end of a board lines up with the mark that is 5 small spaces (sixteenths) past the 3 inch line. What is the measurement?
+
+______________________________________________________________
+
+2. A mark is 12 small spaces (sixteenths) past the 7 inch line. What is the measurement in lowest terms?
+
+______________________________________________________________
+
+3. A mark is 2 small spaces (sixteenths) before the 10 inch line. What is the measurement in lowest terms?
+
+______________________________________________________________
+
+4. A tape reads 53 1/2 in. Write this length in feet and inches.
+
+______________________________________________________________
+
+## Part B: Adding Lengths
+
+5. 2 3/8 in + 4 1/4 in
+
+______________________________________________________________
+
+6. 5 7/8 in + 3 5/16 in
+
+______________________________________________________________
+
+7. Two pieces of pipe are joined end to end. One is 3 ft 8 1/2 in long and the other is 2 ft 6 3/4 in long. What is the total length?
+
+______________________________________________________________
+
+______________________________________________________________
+
+8. A shelf unit needs three boards: 1 ft 4 3/16 in, 2 ft 9 5/8 in and 11 1/2 in. What is the total length of board needed?
+
+______________________________________________________________
+
+______________________________________________________________
+
+## Part C: Subtracting Lengths
+
+9. 9 3/4 in - 4 1/8 in
+
+______________________________________________________________
+
+10. 7 1/4 in - 2 11/16 in
+
+______________________________________________________________
+
+11. A board is exactly 8 ft long. You cut off a piece 3 ft 7 5/8 in long. How long is the piece that is left? Ignore the width of the saw cut.
+
+______________________________________________________________
+
+______________________________________________________________
+
+12. A piece of trim is exactly 10 ft long. You cut two pieces from it, each 3 ft 4 5/8 in long. Each of the two saw cuts turns 1/8 in of the trim into sawdust. How long is the leftover piece?
+
+______________________________________________________________
+
+______________________________________________________________
+
+______________________________________________________________
+
+## Answer Key
+
+### Part A
+
+1. **3 5/16 in.** Five sixteenths past 3 inches. The fraction 5/16 is already in lowest terms.
+
+2. **7 3/4 in.** Twelve sixteenths past 7 inches is 7 12/16 in, and 12/16 reduces to 3/4.
+
+3. **9 7/8 in.** Two sixteenths before 10 inches is 14 sixteenths past 9 inches, because 16 - 2 = 14. That is 9 14/16 in, and 14/16 reduces to 7/8.
+
+4. **4 ft 5 1/2 in.** There are 48 inches in 4 feet, and 53 1/2 - 48 = 5 1/2.
+
+### Part B
+
+5. **6 5/8 in.** Change 1/4 to 2/8. Fractions: 3/8 + 2/8 = 5/8. Inches: 2 + 4 = 6.
+
+6. **9 3/16 in.** Change 7/8 to 14/16. Fractions: 14/16 + 5/16 = 19/16 = 1 3/16. Inches: 5 + 3 + 1 3/16 = 9 3/16.
+
+7. **6 ft 3 1/4 in.** Change 1/2 to 2/4. Fractions: 2/4 + 3/4 = 5/4 = 1 1/4. Inches: 8 + 6 + 1 1/4 = 15 1/4 in, which is 1 ft 3 1/4 in. Feet: 3 + 2 + 1 = 6.
+
+8. **5 ft 1 5/16 in.** Change 5/8 to 10/16 and 1/2 to 8/16. Fractions: 3/16 + 10/16 + 8/16 = 21/16 = 1 5/16. Inches: 4 + 9 + 11 + 1 5/16 = 25 5/16 in, which is 2 ft 1 5/16 in. Feet: 1 + 2 + 2 = 5.
+
+### Part C
+
+9. **5 5/8 in.** Change 3/4 to 6/8. Fractions: 6/8 - 1/8 = 5/8. Inches: 9 - 4 = 5.
+
+10. **4 9/16 in.** Change 1/4 to 4/16. Because 4/16 is smaller than 11/16, borrow 1 inch: 7 4/16 = 6 20/16. Fractions: 20/16 - 11/16 = 9/16. Inches: 6 - 2 = 4.
+
+11. **4 ft 4 3/8 in.** Rewrite 8 ft as 7 ft 11 8/8 in. Fractions: 8/8 - 5/8 = 3/8. Inches: 11 - 7 = 4. Feet: 7 - 3 = 4.
+
+12. **3 ft 2 1/2 in.**
+    - Two pieces: 3 ft 4 5/8 in + 3 ft 4 5/8 in = 6 ft 8 10/8 in = 6 ft 9 1/4 in.
+    - Two saw cuts: 1/8 + 1/8 = 2/8 = 1/4 in.
+    - Total used: 6 ft 9 1/4 in + 1/4 in = 6 ft 9 1/2 in.
+    - Left over: rewrite 10 ft as 9 ft 11 2/2 in. Fractions: 2/2 - 1/2 = 1/2. Inches: 11 - 9 = 2. Feet: 9 - 6 = 3.
+
+### Common mistakes to look for
+
+- Leaving a fraction unreduced, such as 12/16 in place of 3/4.
+- Regrouping feet and inches as if there were 10 inches in a foot. There are 12.
+- In problem 12, forgetting the material lost to the two saw cuts, which gives 3 ft 2 3/4 in.', 'published', 'seed', 0, '2026-10-22T00:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-d52e6a3316884f59', 'theme-and-character-change-discussion-questions-grade-7', 'Theme and Character Change: Discussion Questions for Any Novel', 'discussion-questions', '7', 'ela', 'Eighteen discussion questions on theme and character change that work with any class novel, grouped into three levels of thinking (notice, analyze, evaluate and connect). Includes facilitation tips, sentence stems, a written reflection, and a what-to-listen-for guide.', 'CCSS.ELA-LITERACY.RL.7.2, CCSS.ELA-LITERACY.RL.7.3, CCSS.ELA-LITERACY.SL.7.1', '## How to Use These Questions
 
 These questions fit any novel your class is reading. They work best once students have read at least half of the book, and again at the end.
@@ -3367,7 +5705,7 @@ These questions are open-ended, so answers depend on the novel. Use this guide f
 | 4 | Shares ideas supported by specific evidence from the book AND builds on or respectfully challenges a classmate''s idea |
 | 3 | Shares ideas supported by specific evidence from the book |
 | 2 | Shares ideas or opinions but with little or no evidence |
-| 1 | Listens respectfully but does not contribute, or contributes off topic |', 'published', 'seed', 0, '2026-10-26T02:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+| 1 | Listens respectfully but does not contribute, or contributes off topic |', 'published', 'seed', 0, '2026-10-21T17:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-71cb953f2303dba0', 'then-and-now-local-history-interview-project-grade-8', 'Then and Now: Local History Interview Project', 'project', '8', 'social-studies', 'A three-week oral history project in which students interview an older community member, research one aspect of local life, and create a then-and-now comparison showing change and continuity. Includes student steps, a day-by-day timeline, interview tips, a permission form, a note-taking organizer, and a 24-point scoring rubric.', 'C3 Framework D2.His.2.6-8, CCSS.ELA-LITERACY.WHST.6-8.7, CCSS.ELA-LITERACY.SL.8.4', '## Project Overview
 
 History is not only in textbooks. It is in the memories of the people who live in your community. In this project you will interview someone who has lived in your area for a long time (or who lived somewhere else when they were your age), research one part of daily life, and show how that part of life has changed and how it has stayed the same.
@@ -3607,7 +5945,7 @@ ______________________________________________
 - **Newcomers and families from elsewhere:** A then-and-now comparison between an interviewee''s childhood community and your community today is a valid and often rich version of the project.
 - **Privacy:** Students use first names or initials only and should not include addresses, phone numbers, or other personal details in any product. Check permission forms before products are displayed outside the classroom.
 - **Sensitive memories:** Remind students that some memories may be difficult. Interviewees may skip any question, and students should come to you if an interview raises something that worries them.
-- **Extension:** Compile the class''s then-and-now findings into a shared timeline or a class book to donate to the school or public library.', 'published', 'seed', 0, '2026-10-25T19:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- **Extension:** Compile the class''s then-and-now findings into a shared timeline or a class book to donate to the school or public library.', 'published', 'seed', 0, '2026-10-21T10:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-bfcb1d627e12ce86', 'two-step-addition-subtraction-word-problems-grade-2', 'Two-Step Addition and Subtraction Word Problems Within 100', 'word-problems', '2', 'math', 'Twelve two-step word problems using addition and subtraction within 100, with space to show both steps. The answer key shows the equation for each step.', 'CCSS.MATH.CONTENT.2.OA.A.1', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Each problem has **two steps**. Read the problem carefully. Show your work for Step 1 and Step 2. You may draw a picture, use a number line, or write equations. Write your final answer on the line with a label (for example, 12 apples).
@@ -3736,7 +6074,7 @@ Students may solve the steps in a different order or use a different strategy. A
 
 - A common error is stopping after one step. In problem 12, many students answer 27 (Eli''s cars) and forget to add Omar''s cars. Ask, ''Did you answer the question the problem asked?''
 - In problem 10, watch for students who add all three numbers. Have them underline the question first.
-- For support, assign problems 1, 2, 5, 8, and 9, which follow the story in order. For a challenge, ask students to write their own two-step problem with an answer of 40.', 'published', 'seed', 0, '2026-10-25T12:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+- For support, assign problems 1, 2, 5, 8, and 9, which follow the story in order. For a challenge, ask students to write their own two-step problem with an answer of 40.', 'published', 'seed', 0, '2026-10-21T03:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-58bd1476e88aeb7f', 'two-step-equations-quiz-grade-7', 'Two-Step Equations Quiz', 'quiz', '7', 'math', 'A 15-point quiz on solving two-step equations with integers, fractions, decimals, and negative coefficients, plus two word problems and an error-analysis item. Answer key shows every step and a check.', 'CCSS.MATH.CONTENT.7.EE.B.4.A', '**Name:** ______________________  **Date:** ____________
 
 **Directions:** Solve each equation. Show both steps of your work and circle your final answer. Each problem is worth 1 point (15 points total). You may check your answers by substituting them back into the original equation.
@@ -3863,7 +6201,100 @@ ______________________________________________
 | 12 | 80% |
 | 11 | 73% |
 | 10 | 67% |
-| 9 | 60% |', 'published', 'seed', 0, '2026-10-25T05:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+| 9 | 60% |', 'published', 'seed', 0, '2026-10-20T20:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-03fee8091db984b4', 'unit-circle-radian-measure-quiz-grade-11', 'Unit Circle and Radian Measure Quiz', 'quiz', '11', 'math', 'A ten-question precalculus quiz on converting between degrees and radians, exact values of sine, cosine and tangent on the unit circle, reference angles and arc length. Six multiple choice and four short answer questions, 12 points, with a worked answer key.', '', '**Name:** ______________________  **Date:** ____________
+
+**Directions:** No calculator. Give exact values, such as sqrt(3)/2 or 5pi/6, not decimals. For questions 1 to 6, circle the one correct answer. For questions 7 to 10, write your answer on the line and show your work. The quiz is worth 12 points.
+
+## Multiple Choice (1 point each)
+
+1. What is 150 degrees in radians?
+
+   - A. 2pi/3
+   - B. 3pi/4
+   - C. 5pi/6
+   - D. 7pi/6
+
+2. What is 7pi/4 radians in degrees?
+
+   - A. 225 degrees
+   - B. 270 degrees
+   - C. 300 degrees
+   - D. 315 degrees
+
+3. What is the exact value of sin(pi/3)?
+
+   - A. 1/2
+   - B. sqrt(2)/2
+   - C. sqrt(3)/2
+   - D. sqrt(3)
+
+4. What is the exact value of cos(5pi/6)?
+
+   - A. -sqrt(3)/2
+   - B. -1/2
+   - C. 1/2
+   - D. sqrt(3)/2
+
+5. Which point on the unit circle matches the angle 5pi/4?
+
+   - A. (sqrt(2)/2, -sqrt(2)/2)
+   - B. (-sqrt(2)/2, -sqrt(2)/2)
+   - C. (-sqrt(2)/2, sqrt(2)/2)
+   - D. (-1/2, -sqrt(3)/2)
+
+6. What is the exact value of tan(2pi/3)?
+
+   - A. -sqrt(3)
+   - B. -sqrt(3)/3
+   - C. sqrt(3)/3
+   - D. sqrt(3)
+
+## Short Answer
+
+7. (1 point) What is the exact value of sin(3pi/2)?
+
+______________________________________________________________
+
+8. (1 point) What is the reference angle for 7pi/6? Give your answer in radians.
+
+______________________________________________________________
+
+9. (2 points) Find every angle t, with t at least 0 and less than 2pi, for which cos(t) = -1/2.
+
+______________________________________________________________
+
+______________________________________________________________
+
+10. (2 points) A circle has a radius of 6 cm. Find the length of the arc cut off by a central angle of 2pi/3 radians. Leave your answer in terms of pi and include the unit.
+
+______________________________________________________________
+
+______________________________________________________________
+
+## Answer Key
+
+Total: 12 points.
+
+1. **C. 5pi/6.** Multiply degrees by pi/180: 150pi/180 reduces to 5pi/6. (1 point)
+
+2. **D. 315 degrees.** Multiply radians by 180/pi: 7 times 180 / 4 = 1260 / 4 = 315. (1 point)
+
+3. **C. sqrt(3)/2.** The angle pi/3 is 60 degrees, and its point on the unit circle is (1/2, sqrt(3)/2). Sine is the y-coordinate. (1 point)
+
+4. **A. -sqrt(3)/2.** The angle 5pi/6 is 150 degrees, in Quadrant II, with reference angle pi/6. Cosine is negative in Quadrant II, and cos(pi/6) = sqrt(3)/2. (1 point)
+
+5. **B. (-sqrt(2)/2, -sqrt(2)/2).** The angle 5pi/4 is 225 degrees, in Quadrant III, with reference angle pi/4. Both coordinates are negative in Quadrant III. (1 point)
+
+6. **A. -sqrt(3).** The point for 2pi/3 is (-1/2, sqrt(3)/2). Tangent is y divided by x: (sqrt(3)/2) / (-1/2) = -sqrt(3). (1 point)
+
+7. **-1.** The angle 3pi/2 is 270 degrees, and its point on the unit circle is (0, -1). Sine is the y-coordinate. (1 point)
+
+8. **pi/6.** The angle 7pi/6 is in Quadrant III, so subtract pi: 7pi/6 - 6pi/6 = pi/6. (1 point)
+
+9. **t = 2pi/3 and t = 4pi/3.** Cosine equals 1/2 at the reference angle pi/3. Cosine is negative in Quadrants II and III, so t = pi - pi/3 = 2pi/3 and t = pi + pi/3 = 4pi/3. Give 1 point for each correct angle, and take off 1 point if any extra angle is listed. (2 points)
+
+10. **4pi cm.** Arc length is radius times the angle in radians: 6 times 2pi/3 = 12pi/3 = 4pi cm, which is about 12.6 cm. Give 1 point for the correct setup and 1 point for the answer 4pi with the unit. (2 points)', 'published', 'seed', 0, '2026-10-20T13:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
 INSERT INTO resources (id, slug, title, type, grade, subject, summary, standards, body, status, source, views, created_at) VALUES ('seed-7648a2985df1cd6b', 'water-cycle-lesson-plan-grade-4', 'The Water Cycle Lesson Plan with Bag-on-the-Window Demonstration', 'lesson-plan', '4', 'science', 'A 45-minute lesson that teaches evaporation, condensation, precipitation, and collection using a simple water-cycle-in-a-bag demonstration taped to a window. Includes timed steps, vocabulary, an observation log, differentiation, and a 5-question exit ticket with answer key.', '', '## Overview
 
 **Time:** 45 minutes, plus two short follow-up observations (2 to 3 minutes each) later the same day and the next day
@@ -4063,4 +6494,4 @@ ________________________________________________________________
 - Large drops running down the sides: precipitation
 - Water gathering at the bottom again: collection
 
-**Extension question:** The drops on the sides of the bag are clear because only the water evaporates. The food coloring is left behind in the water at the bottom.', 'published', 'seed', 0, '2026-10-24T22:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;
+**Extension question:** The drops on the sides of the bag are clear because only the water evaporates. The food coloring is left behind in the water at the bottom.', 'published', 'seed', 0, '2026-10-20T06:00:00.000Z') ON CONFLICT (id) DO UPDATE SET slug=excluded.slug, title=excluded.title, type=excluded.type, grade=excluded.grade, subject=excluded.subject, summary=excluded.summary, standards=excluded.standards, body=excluded.body;

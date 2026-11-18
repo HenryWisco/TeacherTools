@@ -27,11 +27,104 @@
       return /^\s*_{3,}\s*$/.test(line) ? line : line.replace(/_{2,}/g, function (run) { return run.replace(/_/g, "\\_"); });
     }).join("\n");
   };
+  var renderPlain = function (text) {
+    if (!text.trim()) return "";
+    return md.parse(protectBlanks(text))
+      // Nothing on the page itself told a trusting reader to check the key, so say it there.
+      .replace(/<h2>(\s*Answer Key[^<]*)<\/h2>/i, '<h2 class="answer-key">$1</h2><p class="key-note">Written with AI. Check every answer before you use this page.</p>')
+      .replace(/<h2>(\s*(?:Version [A-C]|Level [1-3])\b[^<]*)<\/h2>/g, '<h2 class="page-start">$1</h2>');
+  };
+
+  // Same as prettyMath in src/markdown.ts: real exponents, root signs and ≤ ≥ for display.
+  var prettyMath = function (html) {
+    var inCode = 0;
+    return html.split(/(<[^>]+>)/).map(function (piece) {
+      if (piece.charAt(0) === "<") {
+        if (/^<(?:code|pre)\b/i.test(piece)) inCode++;
+        else if (/^<\/(?:code|pre)>/i.test(piece)) inCode = Math.max(0, inCode - 1);
+        return piece;
+      }
+      if (inCode) return piece;
+      return piece
+        .replace(/sqrt\(((?:[^()]|\([^()]*\))*)\)/g, function (_, inner) { return /^[\w.]+$/.test(inner) ? "√" + inner : "√(" + inner + ")"; })
+        .replace(/([\w)\]])\^\(([^()]{1,30})\)/g, "$1<sup>$2</sup>")
+        .replace(/([\w)\]])\^(-?(?:\d+(?:\.\d+)?|[a-zA-Z]))(?![\w^])/g, "$1<sup>$2</sup>")
+        .replace(/(?<=[\w)>]) \* (?=[\w(])/g, " · ")
+        .replace(/&lt;=/g, "≤")
+        .replace(/&gt;=/g, "≥")
+        .replace(/!=/g, "≠");
+    }).join("");
+  };
+
+  // Same as pairLanguages in src/markdown.ts: a two-language document ("## English"
+  // then "## Spanish") laid out as two columns, matched piece by piece.
+  var NATIVE_NAMES = {
+    Spanish: "Español", French: "Français", Portuguese: "Português", "Chinese (Simplified)": "中文",
+    Vietnamese: "Tiếng Việt", Arabic: "العربية", Tagalog: "Tagalog", "Haitian Creole": "Kreyòl ayisyen",
+  };
+  var PAIR = new RegExp("(^|\\n)## English[ \\t]*\\n([\\s\\S]*?)\\n## (" +
+    Object.keys(NATIVE_NAMES).map(function (n) { return n.replace(/[()]/g, "\\$&"); }).join("|") +
+    ")[ \\t]*\\n([\\s\\S]*?)(?=\\n## |$)");
+  var pairLanguages = function (text) {
+    var m = text.match(PAIR);
+    if (!m) return null;
+    var before = text.slice(0, m.index);
+    var after = text.slice(m.index + m[0].length);
+    var pieces = function (src) {
+      var tokens = md.lexer(protectBlanks(src));
+      var one = function (t) { var a = [t]; a.links = tokens.links; return md.parser(a); };
+      var out = [];
+      tokens.forEach(function (t) {
+        if (t.type === "space") return;
+        if (t.type === "list" && t.items && t.items.length > 1) {
+          var first = typeof t.start === "number" ? t.start : 1;
+          t.items.forEach(function (item, i) {
+            out.push({ html: one(Object.assign({}, t, { start: first + i, items: [item], raw: item.raw })), heading: false });
+          });
+        } else out.push({ html: one(t), heading: t.type === "heading" });
+      });
+      return out;
+    };
+    var left = pieces(m[2]);
+    var right = pieces(m[4]);
+    // A table is too wide for half a page, so a pair of tables is stacked instead.
+    var row = function (a, b) {
+      return /^\s*<table/.test(a) && /^\s*<table/.test(b)
+        ? '<tr><td colspan="2">' + a + '</td></tr><tr><td colspan="2" dir="auto">' + b + "</td></tr>"
+        : "<tr><td>" + a + '</td><td dir="auto">' + b + "</td></tr>";
+    };
+    var join = function (list) { return list.map(function (p) { return p.html; }).join(""); };
+    var sections = function (list) {
+      var out = [[]];
+      list.forEach(function (p) {
+        if (p.heading && out[out.length - 1].length) out.push([]);
+        out[out.length - 1].push(p);
+      });
+      return out;
+    };
+    var rows = "";
+    if (left.length === right.length) {
+      rows = left.map(function (p, i) { return row(p.html, right[i].html); }).join("");
+    } else {
+      var ls = sections(left);
+      var rs = sections(right);
+      if (ls.length === rs.length) {
+        rows = ls.map(function (sec, i) {
+          return sec.length === rs[i].length
+            ? sec.map(function (p, k) { return row(p.html, rs[i][k].html); }).join("")
+            : row(join(sec), join(rs[i]));
+        }).join("");
+      } else rows = row(join(left), join(right));
+    }
+    return renderPlain(before) +
+      '<table class="bilingual"><thead><tr><th>English</th><th>' + NATIVE_NAMES[m[3]] + "</th></tr></thead><tbody>" + rows + "</tbody></table>" +
+      (after.trim() ? renderPlain(after) : "");
+  };
+
   var render = function (text) {
     // "[TOTAL]" is filled in by the server once the document is finished.
-    return md.parse(protectBlanks(text).split("[TOTAL]").join("…"))
-      .replace(/<h2>(\s*Answer Key[^<]*)<\/h2>/i, '<h2 class="answer-key">$1</h2>')
-      .replace(/<h2>(\s*(?:Version [A-C]|Level [1-3])\b[^<]*)<\/h2>/g, '<h2 class="page-start">$1</h2>');
+    var src = text.split("[TOTAL]").join("…");
+    return prettyMath(pairLanguages(src) || renderPlain(src));
   };
 
   var remember = function (k, v) { try { localStorage.setItem("sc:" + k, v); } catch (e) {} };
@@ -50,6 +143,7 @@
     var markdown = "";
     var busy = false;
     var checkInfo = null;
+    var hiddenInfo = null;
     var lastInputs = {};
     var docId = "";
     var params = new URLSearchParams(location.search);
@@ -75,10 +169,17 @@
       Array.prototype.forEach.call(gradeEl.options, function (o) {
         if (!o.value) return;
         if (!o.dataset.us) o.dataset.us = o.textContent;
-        var n = o.value === "K" ? 0 : parseInt(o.value, 10);
-        o.textContent = us ? o.dataset.us : "Ages " + (n + 5) + "–" + (n + 6) + " (US " + o.dataset.us + ")";
+        var parts = o.value.split("-").map(function (p) { return p === "K" ? 0 : parseInt(p, 10); });
+        var top = parts.length > 1 ? parts[1] : parts[0];
+        o.textContent = us ? o.dataset.us : "Ages " + (parts[0] + 5) + "–" + (top + 6) + " (US " + o.dataset.us + ")";
       });
     }
+    // Kindergarten pages come out as words and typed shapes: say so before the teacher waits for one.
+    var kNote = root.querySelector("[data-k-note]");
+    function noteKindergarten() {
+      if (kNote && gradeEl) kNote.hidden = gradeEl.value.charAt(0) !== "K";
+    }
+    if (gradeEl) gradeEl.addEventListener("change", noteKindergarten);
 
     // Show which options are switched on, so a remembered setting is never a surprise.
     var more = root.querySelector(".more");
@@ -100,6 +201,16 @@
     }
     labelGrades();
     describeOptions();
+    noteKindergarten();
+
+    // Print choices, remembered on this device.
+    var aiLabel = recall("ailabel") === "1";
+    var press = function (act, on) {
+      var b = root.querySelector('[data-act="' + act + '"]');
+      if (b) b.setAttribute("aria-pressed", on ? "true" : "false");
+    };
+    press("ailabel", aiLabel);
+    if (recall("compact") === "1") { doc.classList.add("compact"); press("compact", true); }
 
     function saveDoc() {
       if (!markdown) return;
@@ -124,6 +235,14 @@
 
     function show() {
       doc.innerHTML = render(markdown);
+      // Optional line at the foot of the student pages, for schools that want AI use disclosed.
+      if (aiLabel && markdown) {
+        var p = document.createElement("p");
+        p.className = "ai-label";
+        p.textContent = "Drafted with AI assistance.";
+        var key = doc.querySelector("h2.answer-key");
+        if (key) doc.insertBefore(p, key); else doc.appendChild(p);
+      }
     }
 
     function setBusy(on, label) {
@@ -171,6 +290,7 @@
           var pending = false;
           var errorText = "";
           checkInfo = null;
+          hiddenInfo = null;
           var schedule = function () {
             if (pending) return;
             pending = true;
@@ -184,6 +304,11 @@
             // The server re-checked the finished document and sent a cleaned-up copy.
             if (typeof msg.replace === "string" && msg.replace) { markdown = msg.replace; schedule(); }
             if (msg.check) checkInfo = msg.check;
+            if (msg.hidden && msg.hidden.length) {
+              hiddenInfo = msg.hidden;
+              SC.notice(root, "Before sending, we took out what looked like a student's details (" + msg.hidden.join(", ") +
+                ") and put [Student] in its place, so it never reached the AI. Add the name yourself after you download.");
+            }
             if (msg.error) errorText = msg.error;
           };
           var pump = function () {
@@ -252,6 +377,17 @@
         var on = doc.classList.toggle("large");
         b.setAttribute("aria-pressed", on ? "true" : "false");
       }
+      if (act === "compact") {
+        var tight = doc.classList.toggle("compact");
+        b.setAttribute("aria-pressed", tight ? "true" : "false");
+        remember("compact", tight ? "1" : "0");
+      }
+      if (act === "ailabel") {
+        aiLabel = !aiLabel;
+        b.setAttribute("aria-pressed", aiLabel ? "true" : "false");
+        remember("ailabel", aiLabel ? "1" : "0");
+        show();
+      }
       if (act === "print") window.print();
       if (act === "word") SC.downloadWord(doc);
       if (act === "copy") SC.copyRich(doc, root);
@@ -294,7 +430,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tool: tool, markdown: markdown, confirm: true,
-          grade: lastInputs.grade || "", subject: lastInputs.subject || "", standards: lastInputs.standards || "",
+          grade: (lastInputs.grade || "").split("-")[0], subject: lastInputs.subject || "", standards: lastInputs.standards || "",
         }),
       })
         .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
